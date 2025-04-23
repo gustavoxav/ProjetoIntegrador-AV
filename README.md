@@ -2,7 +2,7 @@
 
 # Alunos
 Gustavo Xavier Saldanha
-
+Thiago Rocha Duarte
 
 # Aplicação para aluguel de bicicletas
 
@@ -23,6 +23,5 @@ Gustavo Xavier Saldanha
 2. Acesse a pasta do projeto:
    ```bash
    cd g9
-
 
 ## CEFET-RJ, Sistemas de Informação
