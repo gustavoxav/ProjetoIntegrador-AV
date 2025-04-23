@@ -1,7 +1,7 @@
 # Projeto Integrador - Grupo g9
 
 # Alunos
-Gustavo Xavier Saldanha
+Gustavo Xavier Saldanha  
 Thiago Rocha Duarte
 
 # Aplicação para aluguel de bicicletas
