@@ -1,0 +1,19 @@
+{
+  "paises": [
+    {
+      "id": "cad8",
+      "nome": "Argentina",
+      "ddi": "54"
+    },
+    {
+      "id": "9a5e",
+      "nome": "Uruguai",
+      "ddi": "53"
+    },
+    {
+      "id": "5256",
+      "nome": "Brasil",
+      "ddi": "+55"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "g9/api",
+  "autoload": {
+    "psr-4": {
+      "": [
+        "src/locacao"
+      ]
+    }
+  },
+  "authors": [
+    {
+      "name": "Gustavo Xavier Saldanha",
+      "email": "gustavosaldxav@gmail.com"
+    },
+    {
+      "name": "Thiago Rocha",
+      "email": "thiagotsrocha@gmail.com"
+    }
+  ],
+  "require": {
+  }
+}
