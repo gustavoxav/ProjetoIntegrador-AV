@@ -1,5 +1,8 @@
 {
   "name": "g9/api",
+  "scripts": {
+    "start": "php -S localhost:8000 -t public"
+  },
   "autoload": {
     "psr-4": {
       "": [
@@ -18,5 +21,10 @@
     }
   ],
   "require": {
+    "phputil/router": "^0.3.6",
+    "phputil/cors": "^0.5.3"
+  },
+  "require-dev": {
+    "kahlan/kahlan": "^6.0"
   }
 }
