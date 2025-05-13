@@ -1,6 +1,8 @@
 import { RouteType } from "./types/rent";
 import { initLocacaoList } from "./pages/locacao-list";
 import { initLocacaoAdd } from "./pages/locacao-add";
+import { initDevolucaoList } from "./pages/devolucao-list";
+import { initDevolucaoAdd } from "./pages/devolucao-add";
 
 document.addEventListener("DOMContentLoaded", () => {
   const navbarContainer = document.getElementById("navbar-container");
@@ -14,11 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
     "/devolucao-add": "/pages/devolucao-add.html",
   };
 
-  // Page initialization functions
   const pageInitializers: Record<string, () => void> = {
     "/": initLocacaoList,
     "/locacao-list": initLocacaoList,
     "/locacao-add": initLocacaoAdd,
+    "/devolucao-list": initDevolucaoList,
+    "/devolucao-add": initDevolucaoAdd,
   };
 
   function carregadorElemento(section: HTMLElement | null, url: string) {
@@ -27,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((response) => response.text())
       .then((html) => {
         section.innerHTML = html;
-        // Initialize page-specific functionality
         const currentPath = window.location.pathname;
         const initializer = pageInitializers[currentPath];
         if (initializer) {
@@ -39,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // Handle route changes
   window.addEventListener('routeChange', ((event: CustomEvent) => {
     const path = event.detail.path;
     const route = (Object.keys(routes).find((key) => path === key) ?? "/") as RouteType;
@@ -47,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     carregadorElemento(mainContainer, routePath);
   }) as EventListener);
 
-  // Initial page load
   const path = window.location.pathname;
   const route = (Object.keys(routes).find((key) => path === key) ?? "/") as RouteType;
   const routePath = routes[route] ?? "/pages/locacao-list.html";
