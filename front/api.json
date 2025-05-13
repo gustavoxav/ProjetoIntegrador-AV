@@ -1,19 +1,25 @@
 {
-  "paises": [
+  "locacao": [
     {
-      "id": "cad8",
-      "nome": "Argentina",
-      "ddi": "54"
+      "codigo": "cad8",
+      "dataHoraLocacao": "2023-10-04T12:00:00Z",
+      "horasContratadas": "3",
+      "dataHoraEntregaPrevista": "2023-10-01T12:00:00Z",
+      "valorTotal": "120.00"
     },
     {
-      "id": "9a5e",
-      "nome": "Uruguai",
-      "ddi": "53"
+      "codigo": "c4438",
+      "dataHoraLocacao": "2023-11-12T12:00:00Z",
+      "horasContratadas": "2",
+      "dataHoraEntregaPrevista": "2023-10-01T12:00:00Z",
+      "valorTotal": "140.00"
     },
     {
-      "id": "5256",
-      "nome": "Brasil",
-      "ddi": "+55"
+      "codigo": "ca328",
+      "dataHoraLocacao": "2023-10-12T12:00:00Z",
+      "horasContratadas": "1",
+      "dataHoraEntregaPrevista": "2023-10-01T12:00:00Z",
+      "valorTotal": "110.00"
     }
   ]
 }
