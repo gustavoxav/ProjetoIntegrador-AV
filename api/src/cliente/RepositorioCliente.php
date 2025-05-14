@@ -9,7 +9,7 @@ interface RepositorioCliente
  * @throws \RepositorioException
  * @return Cliente|null
  */
-public function buscarCliente(string|int $parametro): ?Cliente;
+public function buscarClientes(string|int $parametro): ?Cliente;
 }
 
 ?>

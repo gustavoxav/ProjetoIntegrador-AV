@@ -3,9 +3,9 @@
 try {
 
   $pdo = new PDO(
-    'mysql:dbname=bd_g9;host=localhost;charset=utf8',
+    'mysql:host=localhost;charset=utf8',
     'root',
-    'root',
+    '',
     [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
   );
 

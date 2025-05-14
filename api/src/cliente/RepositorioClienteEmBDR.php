@@ -6,7 +6,7 @@ class RepositorioClienteEmBDR implements RepositorioCliente
     private PDO $pdo
   ) {}
 
-  public function buscarCliente(int|string $parametro): ?Cliente
+  public function buscarClientes(int|string $parametro): ?Cliente
   {
     try {
       if (is_int($parametro)) {
