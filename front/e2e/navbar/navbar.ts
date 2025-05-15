@@ -1,30 +1,32 @@
 import { Page } from "@playwright/test";
-
+import dotenv from "dotenv";
+dotenv.config();
 export class Navbar {
-
   constructor(public page: Page) {}
 
   async abrir() {
-    await this.page.goto("http://localhost:5173");
+    const apiUrl = process.env.VITE_API_URL ?? "";
+    await this.page.goto(apiUrl);
   }
 
-async navegarParaListagemLocacao() {
-    await this.page.locator("#opt-list-locacao").click();
-    await this.page.waitForURL("**/");
+  private async navegarPara(seletor: string, urlEsperada: string) {
+    await this.page.locator(seletor).click();
+    await this.page.waitForURL(`**/${urlEsperada}`);
+  }
+
+  async navegarParaListagemLocacao() {
+    await this.navegarPara("#opt-list-locacao", "");
   }
 
   async navegarParaNovaLocacao() {
-    await this.page.locator("#opt-nova-locacao").click();
-    await this.page.waitForURL("**/locacao-add");
+    await this.navegarPara("#opt-nova-locacao", "locacao-add");
   }
 
   async navegarParalistagemDevolucao() {
-    await this.page.locator("#opt-list-devolucao").click();
-    await this.page.waitForURL("**/devolucao-list");
+    await this.navegarPara("#opt-list-devolucao", "devolucao-list");
   }
 
   async navegarParaNovaDevolucao() {
-    await this.page.locator("#opt-nova-devolucao").click();
-    await this.page.waitForURL("**/devolucao-add");
+    await this.navegarPara("#opt-nova-devolucao", "devolucao-add");
   }
 }

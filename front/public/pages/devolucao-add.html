@@ -1,4 +1,26 @@
-<div>
-  <h1>Cadastro de Devolução</h1>
+<div class="container">
+  <h1 class="mb-4">Devolução de Locação</h1>
 
+  <form action="/api/devolucao" method="POST">
+
+    <div class="mb-3">
+      <label for="busca" class="form-label">ID da Locação ou CPF do Cliente</label>
+      <input type="text" id="busca" class="form-control" placeholder="Digite o ID ou CPF" autocomplete="off" required />
+    </div>
+
+    <div class="mb-3 d-none" id="itens-locacao-container">
+      <h5>Itens da Locação</h5>
+      <ul class="list-group" id="lista-itens">
+      </ul>
+    </div>
+
+    <div class="mb-3 d-none" id="valores-container">
+      <p><strong>Desconto:</strong> R$ <span id="desconto">0,00</span></p>
+      <p><strong>Valor a Pagar:</strong> R$ <span id="valor-pagar">0,00</span></p>
+    </div>
+
+    <button class="btn btn-primary mt-3 d-none" id="registrar-devolucao" type="submit">
+      Registrar Devolução
+    </button>
+  </form>
 </div>
