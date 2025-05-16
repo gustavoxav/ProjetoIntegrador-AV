@@ -6,21 +6,71 @@ class RepositorioClienteEmBDR implements RepositorioCliente
     private PDO $pdo
   ) {}
 
-  public function buscarClientes(int|string $parametro): ?Cliente
+  public function buscarClientes(): array|null
   {
     try {
-      if (is_int($parametro)) {
-        $sql = "SELECT * FROM cliente WHERE id = :param LIMIT 1";
+      // echo "buscando clientes";
+      $sql = "SELECT * FROM clientes";
+      $ps = $this->pdo->prepare($sql);
+      $ps->execute();
+      $ps->setFetchMode(PDO::FETCH_ASSOC);
+      $resultados = $ps->fetchAll();
+
+      if (!$resultados) return null;
+
+      $clientes = [];
+      foreach ($resultados as $dados) {
+        $clientes[] = new Cliente(
+          codigo: (int) $dados['id'],
+          nomeCompleto: $dados['nome_completo'],
+          dataNascimento: $dados['data_nascimento'],
+          cpf: $dados['cpf'],
+          telefone: $dados['telefone'],
+          email: $dados['email'],
+          endereco: $dados['endereco'],
+          foto: $dados['foto'],
+        );
+      }
+
+      return $clientes;
+    } catch (PDOException $ex) {
+      throw new RepositorioException(
+        'Ocorreu um erro ao buscar clientes. Tente novamente.',
+        (int) $ex->getCode(),
+        $ex
+      );
+    }
+  }
+
+  public function buscarClienteFiltro(int|string $query): Cliente|null
+  {
+    try {
+      // echo "buscando cliente filto";
+      $query = $query !== null ? ltrim((string) $query, '/') : null;
+
+      if (strlen($query) === 11) {
+        $sql = "SELECT * FROM clientes WHERE cpf = :param LIMIT 1";
       } else {
-        $sql = "SELECT * FROM cliente WHERE cpf = :param LIMIT 1";
+        $sql = "SELECT * FROM clientes WHERE id = :param LIMIT 1";
       }
 
       $ps = $this->pdo->prepare($sql);
-      $ps->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Cliente::class);
-      $ps->execute(['param' => $parametro]);
+      $ps->execute([':param' => $query]);
+      $ps->setFetchMode(PDO::FETCH_ASSOC);
+      $dados = $ps->fetch();
 
-      $objeto = $ps->fetch();
-      return $objeto === false ? null : $objeto;
+      if (!$dados) return null;
+
+      return new Cliente(
+        codigo: (int) $dados['id'],
+        nomeCompleto: $dados['nome_completo'],
+        dataNascimento: $dados['data_nascimento'],
+        cpf: $dados['cpf'],
+        telefone: $dados['telefone'],
+        email: $dados['email'],
+        endereco: $dados['endereco'],
+        foto: $dados['foto'],
+      );
     } catch (PDOException $ex) {
       throw new RepositorioException(
         'Ocorreu um erro ao buscar cliente por código ou CPF. Tente novamente.',

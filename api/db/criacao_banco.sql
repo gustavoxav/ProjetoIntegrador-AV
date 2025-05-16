@@ -1,8 +1,8 @@
-drop database if exists bd_teste_g9;
+drop database if exists database_g9;
 
-create database bd_teste_g9 character set utf8mb4 collate utf8mb4_unicode_ci;
+create database database_g9 character set utf8mb4 collate utf8mb4_unicode_ci;
 
-use bd_teste_g9;
+use database_g9;
 
 -- Criação Clientes
 create table clientes (

@@ -11,11 +11,15 @@
     "psr-4": {
       "": [
         "src/",
-        "tests/",
+        "src/infra/",
+        "src/infra/exceptions",
         "src/cliente",
         "src/infra"
       ]
-    }
+    },
+    "files": [
+      "src/infra/transaction.php"
+    ]
   },
   "authors": [
     {
