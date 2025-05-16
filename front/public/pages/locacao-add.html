@@ -2,33 +2,69 @@
   <h1 class="mb-4">Cadastro de Locação</h1>
 
   <form action="/api/locacao" method="POST">
-    <div class="mb-3 position-relative">
-      <label for="cliente" class="form-label">Código ou CPF do Cliente</label>
+    <label for="cliente" class="form-label">Código ou CPF do Cliente</label>
+    <div class="mb-3 input-group">
       <input
-        type="text"
+        type="number"
+        min="1"
+        max="11"
         id="cliente"
+        name="cliente"
         class="form-control"
         placeholder="Digite o código ou CPF"
         autocomplete="off" />
-      <ul
-        id="sugestoes-clientes"
-        class="list-group position-absolute w-100"
-        style="z-index: 1000"></ul>
-    </div>
 
-    <div class="mb-3 position-relative">
-      <label for="item" class="form-label">Código do Item</label>
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        id="btn-buscar-clientes">
+        Buscar
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-search"
+          viewBox="0 0 16 16">
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+        </svg>
+      </button>
+    </div>
+    <div
+      id="mostrar-clientes"
+      class="list-group w-100"
+      style="z-index: 1000"></div>
+
+    <label for="item" class="form-label">Código do Item</label>
+    <div class="mb-3 input-group">
       <input
-        type="text"
+        type="number"
         id="item"
         class="form-control"
+        min="1"
+        max="11"
+        name="itens"
         placeholder="Digite o código do item"
         autocomplete="off" />
-      <ul
-        id="sugestoes-itens"
-        class="list-group position-absolute w-100"
-        style="z-index: 1000"></ul>
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        id="btn-buscar-itens">
+        Buscar
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-search"
+          viewBox="0 0 16 16">
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+        </svg>
+      </button>
     </div>
+    <ul id="mostrar-itens" class="list-group w-100" style="z-index: 1000"></ul>
 
     <div id="item-selecionado" class="border rounded p-3 mb-3 d-none">
       <h5>Item Selecionado</h5>
@@ -40,9 +76,15 @@
 
     <div class="mb-3">
       <label for="hora" class="form-label">Horas para locação</label>
-      <input type="time" id="hora" name="hora" class="form-control" required />
+      <input
+        type="time"
+        id="hora"
+        name="hora"
+        class="form-control"
+        required
+        value="02:00" />
     </div>
-
+    <output></output>
     <button
       id="cancelar"
       type="button"

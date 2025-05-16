@@ -8,7 +8,13 @@ use function \phputil\cors\cors;
 define('API_PREFIX', '/api');
 
 $app = new Router();
-$app->use(cors(['origin' => 'http://localhost:5173']));
+
+$app->use(cors([
+  'origin' => ['http://localhost:5173', 'http://localhost:8080'],
+  'allowedHeaders' => ['Host', 'Origin', 'Accept', 'Content-Type', 'Content-Length', 'Cookie'],
+  'exposeHeaders' => ['Content-Type', 'Content-Length', 'Set-Cookie']
+]));
+
 $pdo = conectarPDO();
 
 // $app->get(API_PREFIX . "/hello", function ($req, $res) {

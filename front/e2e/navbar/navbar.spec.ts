@@ -6,7 +6,7 @@ dotenv.config();
 
 test.describe("Testes para Navbar", () => {
   let tela: Navbar;
-  const apiUrl = process.env.VITE_API_URL ?? "";
+  const apiUrl = process.env.VITE_BASE_URL ?? "";
 
   test.beforeEach(async ({ page }) => {
     tela = new Navbar(page);

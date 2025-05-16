@@ -2,11 +2,11 @@ use database_g9;
 
 -- Clientes
 insert into clientes (nome_completo, foto, data_nascimento, cpf, telefone, email, endereco) values
-('Gustavo Xavier Saldanha', 'https://drive.google.com/file/d/1dVmHQ3Zhx8mjNCpkK67SqlSSPBJ2ATYU/view?usp=drive_link', '2002-11-11', '12345678900', '(11) 99234-5678', 'gustavoxav@email.com', 'Rua das Pedras, 123'),
-('Thiago Rocha', 'https://drive.google.com/file/d/1uOL0bVqlokqORpwV6uzNCIxmWg9m0ZbB/view?usp=sharing', '1985-11-10', '98765432100', '(11) 99876-5432', 'thiagorocha@email.com', 'Av. Brasil, 456'),
-('Fernanda Souza', 'https://drive.google.com/file/d/1AYjwEe6ZYbRD0EOblQ_ieZ5M-QgtChiX/view?usp=drive_link', '1990-05-15', '45678912300', '(11) 93456-7890', 'fernandasouza@gmail.com', 'Rua das Flores, 789'),
-('Lucas Almeida', 'https://drive.google.com/file/d/1U2fZ1J0dkfDGg7hFIuDCNPralFa-aqTJ/view?usp=drive_link', '1995-03-20', '32165498700', '(11) 91234-5678', 'lucasalmeida@gmail.com', 'Av. das Palmeiras, 321'),
-('Mariano Costa', 'https://drive.google.com/file/d/1mXoP7cQogSH0Ikt-FhdydYIKyPqxLWza/view?usp=drive_link', '1992-08-25', '65432198700', '(11) 92345-6789', 'marianocosta@gmail.com', 'Rua do Sol, 654');
+('Gustavo Xavier Saldanha', 'https://super.abril.com.br/wp-content/uploads/2018/05/humanidade-causa-cc3a2ncer-em-animais-selvagens.png?w=720&h=440&crop=1', '2002-11-11', '12345678900', '(11) 99234-5678', 'gustavoxav@email.com', 'Rua das Pedras, 123'),
+('Thiago Rocha', 'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2023/10/26/1095416860-20144148136268.jpg', '1985-11-10', '98765432100', '(11) 99876-5432', 'thiagorocha@email.com', 'Av. Brasil, 456'),
+('Fernanda Souza', 'https://vegazeta.com.br/wp-content/uploads/2021/03/Arthurs-Acres-Animal-Sanctuary-2.jpg', '1990-05-15', '45678912300', '(11) 93456-7890', 'fernandasouza@gmail.com', 'Rua das Flores, 789'),
+('Lucas Almeida', 'https://static.mundoeducacao.uol.com.br/mundoeducacao/2021/03/1-animal.jpg', '1995-03-20', '32165498700', '(11) 91234-5678', 'lucasalmeida@gmail.com', 'Av. das Palmeiras, 321'),
+('Mariano Costa', 'https://jpimg.com.br/uploads/2025/03/7-animais-mais-fofos-do-mundo.jpg', '1992-08-25', '65432198700', '(11) 92345-6789', 'marianocosta@gmail.com', 'Rua do Sol, 654');
 
 -- Funcionarios
 insert into funcionarios (nome) values

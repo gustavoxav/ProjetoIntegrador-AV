@@ -5,7 +5,7 @@ export class Navbar {
   constructor(public page: Page) {}
 
   async abrir() {
-    const apiUrl = process.env.VITE_API_URL ?? "";
+    const apiUrl = process.env.VITE_BASE_URL ?? "";
     await this.page.goto(apiUrl);
   }
 
