@@ -1,11 +1,16 @@
 <?php
 
+require 'vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
 try {
 
   $pdo = new PDO(
-    'mysql:host=localhost;charset=utf8',
-    'root',
-    '',
+    'mysql:host=' . $_ENV['DB_HOST'] . ';charset=' . $_ENV['DB_CHARSET'],
+    $_ENV['DB_USER'],
+    $_ENV['DB_PASS'],
     [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
   );
 

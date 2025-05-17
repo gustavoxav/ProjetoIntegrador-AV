@@ -27,3 +27,8 @@ dist-ssr
 # Backend
 api/vendor/
 *.phar
+
+# .env
+.env
+/api/.env
+/front/.env
