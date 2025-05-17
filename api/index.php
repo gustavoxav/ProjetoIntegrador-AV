@@ -1,6 +1,17 @@
 <?php
 require_once 'vendor/autoload.php';
 
+// CLIENTES
+require_once 'src/cliente/Cliente.php';
+require_once 'src/cliente/RepositorioCliente.php';
+require_once 'src/cliente/RepositorioClienteEmBDR.php';
+require_once 'src/cliente/GestorCliente.php';
+
+// FUNCIONARIOS
+require_once 'src/funcionario/Funcionario.php';
+require_once 'src/funcionario/RepositorioFuncionario.php';
+require_once 'src/funcionario/RepositorioFuncionarioEmBDR.php';
+require_once 'src/funcionario/GestorFuncionario.php';
 
 use \phputil\router\Router;
 use function \phputil\cors\cors;
@@ -17,14 +28,21 @@ $app->use(cors([
 
 $pdo = conectarPDO();
 
-// $app->get(API_PREFIX . "/hello", function ($req, $res) {
-//   try {
-//     $res->send("Hello world");
-//   } catch (Exception $e) {
-//     $res->status(500)->json([$e->getMessage()]);
-//   }
-// });
+// CLIENTES TODOS
+$app->get(API_PREFIX . "/clientes", function ($req, $res) use ($pdo) {
 
+  try {
+    $gestor = new GestorCliente(
+      new RepositorioClienteEmBDR($pdo)
+    );
+    $saida = $gestor->obterClientes(null);
+    $res->json($saida);
+  } catch (Exception $e) {
+    $res->status(500)->json([$e->getMessage()]);
+  }
+});
+
+// CLIENTES FILTRO
 $app->get(API_PREFIX . "/clientesFiltro/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
@@ -40,13 +58,29 @@ $app->get(API_PREFIX . "/clientesFiltro/:filtro", function ($req, $res) use ($pd
   }
 });
 
-$app->get(API_PREFIX . "/clientes", function ($req, $res) use ($pdo) {
+// FUNCIONARIOS TODOS
+$app->get(API_PREFIX . "/funcionarios", function ($req, $res) use ($pdo) {
+  try {
+    $gestor = new GestorFuncionario(
+      new RepositorioFuncionarioEmBDR($pdo)
+    );
+    $saida = $gestor->obterFuncionarios(null);
+    $res->json($saida);
+  } catch (Exception $e) {
+    $res->status(500)->json([$e->getMessage()]);
+  }
+});
+
+// FUNCIONARIOS FILTRO
+$app->get(API_PREFIX . "/funcionariosFiltro/:filtro", function ($req, $res) use ($pdo) {
+  $params = $req->params();
+  $filtro = $params['filtro'] ?? null;
 
   try {
-    $gestor = new GestorCliente(
-      new RepositorioClienteEmBDR($pdo)
+    $gestor = new GestorFuncionario(
+      new RepositorioFuncionarioEmBDR($pdo)
     );
-    $saida = $gestor->obterClientes(null);
+    $saida = $gestor->obterFuncionarios($filtro);
     $res->json($saida);
   } catch (Exception $e) {
     $res->status(500)->json([$e->getMessage()]);
