@@ -1,7 +1,6 @@
 <?php
 require_once 'vendor/autoload.php';
 
-
 use \phputil\router\Router;
 use function \phputil\cors\cors;
 
@@ -52,5 +51,21 @@ $app->get(API_PREFIX . "/clientes", function ($req, $res) use ($pdo) {
     $res->status(500)->json([$e->getMessage()]);
   }
 });
+
+$app->get(API_PREFIX . "/equipamentoFiltro/:filtro", function ($req, $res) use ($pdo) {
+  $params = $req->params();
+  $filtro = $params['filtro'] ?? null;
+
+  try {
+    $gestor = new GestorEquipamento(
+      new RepositorioEquipamentoEmBDR($pdo)
+    );
+    $saida = $gestor->obterEquipamentos($filtro);
+    $res->json($saida);
+  } catch (Exception $e) {
+    $res->status(500)->json([$e->getMessage()]);
+  }
+});
+
 
 $app->listen();

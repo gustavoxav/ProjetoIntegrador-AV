@@ -14,7 +14,8 @@
         "src/infra/",
         "src/infra/exceptions",
         "src/cliente",
-        "src/infra"
+        "src/infra",
+        "src/equipamento"
       ]
     },
     "files": [
