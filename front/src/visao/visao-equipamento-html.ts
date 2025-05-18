@@ -143,12 +143,36 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       return;
     }
     
+    const horasLocacao = this.obterHorasLocacao();
+    const temDesconto = horasLocacao > 2;
+    
     for (const equipamento of this.equipamentosSelecionados) {
+      const subtotalItem = equipamento.valorHora * horasLocacao;
+      const descontoItem = temDesconto ? subtotalItem * 0.1 : 0;
+      const valorComDesconto = subtotalItem - descontoItem;
+      
       const item = document.createElement("li");
       item.className = "list-group-item d-flex justify-content-between align-items-center";
       
       const textoContainer = document.createElement("div");
-      textoContainer.textContent = `${equipamento.descricao} - R$ ${equipamento.valorHora}/h`;
+      
+      const infoEquipamento = document.createElement("div");
+      infoEquipamento.textContent = `${equipamento.descricao} - R$ ${equipamento.valorHora}/h`;
+      
+      const subtotalInfo = document.createElement("div");
+      subtotalInfo.className = "text-muted mt-1";
+      
+      if (temDesconto) {
+        subtotalInfo.innerHTML = `<small>Subtotal (${horasLocacao.toFixed(2)}h): 
+          <span style="text-decoration: line-through;">R$ ${subtotalItem.toFixed(2).replace('.', ',')}</span> 
+          R$ ${valorComDesconto.toFixed(2).replace('.', ',')} (10% desconto)</small>`;
+      } else {
+        subtotalInfo.innerHTML = `<small>Subtotal (${horasLocacao.toFixed(2)}h): 
+          R$ ${subtotalItem.toFixed(2).replace('.', ',')}</small>`;
+      }
+      
+      textoContainer.appendChild(infoEquipamento);
+      textoContainer.appendChild(subtotalInfo);
       
       const btnRemover = document.createElement("button");
       btnRemover.className = "btn btn-sm btn-danger";
@@ -188,6 +212,8 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2).replace('.', ',');
     if (descontoEl) descontoEl.textContent = valorDesconto.toFixed(2).replace('.', ',');
     if (totalEl) totalEl.textContent = valorTotal.toFixed(2).replace('.', ',');
+    
+    this.atualizarListaEquipamentosSelecionados();
     
     this.atualizarDatas();
   }
