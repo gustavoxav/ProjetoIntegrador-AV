@@ -91,5 +91,54 @@ $app->get(API_PREFIX . "/equipamentoFiltro/:filtro", function ($req, $res) use (
   }
 });
 
+// POST /api/locacoes: Registra uma nova locação
+$app->post(API_PREFIX . "/locacoes", function ($req, $res) use ($pdo) {
+  $dadosLocacao = (array) $req->body();
+
+  try {
+    $gestor = new GestorLocacao(
+      new RepositorioLocacaoEmBDR($pdo)
+    );
+    $saida = $gestor->registrarLocacao($dadosLocacao);
+    $res->status(201)->json($saida);
+  } catch (Exception $e) {
+    $res->status(400)->json(["erro" => $e->getMessage()]);
+  }
+});
+
+// GET /api/locacoes: Retorna todas as locações cadastradas no sistema
+$app->get(API_PREFIX . "/locacoes", function ($req, $res) use ($pdo) {
+  try {
+    $gestor = new GestorLocacao(
+      new RepositorioLocacaoEmBDR($pdo)
+    );
+    $saida = $gestor->obterLocacoes(null);
+    $res->json($saida);
+  } catch (Exception $e) {
+    $res->status(500)->json(["erro" => $e->getMessage()]);
+  }
+});
+
+// GET /api/locacoes/:codigo: Busca uma locação pelo código
+$app->get(API_PREFIX . "/locacoes/:codigo", function ($req, $res) use ($pdo) {
+  $params = $req->params();
+  $codigo = $params['codigo'] ?? null;
+
+  try {
+    $gestor = new GestorLocacao(
+      new RepositorioLocacaoEmBDR($pdo)
+    );
+    $saida = $gestor->obterLocacaoPorCodigo($codigo);
+    
+    if (!$saida) {
+      $res->status(404)->json(["erro" => "Locação não encontrada"]);
+      return;
+    }
+    
+    $res->json($saida);
+  } catch (Exception $e) {
+    $res->status(500)->json(["erro" => $e->getMessage()]);
+  }
+});
 
 $app->listen();

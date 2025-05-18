@@ -16,7 +16,8 @@
         "src/cliente",
         "src/infra",
         "src/equipamento",
-        "src/funcionario"
+        "src/funcionario",
+        "src/locacao"
       ]
     },
     "files": [

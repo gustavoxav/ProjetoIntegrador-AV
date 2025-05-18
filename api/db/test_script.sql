@@ -22,15 +22,6 @@ create table funcionario (
   nome VARCHAR(255)
 );
 
--- Criação Locação
-create table locacao (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  data_hora_locacao TIMESTAMP,
-  horas_contratadas INTEGER,
-  funcionario_id INTEGER REFERENCES funcionario(id),
-  cliente_id INTEGER REFERENCES cliente(id)
-);
-
 -- Criando a tabela de equipamento
 create table equipamento (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -43,6 +34,37 @@ create table equipamento (
   numero_seguro VARCHAR(50), -- Só preenchido para bicicletas
   disponivel BOOLEAN DEFAULT TRUE
 );
+
+-- Criação Locação
+create table locacao (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  data_hora_locacao TIMESTAMP,
+  horas_contratadas INTEGER,
+  data_hora_entrega_prevista TIMESTAMP NOT NULL,
+  desconto DECIMAL(10,2) NOT NULL,
+  valor_total DECIMAL(10,2) NOT NULL,
+  cliente_id INTEGER NOT NULL,
+  funcionario_id INTEGER NOT NULL,
+  FOREIGN KEY (cliente_id) REFERENCES cliente(id),
+  FOREIGN KEY (funcionario_id) REFERENCES funcionario(id)
+);
+
+-- Criação Item Locado
+create table item_locado (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  tempo_contratado INTEGER NOT NULL,
+  subtotal DECIMAL(10,2) NOT NULL,
+  equipamento_id INTEGER NOT NULL,
+  locacao_id INTEGER NOT NULL,
+  FOREIGN KEY (equipamento_id) REFERENCES equipamento(id),
+  FOREIGN KEY (locacao_id) REFERENCES locacao(id)
+);
+
+-- Índices para as tabelas
+CREATE INDEX idx_locacao_cliente ON locacao(cliente_id);
+CREATE INDEX idx_locacao_funcionario ON locacao(funcionario_id);
+CREATE INDEX idx_item_locado_equipamento ON item_locado(equipamento_id);
+CREATE INDEX idx_item_locado_locacao ON item_locado(locacao_id);
 
 -- Cliente
 insert into cliente (nome_completo, foto, data_nascimento, cpf, telefone, email, endereco) values
