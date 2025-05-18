@@ -19,3 +19,8 @@ export type Equipamento = {
     disponivel: boolean;
     seguro: number;
 }
+
+export type Funcionario = {
+    codigo: number;
+    nome: string;
+}

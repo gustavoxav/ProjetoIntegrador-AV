@@ -17,7 +17,7 @@ export class GestorCliente {
 
     if (!response.ok) {
       throw ErroDominio.comProblemas([
-        "Erro ao buscar Clientes. Status: " + response.status,
+        `Erro ao buscar cliente. Status: ${response.status}`,
       ]);
     }
 
