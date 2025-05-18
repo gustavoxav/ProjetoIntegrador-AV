@@ -197,6 +197,43 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   atualizarSubtotal(): void {
     const horasLocacao = this.obterHorasLocacao();
     
+    const horasContratadasEl = document.getElementById("horas-contratadas");
+    if (horasContratadasEl) horasContratadasEl.textContent = horasLocacao.toString();
+    
+    const tabelaEquipamentos = document.getElementById("tabela-equipamentos");
+    if (tabelaEquipamentos) {
+      if (this.equipamentosSelecionados.length === 0) {
+        tabelaEquipamentos.innerHTML = `
+          <tr>
+            <td colspan="3" class="text-center text-muted">Nenhum equipamento selecionado</td>
+          </tr>
+        `;
+      } else {
+        tabelaEquipamentos.innerHTML = "";
+        
+        for (const equipamento of this.equipamentosSelecionados) {
+          const valorTotal = equipamento.valorHora * horasLocacao;
+          
+          const tr = document.createElement("tr");
+          
+          const tdEquipamento = document.createElement("td");
+          tdEquipamento.textContent = equipamento.descricao;
+          
+          const tdValorHora = document.createElement("td");
+          tdValorHora.textContent = `R$ ${equipamento.valorHora.toFixed(2).replace('.', ',')}`;
+          
+          const tdValorTotal = document.createElement("td");
+          tdValorTotal.textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+          
+          tr.appendChild(tdEquipamento);
+          tr.appendChild(tdValorHora);
+          tr.appendChild(tdValorTotal);
+          
+          tabelaEquipamentos.appendChild(tr);
+        }
+      }
+    }
+    
     let subtotal = 0;
     for (const equipamento of this.equipamentosSelecionados) {
       subtotal += equipamento.valorHora * horasLocacao;
