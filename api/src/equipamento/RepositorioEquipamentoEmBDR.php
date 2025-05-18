@@ -26,7 +26,7 @@ class RepositorioEquipamentoEmBDR implements RepositorioEquipamento
         fabricante: (string) $dados['fabricante'],
         descricao: (string) $dados['descricao'],
         valorHora: (float) $dados['valor_hora'],
-        avarias: (string) $dados['avarias'],
+        avarias: (string) $dados['avarias'] === "" ? "Nenhuma avaria" : $dados['avarias'],
         disponivel: (bool) $dados['disponivel'],
         numeroSeguro: (int) $dados['numero_seguro']
 

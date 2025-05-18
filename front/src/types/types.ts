@@ -8,3 +8,14 @@ export type Cliente = {
     endereco: string;
     foto: string;
 }
+
+export type Equipamento = {
+    codigo: number;
+    modelo: string;
+    fabricante: string;
+    descricao: string;
+    valorHora: number;
+    avarias: string;
+    disponivel: boolean;
+    seguro: number;
+}
