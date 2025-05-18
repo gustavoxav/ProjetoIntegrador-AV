@@ -9,7 +9,7 @@ class RepositorioFuncionarioEmBDR implements RepositorioFuncionario
   public function buscarFuncionarios(): array|null
   {
     try {
-      $sql = "SELECT * FROM funcionarios";
+      $sql = "SELECT * FROM funcionario";
       $ps = $this->pdo->prepare($sql);
       $ps->execute();
       $ps->setFetchMode(PDO::FETCH_ASSOC);
@@ -41,9 +41,9 @@ class RepositorioFuncionarioEmBDR implements RepositorioFuncionario
       $query = $query !== null ? ltrim((string) $query, '/') : null;
 
       if (is_numeric($query)) {
-        $sql = "SELECT * FROM funcionarios WHERE id = :param LIMIT 1";
+        $sql = "SELECT * FROM funcionario WHERE id = :param LIMIT 1";
       } else {
-        $sql = "SELECT * FROM funcionarios WHERE nome = :param LIMIT 1";
+        $sql = "SELECT * FROM funcionario WHERE nome = :param LIMIT 1";
       }
 
       $ps = $this->pdo->prepare($sql);

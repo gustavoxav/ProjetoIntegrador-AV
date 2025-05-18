@@ -1,18 +1,6 @@
 <?php
 require_once 'vendor/autoload.php';
 
-// CLIENTES
-require_once 'src/cliente/Cliente.php';
-require_once 'src/cliente/RepositorioCliente.php';
-require_once 'src/cliente/RepositorioClienteEmBDR.php';
-require_once 'src/cliente/GestorCliente.php';
-
-// FUNCIONARIOS
-require_once 'src/funcionario/Funcionario.php';
-require_once 'src/funcionario/RepositorioFuncionario.php';
-require_once 'src/funcionario/RepositorioFuncionarioEmBDR.php';
-require_once 'src/funcionario/GestorFuncionario.php';
-
 use \phputil\router\Router;
 use function \phputil\cors\cors;
 

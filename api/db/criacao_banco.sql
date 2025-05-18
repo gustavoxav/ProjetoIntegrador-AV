@@ -4,8 +4,8 @@ create database database_g9 character set utf8mb4 collate utf8mb4_unicode_ci;
 
 use database_g9;
 
--- Criação Clientes
-create table clientes (
+-- Criação Cliente
+create table cliente (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome_completo VARCHAR(255),
   foto VARCHAR(255),
@@ -16,23 +16,23 @@ create table clientes (
   endereco VARCHAR(255)
 );
 
--- Criação Funcionários
-create table funcionarios (
+-- Criação Funcionário
+create table funcionario (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(255)
 );
 
--- Criação Locações
-create table locacoes (
+-- Criação Locação
+create table locacao (
   id INT AUTO_INCREMENT PRIMARY KEY,
   data_hora_locacao TIMESTAMP,
   horas_contratadas INTEGER,
-  funcionario_id INTEGER REFERENCES funcionarios(id),
-  cliente_id INTEGER REFERENCES clientes(id)
+  funcionario_id INTEGER REFERENCES funcionario(id),
+  cliente_id INTEGER REFERENCES cliente(id)
 );
 
--- Criando a tabela de itens
-create table itens (
+-- Criando a tabela de equipamento
+create table equipamento (
   id INT AUTO_INCREMENT PRIMARY KEY,
   tipo VARCHAR(50) NOT NULL,
   modelo VARCHAR(100),

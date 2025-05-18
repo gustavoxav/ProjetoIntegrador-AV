@@ -10,7 +10,7 @@ class RepositorioClienteEmBDR implements RepositorioCliente
   {
     try {
       // echo "buscando clientes";
-      $sql = "SELECT * FROM clientes";
+      $sql = "SELECT * FROM cliente";
       $ps = $this->pdo->prepare($sql);
       $ps->execute();
       $ps->setFetchMode(PDO::FETCH_ASSOC);
@@ -49,9 +49,9 @@ class RepositorioClienteEmBDR implements RepositorioCliente
       $query = $query !== null ? ltrim((string) $query, '/') : null;
 
       if (strlen($query) === 11) {
-        $sql = "SELECT * FROM clientes WHERE cpf = :param LIMIT 1";
+        $sql = "SELECT * FROM cliente WHERE cpf = :param LIMIT 1";
       } else {
-        $sql = "SELECT * FROM clientes WHERE id = :param LIMIT 1";
+        $sql = "SELECT * FROM cliente WHERE id = :param LIMIT 1";
       }
 
       $ps = $this->pdo->prepare($sql);

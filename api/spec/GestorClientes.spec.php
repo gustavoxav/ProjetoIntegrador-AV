@@ -6,6 +6,7 @@ describe("GestorCliente", function () {
         $this->pdo->exec(file_get_contents('db/test_script.sql'));
         $this->clienteRepo = new RepositorioClienteEmBDR($this->pdo);
     });
+    
 
     it("Deve retornar todos os clientes quando nenhum filtro é passado", function () {
         $gestor = new GestorCliente($this->clienteRepo);

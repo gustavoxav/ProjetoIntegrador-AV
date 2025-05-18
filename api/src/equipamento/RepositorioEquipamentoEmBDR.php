@@ -11,7 +11,7 @@ class RepositorioEquipamentoEmBDR implements RepositorioEquipamento
     try {
       $query = $query !== null ? ltrim((string) $query, '/') : null;
 
-      $sql = "SELECT * FROM Equipamentos WHERE id = :param LIMIT 1";
+      $sql = "SELECT * FROM equipamento WHERE id = :param LIMIT 1";
 
       $ps = $this->pdo->prepare($sql);
       $ps->execute([':param' => $query]);

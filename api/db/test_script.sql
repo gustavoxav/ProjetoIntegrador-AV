@@ -4,8 +4,8 @@ create database database_test_g9 character set utf8mb4 collate utf8mb4_unicode_c
 
 use database_test_g9;
 
--- Criação Clientes
-create table clientes (
+-- Criação Cliente
+create table cliente (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome_completo VARCHAR(255),
   foto VARCHAR(255),
@@ -16,23 +16,23 @@ create table clientes (
   endereco VARCHAR(255)
 );
 
--- Criação Funcionários
-create table funcionarios (
+-- Criação Funcionário
+create table funcionario (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(255)
 );
 
--- Criação Locações
-create table locacoes (
+-- Criação Locação
+create table locacao (
   id INT AUTO_INCREMENT PRIMARY KEY,
   data_hora_locacao TIMESTAMP,
   horas_contratadas INTEGER,
-  funcionario_id INTEGER REFERENCES funcionarios(id),
-  cliente_id INTEGER REFERENCES clientes(id)
+  funcionario_id INTEGER REFERENCES funcionario(id),
+  cliente_id INTEGER REFERENCES cliente(id)
 );
 
--- Criando a tabela de itens
-create table itens (
+-- Criando a tabela de equipamento
+create table equipamento (
   id INT AUTO_INCREMENT PRIMARY KEY,
   tipo VARCHAR(50) NOT NULL,
   modelo VARCHAR(100),
@@ -44,16 +44,16 @@ create table itens (
   disponivel BOOLEAN DEFAULT TRUE
 );
 
--- Clientes
-insert into clientes (nome_completo, foto, data_nascimento, cpf, telefone, email, endereco) values
+-- Cliente
+insert into cliente (nome_completo, foto, data_nascimento, cpf, telefone, email, endereco) values
 ('Gustavo Xavier Saldanha', 'https://drive.google.com/file/d/1dVmHQ3Zhx8mjNCpkK67SqlSSPBJ2ATYU/view?usp=drive_link', '2002-11-11', '12345678900', '(11) 99234-5678', 'gustavoxav@email.com', 'Rua das Pedras, 123'),
 ('Thiago Rocha', 'https://drive.google.com/file/d/1uOL0bVqlokqORpwV6uzNCIxmWg9m0ZbB/view?usp=sharing', '1985-11-10', '98765432100', '(11) 99876-5432', 'thiagorocha@email.com', 'Av. Brasil, 456'),
 ('Fernanda Souza', 'https://drive.google.com/file/d/1AYjwEe6ZYbRD0EOblQ_ieZ5M-QgtChiX/view?usp=drive_link', '1990-05-15', '45678912300', '(11) 93456-7890', 'fernandasouza@gmail.com', 'Rua das Flores, 789'),
 ('Lucas Almeida', 'https://drive.google.com/file/d/1U2fZ1J0dkfDGg7hFIuDCNPralFa-aqTJ/view?usp=drive_link', '1995-03-20', '32165498700', '(11) 91234-5678', 'lucasalmeida@gmail.com', 'Av. das Palmeiras, 321'),
 ('Mariano Costa', 'https://drive.google.com/file/d/1mXoP7cQogSH0Ikt-FhdydYIKyPqxLWza/view?usp=drive_link', '1992-08-25', '65432198700', '(11) 92345-6789', 'marianocosta@gmail.com', 'Rua do Sol, 654');
 
--- Funcionarios
-insert into funcionarios (nome) values
+-- Funcionario
+insert into funcionario (nome) values
 ('Gustavo Funcionario'),
 ('Fernanda Funcionario'),
 ('Lucas Funcionario'),
@@ -61,12 +61,12 @@ insert into funcionarios (nome) values
 ('Thiago Funcionario');
 
 -- Bicicletas
-insert into itens (tipo, modelo, fabricante, descricao, valor_hora, avarias, numero_seguro, disponivel) values
+insert into equipamento (tipo, modelo, fabricante, descricao, valor_hora, avarias, numero_seguro, disponivel) values
 ('bicicleta', 'MTB 29', 'Caloi', 'Bicicleta de trilha com 21 marchas', 15.00, '', 'SEG123456', TRUE),
 ('bicicleta', 'Elétrica 500W', 'Sense', 'Bicicleta elétrica com autonomia de 40km', 25.00, '', 'SEG987654', TRUE);
 
 -- Equipamentos Gerais
-insert into itens (tipo, modelo, fabricante, descricao, valor_hora, avarias, numero_seguro, disponivel) values
+insert into equipamento (tipo, modelo, fabricante, descricao, valor_hora, avarias, numero_seguro, disponivel) values
 ('capacete', 'Capacete', 'Giro', 'Capacete de ciclismo', 5.00, '', NULL, TRUE),
 ('farolete', 'Farol LED', 'Trek', 'Farol LED', 3.00, '', NULL, TRUE),
 ('squeeze', 'Squeeze 600ml', 'Nike', 'Squeeze térmico', 1.00, '', NULL, TRUE),

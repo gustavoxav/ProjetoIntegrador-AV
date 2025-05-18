@@ -11,9 +11,9 @@ class GestorEquipamento
      * Buscar um Equipamento por Código.
      *
      * @param int $filtro
-     * @return Equipamento
+     * @return Equipamento|null
      */
-    public function obterEquipamentos(int $filtro): Equipamento
+    public function obterEquipamentos(int $filtro): Equipamento|null
     {
         try {
             return $this->repositorioEquipamento->buscarEquipamentoFiltro($filtro);
