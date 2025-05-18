@@ -189,8 +189,9 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     const horaInput = document.getElementById("hora") as HTMLInputElement;
     if (!horaInput || !horaInput.value) return 2;
     
-    const [horas, minutos] = horaInput.value.split(':').map(Number);
-    return horas + (minutos / 60);
+    // const [horas, minutos] = horaInput.value.split(':').map(Number);
+    // return horas + (minutos / 60);
+    return Number(horaInput.value);
   }
   
   atualizarSubtotal(): void {
