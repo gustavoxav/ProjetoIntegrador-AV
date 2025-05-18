@@ -16,7 +16,7 @@ $app->use(cors([
 
 $pdo = conectarPDO();
 
-// CLIENTES TODOS
+// GET /api/clientes: Retorna todos os clientes cadastrados no sistema
 $app->get(API_PREFIX . "/clientes", function ($req, $res) use ($pdo) {
 
   try {
@@ -30,7 +30,7 @@ $app->get(API_PREFIX . "/clientes", function ($req, $res) use ($pdo) {
   }
 });
 
-// CLIENTES FILTRO
+// GET /api/clientesFiltro/:filtro: Busca clientes por CPF ou código específico
 $app->get(API_PREFIX . "/clientesFiltro/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
@@ -46,7 +46,7 @@ $app->get(API_PREFIX . "/clientesFiltro/:filtro", function ($req, $res) use ($pd
   }
 });
 
-// FUNCIONARIOS TODOS
+// GET /api/funcionarios: Retorna todos os funcionários cadastrados no sistema
 $app->get(API_PREFIX . "/funcionarios", function ($req, $res) use ($pdo) {
   try {
     $gestor = new GestorFuncionario(
@@ -59,7 +59,7 @@ $app->get(API_PREFIX . "/funcionarios", function ($req, $res) use ($pdo) {
   }
 });
 
-// FUNCIONARIOS FILTRO
+// GET /api/funcionariosFiltro/:filtro: Busca funcionários por código ou nome específico
 $app->get(API_PREFIX . "/funcionariosFiltro/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
@@ -75,6 +75,7 @@ $app->get(API_PREFIX . "/funcionariosFiltro/:filtro", function ($req, $res) use 
   }
 });
 
+// GET /api/equipamentoFiltro/:filtro: Busca equipamentos por critério específico
 $app->get(API_PREFIX . "/equipamentoFiltro/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
