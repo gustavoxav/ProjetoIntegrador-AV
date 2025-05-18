@@ -98,6 +98,22 @@
         value="02:00" />
     </div>
     <output></output>
+
+    <div id="subtotal-section" class="border rounded p-3 mb-4">
+      <h5>Resumo da Locação</h5>
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Subtotal dos Itens:</strong> R$ <span id="subtotal-itens">0,00</span></p>
+          <p><strong>Desconto (10% acima de 2h):</strong> R$ <span id="desconto">0,00</span></p>
+          <p><strong>Valor Total:</strong> R$ <span id="valor-total">0,00</span></p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Data e Hora de Locação:</strong> <span id="data-locacao">-</span></p>
+          <p><strong>Data e Hora de Devolução:</strong> <span id="data-devolucao">-</span></p>
+        </div>
+      </div>
+    </div>
+    
     <button
       id="cancelar"
       type="button"

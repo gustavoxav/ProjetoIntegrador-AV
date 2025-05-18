@@ -11,6 +11,18 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     document
       .getElementById("btn-buscar-equipamento")
       ?.addEventListener("click", () => this.controladora.buscarEquipamento());
+    
+    document
+      .getElementById("hora")
+      ?.addEventListener("change", () => this.atualizarSubtotal());
+    
+    document
+      .getElementById("cancelar")
+      ?.addEventListener("click", () => {
+        window.history.back();
+      });
+    
+    this.atualizarDatas();
   }
 
   filtroEquipamento(): { filtro: string } {
@@ -100,6 +112,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     }
     
     this.atualizarListaEquipamentosSelecionados();
+    this.atualizarSubtotal();
   }
   
   removerEquipamento(codigo: number): void {
@@ -108,6 +121,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     );
     
     this.atualizarListaEquipamentosSelecionados();
+    this.atualizarSubtotal();
     
     const equipamentoAtual = document.querySelector("#mostrar-equipamento");
     if (equipamentoAtual) {
@@ -145,6 +159,60 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       item.appendChild(btnRemover);
       listaEquipamentos.appendChild(item);
     }
+  }
+  
+  private obterHorasLocacao(): number {
+    const horaInput = document.getElementById("hora") as HTMLInputElement;
+    if (!horaInput || !horaInput.value) return 2;
+    
+    const [horas, minutos] = horaInput.value.split(':').map(Number);
+    return horas + (minutos / 60);
+  }
+  
+  atualizarSubtotal(): void {
+    const horasLocacao = this.obterHorasLocacao();
+    
+    let subtotal = 0;
+    for (const equipamento of this.equipamentosSelecionados) {
+      subtotal += equipamento.valorHora * horasLocacao;
+    }
+    
+    const temDesconto = horasLocacao > 2;
+    const valorDesconto = temDesconto ? (subtotal * 0.1) : 0;
+    const valorTotal = subtotal - valorDesconto;
+    
+    const subtotalEl = document.getElementById("subtotal-itens");
+    const descontoEl = document.getElementById("desconto");
+    const totalEl = document.getElementById("valor-total");
+    
+    if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2).replace('.', ',');
+    if (descontoEl) descontoEl.textContent = valorDesconto.toFixed(2).replace('.', ',');
+    if (totalEl) totalEl.textContent = valorTotal.toFixed(2).replace('.', ',');
+    
+    this.atualizarDatas();
+  }
+  
+  atualizarDatas(): void {
+    const agora = new Date();
+    const horasLocacao = this.obterHorasLocacao();
+    
+    const dataDevolucao = new Date(agora.getTime() + (horasLocacao * 60 * 60 * 1000));
+    
+    const formatarData = (data: Date): string => {
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(data);
+    };
+    
+    const dataLocacaoEl = document.getElementById("data-locacao");
+    const dataDevolucaoEl = document.getElementById("data-devolucao");
+    
+    if (dataLocacaoEl) dataLocacaoEl.textContent = formatarData(agora);
+    if (dataDevolucaoEl) dataDevolucaoEl.textContent = formatarData(dataDevolucao);
   }
   
   getEquipamentosSelecionados(): Equipamento[] {
