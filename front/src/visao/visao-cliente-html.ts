@@ -4,12 +4,13 @@ import { VisaoCliente } from "./visao-clientes.js";
 
 export class VisaoClienteEmHTML implements VisaoCliente {
   private controladora: ControladoraCliente;
+  private clienteSelecionado: Cliente | null = null;
 
   constructor() {
     this.controladora = new ControladoraCliente(this);
     document
-      .getElementById("btn-buscar-clientes")!
-      .addEventListener("click", () => this.controladora.buscarClientes());
+      .getElementById("btn-buscar-clientes")
+      ?.addEventListener("click", () => this.controladora.buscarClientes());
   }
 
   filtroClientes(): { filtro: string } {
@@ -20,14 +21,16 @@ export class VisaoClienteEmHTML implements VisaoCliente {
 
   retornarClientes(cliente: Cliente): void {
     console.log("aq: 1", cliente);
-    const ul = document.getElementById("mostrar-clientes")!;
+    const ul = document.getElementById("mostrar-clientes");
+    if (!ul) return;
+    
     ul.innerHTML = "";
     const li = document.createElement("li");
     li.className = "list-group-item d-flex align-items-center gap-3";
 
     const avatar = document.createElement("img");
     avatar.src = cliente.foto;
-    avatar.alt = `Foto de Avatar`;
+    avatar.alt = "Foto de Avatar";
     avatar.width = 150;
     avatar.height = 150;
     avatar.style.borderRadius = "20%";
@@ -44,12 +47,43 @@ export class VisaoClienteEmHTML implements VisaoCliente {
 
     textoContainer.appendChild(nome);
     textoContainer.appendChild(cpf);
+    
+    const selecaoContainer = document.createElement("div");
+    selecaoContainer.className = "ms-auto";
+    
+    const btnSelecionar = document.createElement("button");
+    btnSelecionar.className = "btn btn-primary";
+    btnSelecionar.textContent = "Selecionar";
+    btnSelecionar.addEventListener("click", () => this.selecionarCliente(cliente));
+    
+    selecaoContainer.appendChild(btnSelecionar);
+    
     li.appendChild(avatar);
     li.appendChild(textoContainer);
+    li.appendChild(selecaoContainer);
     ul.appendChild(li);
   }
 
+  selecionarCliente(cliente: Cliente): void {
+    this.clienteSelecionado = cliente;
+    
+    // Atualiza a UI para mostrar que o cliente foi selecionado
+    const btnSelecionar = document.querySelector("#mostrar-clientes button");
+    if (btnSelecionar) {
+      btnSelecionar.textContent = "Selecionado";
+      btnSelecionar.className = "btn btn-success";
+      (btnSelecionar as HTMLButtonElement).disabled = true;
+    }
+  }
+
+  getClienteSelecionado(): Cliente | null {
+    return this.clienteSelecionado;
+  }
+
   exibirMensagens(mensagens: string[]) {
-    document.querySelector("output")!.innerText = mensagens.join("\n");
+    const outputElement = document.querySelector("output");
+    if (outputElement) {
+      outputElement.innerText = mensagens.join("\n");
+    }
   }
 }
