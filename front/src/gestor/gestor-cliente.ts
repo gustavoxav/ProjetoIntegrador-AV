@@ -1,5 +1,15 @@
 import { ErroDominio } from "../infra/ErroDominio";
 
+// pra tirar o erro do import.meta.env
+declare global {
+  interface ImportMeta {
+    readonly env: {
+      readonly VITE_API_URL?: string;
+      [key: string]: string | undefined;
+    }
+  }
+}
+
 export class GestorCliente {
  private readonly urlApi: string = import.meta.env.VITE_API_URL ?? "";
 
