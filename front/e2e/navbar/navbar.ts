@@ -1,5 +1,7 @@
 import { Page } from "@playwright/test";
 import dotenv from "dotenv";
+import { navegarPara } from "../../src/infra/utils";
+
 dotenv.config();
 export class Navbar {
   constructor(public page: Page) {}
@@ -9,24 +11,19 @@ export class Navbar {
     await this.page.goto(apiUrl);
   }
 
-  private async navegarPara(seletor: string, urlEsperada: string) {
-    await this.page.locator(seletor).click();
-    await this.page.waitForURL(`**/${urlEsperada}`);
-  }
-
   async navegarParaListagemLocacao() {
-    await this.navegarPara("#opt-list-locacao", "");
+    await navegarPara("#opt-list-locacao", "", this.page);
   }
 
   async navegarParaNovaLocacao() {
-    await this.navegarPara("#opt-nova-locacao", "locacao-add");
+    await navegarPara("#opt-nova-locacao", "locacao-add", this.page);
   }
 
   async navegarParalistagemDevolucao() {
-    await this.navegarPara("#opt-list-devolucao", "devolucao-list");
+    await navegarPara("#opt-list-devolucao", "devolucao-list", this.page);
   }
 
   async navegarParaNovaDevolucao() {
-    await this.navegarPara("#opt-nova-devolucao", "devolucao-add");
+    await navegarPara("#opt-nova-devolucao", "devolucao-add", this.page);
   }
 }

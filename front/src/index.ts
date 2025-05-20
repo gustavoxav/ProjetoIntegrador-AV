@@ -1,58 +1,54 @@
-import { RouteType } from "./types/rent";
+import page from "page";
 import { initLocacaoList } from "./pages/locacao-list";
 import { initLocacaoAdd } from "./pages/locacao-add";
 import { initDevolucaoList } from "./pages/devolucao-list";
 import { initDevolucaoAdd } from "./pages/devolucao-add";
+import { initNotFound } from "./pages/not-found";
+
+function carregadorElemento(section: HTMLElement | null, url: string) {
+  if (!section) return;
+  fetch(url)
+    .then((response) => response.text())
+    .then((html) => {
+      section.innerHTML = html;
+    })
+    .catch((err) => {
+      console.error("Erro ao carregar sessão", section, err);
+    });
+}
+
+function carregarRota(htmlPath: string, initFn: () => void) {
+  const mainContainer = document.getElementById("main-controller");
+  carregadorElemento(mainContainer, htmlPath);
+  setTimeout(() => {
+    initFn();
+  }, 50);
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-  const navbarContainer = document.getElementById("navbar-container");
-  const footerContainer = document.getElementById("footer-container");
-  const mainContainer = document.getElementById("main-controller");
+  carregadorElemento(
+    document.getElementById("navbar-container"),
+    "/components/navbar.html"
+  );
+  carregadorElemento(
+    document.getElementById("footer-container"),
+    "/components/footer.html"
+  );
 
-  const routes = {
-    "/": "/pages/locacao-list.html",
-    "/locacao-add": "/pages/locacao-add.html",
-    "/devolucao-list": "/pages/devolucao-list.html",
-    "/devolucao-add": "/pages/devolucao-add.html",
-  };
+  page("/", () => carregarRota("/pages/locacao-list.html", initLocacaoList));
+  page("/locacao-list", () =>
+    carregarRota("/pages/locacao-list.html", initLocacaoList)
+  );
+  page("/locacao-add", () =>
+    carregarRota("/pages/locacao-add.html", initLocacaoAdd)
+  );
+  page("/devolucao-list", () =>
+    carregarRota("/pages/devolucao-list.html", initDevolucaoList)
+  );
+  page("/devolucao-add", () =>
+    carregarRota("/pages/devolucao-add.html", initDevolucaoAdd)
+  );
+  page("*", () => carregarRota("/pages/not-found.html", initNotFound));
 
-  const pageInitializers: Record<string, () => void> = {
-    "/": initLocacaoList,
-    "/locacao-list": initLocacaoList,
-    "/locacao-add": initLocacaoAdd,
-    "/devolucao-list": initDevolucaoList,
-    "/devolucao-add": initDevolucaoAdd,
-  };
-
-  function carregadorElemento(section: HTMLElement | null, url: string) {
-    if (!section) return;
-    fetch(url)
-      .then((response) => response.text())
-      .then((html) => {
-        section.innerHTML = html;
-        const currentPath = window.location.pathname;
-        const initializer = pageInitializers[currentPath];
-        if (initializer) {
-          initializer();
-        }
-      })
-      .catch((err) => {
-        console.error('Erro ao carregar section', section, err);
-      });
-  }
-
-  window.addEventListener('routeChange', ((event: CustomEvent) => {
-    const path = event.detail.path;
-    const route = (Object.keys(routes).find((key) => path === key) ?? "/") as RouteType;
-    const routePath = routes[route] ?? "/pages/locacao-list.html";
-    carregadorElemento(mainContainer, routePath);
-  }) as EventListener);
-
-  const path = window.location.pathname;
-  const route = (Object.keys(routes).find((key) => path === key) ?? "/") as RouteType;
-  const routePath = routes[route] ?? "/pages/locacao-list.html";
-  carregadorElemento(mainContainer, routePath);
-
-  carregadorElemento(navbarContainer, "/components/navbar.html");
-  carregadorElemento(footerContainer, "/components/footer.html");
+  page();
 });
