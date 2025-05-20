@@ -113,6 +113,20 @@ export class ControladoraLocacao {
       }
     }
   }
+
+    public async buscarLocacoes() {
+      const gestor = new GestorLocacao();
+      try {
+        const response = await gestor.obterLocacoes();
+        this.visao.exibirListagemLocacao(response);
+      } catch (error: any) {
+        if (error instanceof ErroDominio) {
+          this.visao.exibirMensagemErro(error.getProblemas()[0]);
+        } else {
+          this.visao.exibirMensagemErro(error.message);
+        }
+      }
+    }
 } 
 
 

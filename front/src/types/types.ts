@@ -42,6 +42,7 @@ export type RespostaLocacao = {
   cliente: {
     codigo: number;
     nomeCompleto: string;
+    telefone: string;
   };
   registradoPor: {
     codigo: number;

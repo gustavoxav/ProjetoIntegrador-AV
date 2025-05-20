@@ -40,7 +40,7 @@ create table locacao (
   id INT AUTO_INCREMENT PRIMARY KEY,
   data_hora_locacao TIMESTAMP,
   horas_contratadas INTEGER,
-  data_hora_entrega_prevista TIMESTAMP NOT NULL,
+  data_hora_entrega_prevista DATETIME NOT NULL,
   desconto DECIMAL(10,2) NOT NULL,
   valor_total DECIMAL(10,2) NOT NULL,
   cliente_id INTEGER NOT NULL,
