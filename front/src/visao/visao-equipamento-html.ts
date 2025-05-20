@@ -158,7 +158,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       const textoContainer = document.createElement("div");
       
       const infoEquipamento = document.createElement("div");
-      infoEquipamento.textContent = `${equipamento.descricao} - R$ ${equipamento.valorHora}/h`;
+      infoEquipamento.textContent = `${equipamento.codigo} - ${equipamento.descricao} - R$ ${equipamento.valorHora}/h`;
       
       const subtotalInfo = document.createElement("div");
       subtotalInfo.className = "text-muted mt-1";
@@ -218,7 +218,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
           const tr = document.createElement("tr");
           tr.setAttribute('equip-codigo', equipamento.codigo.toString());
           const tdEquipamento = document.createElement("td");
-          tdEquipamento.textContent = equipamento.descricao;
+          tdEquipamento.textContent = `${equipamento.codigo} - ${equipamento.descricao}`;
           
           const tdValorHora = document.createElement("td");
           tdValorHora.textContent = `R$ ${equipamento.valorHora.toFixed(2).replace('.', ',')}`;
