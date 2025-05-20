@@ -1,6 +1,6 @@
-import { Equipamento } from "../types/types.js";
+import type { Equipamento } from "../types/types.js";
 import { ControladoraEquipamento } from "../controladora/controladora-equipamento.js";
-import { VisaoEquipamento } from "./visao-equipamento.js";
+import type { VisaoEquipamento } from "./visao-equipamento.js";
 
 export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   private controladora: ControladoraEquipamento;
@@ -153,6 +153,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       
       const item = document.createElement("li");
       item.className = "list-group-item d-flex justify-content-between align-items-center";
+      item.setAttribute('equip-codigo', equipamento.codigo.toString());
       
       const textoContainer = document.createElement("div");
       
@@ -191,7 +192,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     
     // const [horas, minutos] = horaInput.value.split(':').map(Number);
     // return horas + (minutos / 60);
-    return Number(horaInput.value);
+    return Number(horaInput.value); // considera apenas a hora
   }
   
   atualizarSubtotal(): void {
@@ -215,7 +216,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
           const valorTotal = equipamento.valorHora * horasLocacao;
           
           const tr = document.createElement("tr");
-          
+          tr.setAttribute('equip-codigo', equipamento.codigo.toString());
           const tdEquipamento = document.createElement("td");
           tdEquipamento.textContent = equipamento.descricao;
           
@@ -279,8 +280,8 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     if (dataDevolucaoEl) dataDevolucaoEl.textContent = formatarData(dataDevolucao);
   }
   
-  getEquipamentosSelecionados(): Equipamento[] {
-    return this.equipamentosSelecionados;
+  obterEquipamentosSelecionados(): Equipamento[] {
+    return [...this.equipamentosSelecionados];
   }
 
   exibirMensagens(mensagens: string[]) {

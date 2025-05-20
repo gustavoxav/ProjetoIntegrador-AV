@@ -1,8 +1,9 @@
-import { Equipamento } from "../types/types";
+import type { Equipamento } from "../types/types.js";
 
 export interface VisaoEquipamento {
   filtroEquipamento(): { filtro: string };
 
-  exibirMensagens(mensagens: string[]): void;
+  exibirMensagens(erros: string[]): void;
   retornarEquipamento(equipamento: Equipamento): void;
+  obterEquipamentosSelecionados(): Equipamento[];
 }
