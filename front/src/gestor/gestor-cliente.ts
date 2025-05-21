@@ -24,7 +24,7 @@ export class GestorCliente {
       credentials: "include",
     };
 
-    const response = await fetch(`${this.urlApi}/clientesFiltro/${id}`, options);
+    const response = await fetch(`${this.urlApi}/clientes/${id}`, options);
 
     if (!response.ok) {
       throw ErroDominio.comProblemas([

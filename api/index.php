@@ -30,8 +30,8 @@ $app->get(API_PREFIX . "/clientes", function ($req, $res) use ($pdo) {
   }
 });
 
-// GET /api/clientesFiltro/:filtro: Busca clientes por CPF ou código específico
-$app->get(API_PREFIX . "/clientesFiltro/:filtro", function ($req, $res) use ($pdo) {
+// GET /api/clientes/:filtro: Busca clientes por CPF ou código específico
+$app->get(API_PREFIX . "/clientes/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
 
@@ -59,8 +59,8 @@ $app->get(API_PREFIX . "/funcionarios", function ($req, $res) use ($pdo) {
   }
 });
 
-// GET /api/funcionariosFiltro/:filtro: Busca funcionários por código ou nome específico
-$app->get(API_PREFIX . "/funcionariosFiltro/:filtro", function ($req, $res) use ($pdo) {
+// GET /api/funcionarios/:filtro: Busca funcionários por código ou nome específico
+$app->get(API_PREFIX . "/funcionarios/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
 
@@ -88,8 +88,8 @@ $app->get(API_PREFIX . "/equipamentos", function ($req, $res) use ($pdo) {
   }
 });
 
-// GET /api/equipamentoFiltro/:filtro: Busca equipamentos por critério específico
-$app->get(API_PREFIX . "/equipamentoFiltro/:filtro", function ($req, $res) use ($pdo) {
+// GET /api/equipamentos/:filtro: Busca equipamentos por critério específico
+$app->get(API_PREFIX . "/equipamentos/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
 

@@ -14,7 +14,7 @@ export class GestorEquipamento {
       credentials: "include",
     };
 
-    const response = await fetch(`${this.urlApi}/equipamentoFiltro/${id}`, options);
+    const response = await fetch(`${this.urlApi}/equipamentos/${id}`, options);
 
     if (!response.ok) {
       throw ErroDominio.comProblemas([

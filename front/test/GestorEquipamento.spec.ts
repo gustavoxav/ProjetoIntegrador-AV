@@ -28,7 +28,7 @@ describe("GestorEquipamento", () => {
 
     expect(equipamento).toEqual(mockEquipamento);
     expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining("/equipamentoFiltro/1"),
+      expect.stringContaining("/equipamentos/1"),
       expect.objectContaining({
         method: "GET",
         credentials: "include",

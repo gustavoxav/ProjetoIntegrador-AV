@@ -29,7 +29,7 @@ describe("GestorCliente", () => {
 
     expect(cliente).toEqual(mockCliente);
     expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining("/clientesFiltro/1"),
+      expect.stringContaining("/clientes/1"),
       expect.objectContaining({
         method: "GET",
         credentials: "include",
