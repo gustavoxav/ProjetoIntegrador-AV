@@ -1,4 +1,4 @@
-import { RespostaLocacao } from "../types/types";
+import type { RespostaLocacao } from "../types/types";
 
 export interface VisaoLocacao {
   obterDadosLocacao(): {

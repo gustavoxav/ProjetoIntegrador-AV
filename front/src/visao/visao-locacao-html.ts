@@ -1,6 +1,6 @@
 import type { VisaoLocacao } from "./visao-locacao.js";
 import { ControladoraLocacao } from "../controladora/controladora-locacao.js";
-import { RespostaLocacao } from "../types/types.js";
+import type { RespostaLocacao } from "../types/types.js";
 import { formatarDataHora } from "../infra/utils.js";
 
 export class VisaoLocacaoEmHTML implements VisaoLocacao {
