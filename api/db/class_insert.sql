@@ -6,30 +6,50 @@ insert into cliente (nome_completo, foto, data_nascimento, cpf, telefone, email,
 ('Thiago Rocha', 'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2023/10/26/1095416860-20144148136268.jpg', '1985-11-10', '98765432100', '(11) 99876-5432', 'thiagorocha@email.com', 'Av. Brasil, 456'),
 ('Fernanda Souza', 'https://vegazeta.com.br/wp-content/uploads/2021/03/Arthurs-Acres-Animal-Sanctuary-2.jpg', '1990-05-15', '45678912300', '(11) 93456-7890', 'fernandasouza@gmail.com', 'Rua das Flores, 789'),
 ('Lucas Almeida', 'https://static.mundoeducacao.uol.com.br/mundoeducacao/2021/03/1-animal.jpg', '1995-03-20', '32165498700', '(11) 91234-5678', 'lucasalmeida@gmail.com', 'Av. das Palmeiras, 321'),
-('Mariano Costa', 'https://jpimg.com.br/uploads/2025/03/7-animais-mais-fofos-do-mundo.jpg', '1992-08-25', '65432198700', '(11) 92345-6789', 'marianocosta@gmail.com', 'Rua do Sol, 654');
+('Mariano Costa', 'https://jpimg.com.br/uploads/2025/03/7-animais-mais-fofos-do-mundo.jpg', '1992-08-25', '65432198700', '(11) 92345-6789', 'marianocosta@gmail.com', 'Rua do Sol, 654'),
+('Amanda Ribeiro', 'https://jpimg.com.br/uploads/2025/02/8-animais-mais-fortes-do-mundo.jpg', '1996-04-12', '12345678001', '(11) 99123-4567', 'amanda.ribeiro@gmail.com', 'Rua Jacarandá, 87'),
+('Bruno Costa', 'https://portaledicase.com/wp-content/uploads/2025/02/Hipopotamo-1024x683.jpg', '1989-08-25', '23456789002', '(21) 99876-5432', 'bruno.costa@email.com', 'Av. Copacabana, 145'),
+('Carolina Mello', 'https://rizzoimobiliaria.com.br/images/media/dfe779831f7a3f38504a77dbfa883a341673881279.jpg', '1994-12-03', '34567890103', '(31) 98765-4321', 'carol.mello@gmail.com', 'Rua das Palmeiras, 321'),
+('Diego Nunes', 'https://cdn.gazetasp.com.br/img/c/825/500/dn_arquivo/2025/01/lobo-guara.jpg', '1992-01-10', '45678901204', '(41) 97654-3210', 'diego.nunes@hotmail.com', 'Travessa do Sol, 12'),
+('Elisa Martins', 'https://ogimg.infoglobo.com.br/in/14638550-9ee-f9a/FT1086A/20141123-125719.jpg', '1990-07-28', '56789012305', '(51) 96543-2109', 'elisa.martins@yahoo.com', 'Rua dos Lírios, 98'),
+('Felipe Gomes', 'https://ufape.com.br/wp-content/uploads/2024/06/Ufape-Hospital-Veterinario-filhote-de-cachorro-brincando-na-grama-GS2-MKT-Freepik.jpg', '1995-03-05', '67890123406', '(61) 95432-1098', 'felipe.gomes@outlook.com', 'Alameda Central, 250');
 
 -- Funcionario
 insert into funcionario (nome) values
-('Gustavo Funcionario'),
-('Fernanda Funcionario'),
-('Lucas Funcionario'),
-('Mariano Funcionario'),
-('Thiago Funcionario');
+('Patrícia Oliveira'),
+('Renato Silva'),
+('Juliana Castro'),
+('Marcelo Teixeira'),
+('Aline Fernandes');
 
 -- Bicicleta
 insert into equipamento (tipo, modelo, fabricante, descricao, valor_hora, avarias, numero_seguro, disponivel) values
 ('bicicleta', 'MTB 29', 'Caloi', 'Bicicleta de trilha com 21 marchas', 15.00, '', 'SEG123456', TRUE),
-('bicicleta', 'Elétrica 500W', 'Sense', 'Bicicleta elétrica com autonomia de 40km', 25.00, '', 'SEG987654', TRUE);
+('bicicleta', 'Elétrica 500W', 'Sense', 'Bicicleta elétrica com autonomia de 40km', 25.00, '', 'SEG987654', TRUE),
+('bicicleta', 'Urban Speed 2024', 'Specialized', 'Bicicleta urbana de alta performance', 22.00, '', 'SEG101010', TRUE),
+('bicicleta', 'Trail Master 500', 'Scott', 'Mountain Bike com suspensão total', 30.00, '', 'SEG202020', TRUE),
+('bicicleta', 'EcoBike City', 'Oggi', 'Bicicleta elétrica dobrável', 27.50, '', 'SEG303030', TRUE);
 
 -- Equipamentos Gerais
 insert into equipamento (tipo, modelo, fabricante, descricao, valor_hora, avarias, numero_seguro, disponivel) values
 ('capacete', 'Capacete', 'Giro', 'Capacete de ciclismo', 5.00, '', NULL, TRUE),
 ('farolete', 'Farol LED', 'Trek', 'Farol LED', 3.00, '', NULL, TRUE),
-('squeeze', 'Squeeze 600ml', 'Nike', 'Squeeze térmico', 1.00, '', NULL, FALSE),
+('squeeze', 'Squeeze 600ml', 'Nike', 'Squeeze térmico', 1.00, '', NULL, TRUE),
 ('suporte_para_squeeze', 'Suporte de Bicicleta', 'Shimano', 'Suporte para squeeze', 0.50, '', NULL, TRUE),
 ('pisca_alerta', 'Pisca Dianteiro', 'GTS', 'Pisca alerta dianteiro LED', 2.00, '', NULL, TRUE),
 ('acolchoamento_selim', 'Empresa Banco', 'Atrio', 'Banco de Gel', 1.50, '', NULL, TRUE),
 ('refletor_roda', 'Refletor de Roda', 'shimano', 'Refletor circular para rodas', 0.75, '', NULL, TRUE),
 ('refletor_selim', 'Refletor Traseiro', 'shimano', 'Refletor vermelho traseiro', 0.75, '', NULL, TRUE),
 ('cadeado', 'Cadeado Antifurto', 'Haga', 'Cadeado com senha numérica', 1.00, '', NULL, TRUE),
-('tranca', 'Tranca Alta Segurança', 'Empresa Tranca', 'Tranca com chave e alarme', 2.50, '', NULL, TRUE);
+('tranca', 'Tranca Alta Segurança', 'Empresa Tranca', 'Tranca com chave e alarme', 2.50, '', NULL, TRUE),
+('capacete', 'Urban Helmet', 'Bell', 'Capacete urbano ventilado', 6.00, '', NULL, TRUE),
+('capacete', 'Sport Pro', 'Giro', 'Capacete com viseira removível', 7.00, '', NULL, TRUE),
+('farolete', 'LED Max', 'Trek', 'Farol LED recarregável', 3.50, '', NULL, TRUE),
+('farolete', 'Light Beam', 'GTS', 'Farol traseiro e dianteiro conjunto', 4.00, '', NULL, TRUE),
+('squeeze', 'Thermo 700ml', 'Nike', 'Squeeze com isolamento térmico', 1.50, '', NULL, TRUE),
+('tranca', 'Tranca X-Pro', 'Haga', 'Tranca com alarme embutido', 3.00, '', NULL, TRUE),
+('cadeado', 'Cadeado Flex', 'Zoli', 'Cadeado com senha digital', 1.75, '', NULL, TRUE),
+('refletor_roda', 'Roda Reflex', 'Shimano', 'Refletor com encaixe magnético', 1.00, '', NULL, TRUE),
+('refletor_selim', 'Reflex Red', 'Giro', 'Refletor traseiro com LED', 1.20, '', NULL, TRUE),
+('acolchoamento_selim', 'GelComfort', 'Atrio', 'Selim com gel extra confortável', 2.00, '', NULL, TRUE),
+('suporte_para_squeeze', 'Bike Holder', 'Shimano', 'Suporte ajustável para garrafa', 0.75, '', NULL, TRUE);
