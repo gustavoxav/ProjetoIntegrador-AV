@@ -10,8 +10,8 @@ export class VisaoFuncionarioEmHTML implements VisaoFuncionario {
   }
 
   filtroFuncionario(): { filtro: string } {
-    const selectedRadio = document.querySelector('input[name="funcionario"]:checked') as HTMLInputElement;
-    return { filtro: selectedRadio ? selectedRadio.value : '' };
+    const selectElement = document.getElementById("funcionario") as HTMLSelectElement;
+    return { filtro: selectElement ? selectElement.value : '' };
   }
 
   retornarFuncionarios(funcionario: Funcionario): void {
@@ -26,26 +26,26 @@ export class VisaoFuncionarioEmHTML implements VisaoFuncionario {
     
     container.innerHTML = "";
     
+    const selectElement = document.createElement("select");
+    selectElement.className = "form-select";
+    selectElement.id = "funcionario";
+    selectElement.name = "funcionario";
+    
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.text = "Selecione um funcionário";
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    selectElement.appendChild(defaultOption);
+    
     for (const funcionario of funcionarios) {
-      const radioDiv = document.createElement("div");
-      radioDiv.className = "form-check";
-      
-      const input = document.createElement("input");
-      input.className = "form-check-input";
-      input.type = "radio";
-      input.name = "funcionario";
-      input.id = `funcionario${funcionario.codigo}`;
-      input.value = funcionario.codigo.toString();
-      
-      const label = document.createElement("label");
-      label.className = "form-check-label";
-      label.htmlFor = `funcionario${funcionario.codigo}`;
-      label.textContent = `${funcionario.codigo} - ${funcionario.nome}`;
-      
-      radioDiv.appendChild(input);
-      radioDiv.appendChild(label);
-      container.appendChild(radioDiv);
+      const option = document.createElement("option");
+      option.value = funcionario.codigo.toString();
+      option.text = `${funcionario.codigo} - ${funcionario.nome}`;
+      selectElement.appendChild(option);
     }
+    
+    container.appendChild(selectElement);
   }
 
   exibirMensagens(mensagens: string[]) {

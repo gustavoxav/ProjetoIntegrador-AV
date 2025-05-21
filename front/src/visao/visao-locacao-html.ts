@@ -24,20 +24,13 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
     }
   }
 
-  obterDadosLocacao() {
-    const funcionario =
-      (
-        document.querySelector(
-          'input[name="funcionario"]:checked'
-        ) as HTMLInputElement
-      )?.value || "";
-    const cliente =
-      (document.getElementById("cliente") as HTMLInputElement)?.value || "";
-    const horas =
-      Number((document.getElementById("hora") as HTMLInputElement)?.value) || 0;
-
-    const equipamentos = this.obterEquipamentos();
-    console.log(`Equips selecionados: ${equipamentos.length}`, equipamentos);
+    obterDadosLocacao() {
+        const funcionario = (document.getElementById('funcionario') as HTMLSelectElement)?.value || '';
+        const cliente = (document.getElementById('cliente') as HTMLInputElement)?.value || '';
+        const horas = Number((document.getElementById('hora') as HTMLInputElement)?.value) || 0;
+        
+        const equipamentos = this.obterEquipamentos();
+        console.log(`Equips selecionados: ${equipamentos.length}`, equipamentos);
 
     return {
       funcionario,
