@@ -5,12 +5,35 @@ import type { VisaoEquipamento } from "./visao-equipamento.js";
 export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   private controladora: ControladoraEquipamento;
   private equipamentosSelecionados: Equipamento[] = [];
+  private todosEquipamentos: Equipamento[] = [];
 
   constructor() {
     this.controladora = new ControladoraEquipamento(this);
     document
       .getElementById("btn-buscar-equipamento")
       ?.addEventListener("click", () => this.controladora.buscarEquipamento());
+    
+    const equipamentoInput = document.getElementById("equipamento") as HTMLInputElement;
+    equipamentoInput?.addEventListener("click", () => {
+      if (this.todosEquipamentos.length === 0) {
+        this.controladora.buscarTodosEquipamentos();
+      } else {
+        this.displayEquipamentoDropdown(this.todosEquipamentos);
+      }
+    });
+    
+    equipamentoInput?.addEventListener("input", () => {
+      const filtro = equipamentoInput.value.trim();
+      if (filtro === "") {
+        this.displayEquipamentoDropdown(this.todosEquipamentos);
+      } else if (this.todosEquipamentos.length > 0) {
+        const filtrado = this.todosEquipamentos.filter(eq => 
+          eq.codigo.toString().includes(filtro) || 
+          eq.descricao.toLowerCase().includes(filtro.toLowerCase())
+        );
+        this.displayEquipamentoDropdown(filtrado);
+      }
+    });
     
     document
       .getElementById("hora")
@@ -32,11 +55,113 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     return { filtro: valor };
   }
 
+  retornarTodosEquipamentos(equipamentos: Equipamento[]): void {
+    this.todosEquipamentos = equipamentos;
+    this.displayEquipamentoDropdown(equipamentos);
+  }
+  
+  private displayEquipamentoDropdown(equipamentos: Equipamento[]): void {
+    const ul = document.getElementById("mostrar-equipamento");
+    if (!ul) return;
+    
+    ul.innerHTML = "";
+    ul.style.display = "block";
+    ul.style.maxHeight = "300px";
+    ul.style.overflowY = "auto";
+    
+    if (equipamentos.length === 0) {
+      const li = document.createElement("li");
+      li.className = "list-group-item text-muted";
+      li.textContent = "Nenhum equipamento encontrado";
+      ul.appendChild(li);
+      return;
+    }
+    
+    for (const equipamento of equipamentos) {
+      const li = document.createElement("li");
+      li.className = "list-group-item d-flex align-items-center gap-3";
+      li.style.cursor = "pointer";
+      
+      const textoContainer = document.createElement("div");
+      textoContainer.className = "flex-grow-1";
+      
+      const titulo = document.createElement("div");
+      titulo.textContent = `${equipamento.codigo} - ${equipamento.descricao}`;
+      titulo.className = "fw-bold";
+      
+      const infoSecundaria = document.createElement("div");
+      infoSecundaria.className = "small";
+      infoSecundaria.innerHTML = `R$ ${equipamento.valorHora}/h • 
+        <span class="${equipamento.disponivel ? 'text-success' : 'text-danger'}">
+          ${equipamento.disponivel ? 'Disponível' : 'Indisponível'}
+        </span>`;
+      
+      textoContainer.appendChild(titulo);
+      textoContainer.appendChild(infoSecundaria);
+      
+      const btnContainer = document.createElement("div");
+      
+      const btnAdicionar = document.createElement("button");
+      btnAdicionar.className = "btn btn-sm btn-primary";
+      btnAdicionar.textContent = "Adicionar";
+      
+      if (!equipamento.disponivel) {
+        btnAdicionar.disabled = true;
+        btnAdicionar.className = "btn btn-sm btn-secondary";
+        btnAdicionar.title = "Equipamento indisponível";
+      } else {
+        const itemJaSelecionado = this.equipamentosSelecionados.some(
+          eq => eq.codigo === equipamento.codigo
+        );
+        
+        if (itemJaSelecionado) {
+          btnAdicionar.disabled = true;
+          btnAdicionar.className = "btn btn-sm btn-success";
+          btnAdicionar.textContent = "Adicionado";
+        } else {
+          btnAdicionar.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.adicionarEquipamento(equipamento);
+          });
+        }
+      }
+      
+      btnContainer.appendChild(btnAdicionar);
+      
+      li.appendChild(textoContainer);
+      li.appendChild(btnContainer);
+      
+      li.addEventListener("click", () => {
+        (document.getElementById("equipamento") as HTMLInputElement).value = 
+          equipamento.codigo.toString();
+        this.retornarEquipamento(equipamento);
+      });
+      
+      ul.appendChild(li);
+    }
+    
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      const equipamentoInput = document.getElementById("equipamento");
+      const mostrarEquipamento = document.getElementById("mostrar-equipamento");
+      
+      if (target !== equipamentoInput && 
+          !mostrarEquipamento?.contains(target) && 
+          target.id !== "btn-buscar-equipamento") {
+        if (mostrarEquipamento) {
+          mostrarEquipamento.style.display = "none";
+        }
+      }
+    }, { capture: true });
+  }
+
   retornarEquipamento(equipamento: Equipamento): void {
     const ul = document.getElementById("mostrar-equipamento");
     if (!ul) return;
     
     ul.innerHTML = "";
+    ul.style.display = "block";
+    
     const li = document.createElement("li");
     li.className = "list-group-item d-flex align-items-center gap-3";
 
@@ -111,7 +236,11 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       (btnAdicionar as HTMLButtonElement).disabled = true;
     }
     
-    this.atualizarListaEquipamentosSelecionados();
+    const ultimosEquipamentosExibidos = document.querySelectorAll("#mostrar-equipamento li");
+    if (ultimosEquipamentosExibidos.length > 1) {
+      this.displayEquipamentoDropdown(this.todosEquipamentos);
+    }
+    
     this.atualizarSubtotal();
   }
   
@@ -120,69 +249,22 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       eq => eq.codigo !== codigo
     );
     
-    this.atualizarListaEquipamentosSelecionados();
     this.atualizarSubtotal();
     
-    const equipamentoAtual = document.querySelector("#mostrar-equipamento");
-    if (equipamentoAtual) {
-      this.controladora.buscarEquipamento();
-    }
-  }
-  
-  atualizarListaEquipamentosSelecionados(): void {
-    const listaEquipamentos = document.getElementById("equipamentos-selecionados-lista");
-    if (!listaEquipamentos) return;
-    
-    listaEquipamentos.innerHTML = "";
-    
-    if (this.equipamentosSelecionados.length === 0) {
-      const mensagem = document.createElement("li");
-      mensagem.className = "list-group-item text-muted";
-      mensagem.textContent = "Nenhum equipamento selecionado";
-      listaEquipamentos.appendChild(mensagem);
-      return;
-    }
-    
-    const horasLocacao = this.obterHorasLocacao();
-    const temDesconto = horasLocacao > 2;
-    
-    for (const equipamento of this.equipamentosSelecionados) {
-      const subtotalItem = equipamento.valorHora * horasLocacao;
-      const descontoItem = temDesconto ? subtotalItem * 0.1 : 0;
-      const valorComDesconto = subtotalItem - descontoItem;
-      
-      const item = document.createElement("li");
-      item.className = "list-group-item d-flex justify-content-between align-items-center";
-      item.setAttribute('equip-codigo', equipamento.codigo.toString());
-      
-      const textoContainer = document.createElement("div");
-      
-      const infoEquipamento = document.createElement("div");
-      infoEquipamento.textContent = `${equipamento.codigo} - ${equipamento.descricao} - R$ ${equipamento.valorHora}/h`;
-      
-      const subtotalInfo = document.createElement("div");
-      subtotalInfo.className = "text-muted mt-1";
-      
-      if (temDesconto) {
-        subtotalInfo.innerHTML = `<small>Subtotal (${horasLocacao.toFixed(2)}h): 
-          <span style="text-decoration: line-through;">R$ ${subtotalItem.toFixed(2).replace('.', ',')}</span> 
-          R$ ${valorComDesconto.toFixed(2).replace('.', ',')} (10% desconto)</small>`;
-      } else {
-        subtotalInfo.innerHTML = `<small>Subtotal (${horasLocacao.toFixed(2)}h): 
-          R$ ${subtotalItem.toFixed(2).replace('.', ',')}</small>`;
+    const equipamentoAtual = document.querySelector("#mostrar-equipamento") as HTMLElement;
+    if (equipamentoAtual && equipamentoAtual.style.display !== "none") {
+      const mostrarEquipamento = document.getElementById("mostrar-equipamento");
+      if (mostrarEquipamento) {
+        const singleItem = mostrarEquipamento.querySelector(`li[equip-codigo="${codigo}"]`);
+        if (singleItem) {
+          const btn = singleItem.querySelector("button");
+          if (btn) {
+            btn.textContent = "Adicionar";
+            btn.className = "btn btn-primary";
+            (btn as HTMLButtonElement).disabled = false;
+          }
+        }
       }
-      
-      textoContainer.appendChild(infoEquipamento);
-      textoContainer.appendChild(subtotalInfo);
-      
-      const btnRemover = document.createElement("button");
-      btnRemover.className = "btn btn-sm btn-danger";
-      btnRemover.textContent = "Remover";
-      btnRemover.addEventListener("click", () => this.removerEquipamento(equipamento.codigo));
-      
-      item.appendChild(textoContainer);
-      item.appendChild(btnRemover);
-      listaEquipamentos.appendChild(item);
     }
   }
   
@@ -206,17 +288,21 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       if (this.equipamentosSelecionados.length === 0) {
         tabelaEquipamentos.innerHTML = `
           <tr>
-            <td colspan="3" class="text-center text-muted">Nenhum equipamento selecionado</td>
+            <td colspan="5" class="text-center text-muted">Nenhum equipamento selecionado</td>
           </tr>
         `;
       } else {
         tabelaEquipamentos.innerHTML = "";
         
+        const temDesconto = horasLocacao > 2;
+        
         for (const equipamento of this.equipamentosSelecionados) {
           const valorTotal = equipamento.valorHora * horasLocacao;
+          const descontoItem = temDesconto ? valorTotal * 0.1 : 0;
           
           const tr = document.createElement("tr");
           tr.setAttribute('equip-codigo', equipamento.codigo.toString());
+          
           const tdEquipamento = document.createElement("td");
           tdEquipamento.textContent = `${equipamento.codigo} - ${equipamento.descricao}`;
           
@@ -226,9 +312,24 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
           const tdValorTotal = document.createElement("td");
           tdValorTotal.textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
           
+          const tdDesconto = document.createElement("td");
+          tdDesconto.textContent = `R$ ${descontoItem.toFixed(2).replace('.', ',')}`;
+          if (temDesconto) {
+            tdDesconto.className = "text-success";
+          }
+          
+          const tdAcoes = document.createElement("td");
+          const btnRemover = document.createElement("button");
+          btnRemover.className = "btn btn-sm btn-danger";
+          btnRemover.textContent = "Remover";
+          btnRemover.addEventListener("click", () => this.removerEquipamento(equipamento.codigo));
+          tdAcoes.appendChild(btnRemover);
+          
           tr.appendChild(tdEquipamento);
           tr.appendChild(tdValorHora);
           tr.appendChild(tdValorTotal);
+          tr.appendChild(tdDesconto);
+          tr.appendChild(tdAcoes);
           
           tabelaEquipamentos.appendChild(tr);
         }
@@ -251,8 +352,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2).replace('.', ',');
     if (descontoEl) descontoEl.textContent = valorDesconto.toFixed(2).replace('.', ',');
     if (totalEl) totalEl.textContent = valorTotal.toFixed(2).replace('.', ',');
-    
-    this.atualizarListaEquipamentosSelecionados();
     
     this.atualizarDatas();
   }

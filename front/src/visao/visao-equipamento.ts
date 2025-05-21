@@ -5,5 +5,6 @@ export interface VisaoEquipamento {
 
   exibirMensagens(erros: string[]): void;
   retornarEquipamento(equipamento: Equipamento): void;
+  retornarTodosEquipamentos(equipamentos: Equipamento[]): void;
   obterEquipamentosSelecionados(): Equipamento[];
 }

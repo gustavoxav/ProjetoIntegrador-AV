@@ -1,4 +1,5 @@
 import { ErroDominio } from "../infra/ErroDominio";
+import type { Cliente } from "../types/types";
 
 // pra tirar o erro do import.meta.env
 declare global {
@@ -13,7 +14,7 @@ declare global {
 export class GestorCliente {
  private readonly urlApi: string = import.meta.env.VITE_API_URL ?? "";
 
-  async obterClientes(id: number): Promise<any> {
+  async obterClientes(id: number): Promise<Cliente> {
     const options: RequestInit = {
       headers: {
         Accept: "application/json",

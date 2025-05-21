@@ -1,6 +1,7 @@
 import type { VisaoLocacao } from "./visao-locacao.js";
 import { ControladoraLocacao } from "../controladora/controladora-locacao.js";
 import { RespostaLocacao } from "../types/types.js";
+import { formatarDataHora } from "../infra/utils.js";
 
 export class VisaoLocacaoEmHTML implements VisaoLocacao {
   private controladora: ControladoraLocacao;
@@ -27,11 +28,8 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
 
   obterDadosLocacao() {
     const funcionario =
-      (
-        document.querySelector(
-          'input[name="funcionario"]:checked'
-        ) as HTMLInputElement
-      )?.value || "";
+      (document.getElementById("funcionario") as HTMLSelectElement)?.value ||
+      "";
     const cliente =
       (document.getElementById("cliente") as HTMLInputElement)?.value || "";
     const horas =
@@ -113,49 +111,6 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
       }
     }
 
-    if (equipamentos.length === 0) {
-      console.log("Tentando encontrar equipamentos na lista de selecionados");
-
-      const lista = document.getElementById("equipamentos-selecionados-lista");
-      if (lista) {
-        const itens = lista.querySelectorAll("li:not(.text-muted)");
-        console.log(
-          `Encontrados ${itens.length} itens na lista de selecionados`
-        );
-
-        for (const item of Array.from(itens)) {
-          try {
-            const texto = item.textContent || "";
-            const descricao = texto.split(" - R$")[0].trim();
-
-            const valorMatch = texto.match(/R\$ ([\d.,]+)\/h/);
-            const valor = valorMatch
-              ? Number(valorMatch[1].replace(",", "."))
-              : 0;
-
-            const codigo = Number(item.getAttribute("equip-codigo")) || 0;
-
-            console.log(
-              `Processando item da lista: "${descricao}" -> código ${codigo}`
-            );
-
-            if (codigo > 0) {
-              equipamentos.push({
-                codigo,
-                descricao,
-                valor,
-              });
-              console.log(
-                `Equipamento adicionado da lista: ${descricao} (código ${codigo})`
-              );
-            }
-          } catch (err) {
-            console.error("Erro ao processar item da lista:", err);
-          }
-        }
-      }
-    }
-
     console.log(
       `Total de equipamentos capturados: ${equipamentos.length}`,
       equipamentos
@@ -173,11 +128,11 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
 
       row.innerHTML = `
       <td class="text-center align-middle">${locacao.codigo}</td>
-      <td class="text-center align-middle">${this.formatarDataHora(
+      <td class="text-center align-middle">${formatarDataHora(
         locacao.dataHoraLocacao
       )}</td>
       <td class="text-center align-middle">${locacao.horasContratadas}h</td>
-      <td class="text-center align-middle">${this.formatarDataHora(
+      <td class="text-center align-middle">${formatarDataHora(
         locacao.dataHoraEntregaPrevista
       )}</td>
       <td class="text-center align-middle">${locacao.cliente.nomeCompleto}</td>
@@ -195,16 +150,6 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
 
       tbody.appendChild(row);
     }
-  }
-
-  private formatarDataHora(isoString: string): string {
-    const data = new Date(isoString);
-    const dia = data.getDate().toString().padStart(2, "0");
-    const mes = (data.getMonth() + 1).toString().padStart(2, "0");
-    const ano = data.getFullYear();
-    const hora = data.getHours().toString().padStart(2, "0");
-    const minuto = data.getMinutes().toString().padStart(2, "0");
-    return `${dia}/${mes}/${ano} - ${hora}:${minuto}`;
   }
 
   exibirMensagemSucesso(x: string): void {

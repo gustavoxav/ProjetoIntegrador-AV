@@ -55,15 +55,15 @@
         value="2" />
     </div>
 
-    <label for="equipamento" class="form-label">Código do Item</label>
+    <label for="equipamento" class="form-label">Código ou nome do Equipamento</label>
     <div class="mb-3 input-group">
       <input
-        type="number"
+        type="text"
         id="equipamento"
         class="form-control"
         min="1"
         name="equipamento"
-        placeholder="Digite o código do equipamento"
+        placeholder="Digite o código ou nome do equipamento"
         autocomplete="off" />
       <button
         class="btn btn-outline-secondary"
@@ -84,13 +84,6 @@
     </div>
     <ul id="mostrar-equipamento" class="list-group w-100" style="z-index: 1000"></ul>
 
-    <div id="equipamentos-selecionados-section" class="mt-4">
-      <label class="form-label">Equipamentos Selecionados</label>
-      <ul id="equipamentos-selecionados-lista" class="list-group mt-2">
-        <li class="list-group-item text-muted">Nenhum equipamento selecionado</li>
-      </ul>
-    </div>
-
     <div id="item-selecionado" class="border rounded p-3 mb-3 d-none">
       <h5>Item Selecionado</h5>
       <p><strong>Descrição:</strong> <span id="desc"></span></p>
@@ -99,7 +92,7 @@
       <p><strong>Disponibilidade:</strong> <span id="disponivel"></span></p>
     </div>
 
-    <output></output>
+    <!-- <output></output> -->
 
     <div id="subtotal-section" class="border rounded p-3 mb-4">
       <h5>Resumo da Locação</h5>
@@ -111,12 +104,14 @@
             <tr>
               <th>Equipamento</th>
               <th>Valor por hora</th>
-              <th>Valor Total</th>
+              <th>Valor Subtotal</th>
+              <th>Desconto</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody id="tabela-equipamentos">
             <tr>
-              <td colspan="3" class="text-center text-muted">Nenhum equipamento selecionado</td>
+              <td colspan="5" class="text-center text-muted">Nenhum equipamento selecionado</td>
             </tr>
           </tbody>
         </table>
@@ -149,6 +144,6 @@
       style="width: 200px">
       Adicionar
     </button>
-    <output class="mt-3 d-block"></output>
+    <!-- <output class="mt-3 d-block"></output> -->
   </form>
 </div>

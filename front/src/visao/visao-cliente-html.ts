@@ -1,6 +1,6 @@
-import { Cliente } from "../types/types.js";
+import type { Cliente } from "../types/types.js";
 import { ControladoraCliente } from "../controladora/controladora-cliente.js";
-import { VisaoCliente } from "./visao-clientes.js";
+import type { VisaoCliente } from "./visao-clientes.js";
 
 export class VisaoClienteEmHTML implements VisaoCliente {
   private controladora: ControladoraCliente;
@@ -20,59 +20,43 @@ export class VisaoClienteEmHTML implements VisaoCliente {
   }
 
   retornarClientes(cliente: Cliente): void {
-    console.log("aq: 1", cliente);
-    const ul = document.getElementById("mostrar-clientes");
-    if (!ul) return;
-    
-    ul.innerHTML = "";
-    const li = document.createElement("li");
-    li.className = "list-group-item d-flex align-items-center gap-3";
-
-    const avatar = document.createElement("img");
-    avatar.src = cliente.foto;
-    avatar.alt = "Foto de Avatar";
-    avatar.width = 150;
-    avatar.height = 150;
-    avatar.style.borderRadius = "20%";
-    avatar.style.objectFit = "cover";
-
-    const textoContainer = document.createElement("div");
-
-    const nome = document.createElement("div");
-    nome.textContent = cliente.nomeCompleto;
-    nome.className = "fw-bold";
-    const cpf = document.createElement("div");
-    cpf.textContent = `CPF: ${cliente.cpf}`;
-    cpf.className = "fw-bold";
-
-    textoContainer.appendChild(nome);
-    textoContainer.appendChild(cpf);
-    
-    const selecaoContainer = document.createElement("div");
-    selecaoContainer.className = "ms-auto";
-    
-    const btnSelecionar = document.createElement("button");
-    btnSelecionar.className = "btn btn-primary";
-    btnSelecionar.textContent = "Selecionar";
-    btnSelecionar.addEventListener("click", () => this.selecionarCliente(cliente));
-    
-    selecaoContainer.appendChild(btnSelecionar);
-    
-    li.appendChild(avatar);
-    li.appendChild(textoContainer);
-    li.appendChild(selecaoContainer);
-    ul.appendChild(li);
+    console.log("aq1: ", cliente);
+    this.selecionarCliente(cliente);
   }
 
   selecionarCliente(cliente: Cliente): void {
     this.clienteSelecionado = cliente;
     
-    // Atualiza a UI para mostrar que o cliente foi selecionado
-    const btnSelecionar = document.querySelector("#mostrar-clientes button");
-    if (btnSelecionar) {
-      btnSelecionar.textContent = "Selecionado";
-      btnSelecionar.className = "btn btn-success";
-      (btnSelecionar as HTMLButtonElement).disabled = true;
+    const ul = document.getElementById("mostrar-clientes");
+    if (ul) {
+      ul.innerHTML = "";
+      const li = document.createElement("li");
+      li.className = "list-group-item d-flex align-items-center gap-3";
+
+      const avatar = document.createElement("img");
+      avatar.src = cliente.foto;
+      avatar.alt = "Foto de Avatar";
+      avatar.width = 150;
+      avatar.height = 150;
+      avatar.style.borderRadius = "20%";
+      avatar.style.objectFit = "cover";
+
+      const textoContainer = document.createElement("div");
+
+      const nome = document.createElement("div");
+      nome.textContent = cliente.nomeCompleto;
+      nome.className = "fw-bold";
+      const cpf = document.createElement("div");
+      cpf.textContent = `CPF: ${cliente.cpf}`;
+      cpf.className = "fw-bold";
+
+      textoContainer.appendChild(nome);
+      textoContainer.appendChild(cpf);
+      
+      li.appendChild(avatar);
+      li.appendChild(textoContainer);
+      ul.appendChild(li);
+      ul.style.display = "block";
     }
   }
 

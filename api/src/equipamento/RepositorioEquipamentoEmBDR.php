@@ -6,6 +6,40 @@ class RepositorioEquipamentoEmBDR implements RepositorioEquipamento
     private PDO $pdo
   ) {}
 
+  public function buscarEquipamentos(): array|null {
+    try {
+      $sql = "SELECT * FROM equipamento";
+      $ps = $this->pdo->prepare($sql);
+      $ps->execute();
+      $ps->setFetchMode(PDO::FETCH_ASSOC);
+      $resultados = $ps->fetchAll();
+
+      if (!$resultados) return null;
+
+      $equipamentos = [];
+      foreach ($resultados as $dados) {
+        $equipamentos[] = new Equipamento(
+          codigo: (int) $dados['id'],
+          modelo: $dados['modelo'],
+          fabricante: $dados['fabricante'],
+          descricao: $dados['descricao'],
+          valorHora: $dados['valor_hora'],
+          avarias: $dados['avarias'],
+          disponivel: $dados['disponivel'],
+          numeroSeguro: is_numeric($dados['numero_seguro']) ? (int) $dados['numero_seguro'] : null
+        );
+      }
+
+      return $equipamentos;
+    } catch (PDOException $ex) {
+      throw new RepositorioException(
+        'Ocorreu um erro ao buscar equipamentos. Tente novamente.',
+        (int) $ex->getCode(),
+        $ex
+      );
+    }
+  }
+
   public function buscarEquipamentoFiltro(int $query): Equipamento|null
   {
     try {

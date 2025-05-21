@@ -1,4 +1,4 @@
-import { Cliente } from "../types/types";
+import type { Cliente } from "../types/types";
 
 export interface VisaoCliente {
   filtroClientes(): { filtro: string };
