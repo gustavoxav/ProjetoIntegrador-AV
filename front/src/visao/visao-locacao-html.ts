@@ -127,17 +127,17 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
       const row = document.createElement("tr");
 
       row.innerHTML = `
-      <td class="text-center align-middle">${locacao.codigo}</td>
-      <td class="text-center align-middle">${formatarDataHora(
+      <td class="text-start align-middle">${locacao.codigo}</td>
+      <td class="text-start align-middle">${formatarDataHora(
         locacao.dataHoraLocacao
       )}</td>
-      <td class="text-center align-middle">${locacao.horasContratadas}h</td>
-      <td class="text-center align-middle">${formatarDataHora(
+      <td class="text-start align-middle">${locacao.horasContratadas}h</td>
+      <td class="text-start align-middle">${formatarDataHora(
         locacao.dataHoraEntregaPrevista
       )}</td>
-      <td class="text-center align-middle">${locacao.cliente.nomeCompleto}</td>
-      <td class="text-center align-middle">${locacao.cliente.telefone}</td>
-      <td class="text-center align-middle">
+      <td class="text-start align-middle">${locacao.cliente.nomeCompleto}</td>
+      <td class="text-start align-middle">${locacao.cliente.telefone}</td>
+      <td class="text-start align-middle">
         <a 
           href="/devolucao-add?codigo=${locacao.codigo}" 
           class="btn btn-sm btn-outline-dark"
