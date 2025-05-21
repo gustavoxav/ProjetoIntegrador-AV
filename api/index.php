@@ -75,6 +75,19 @@ $app->get(API_PREFIX . "/funcionariosFiltro/:filtro", function ($req, $res) use 
   }
 });
 
+// GET /api/equipamentos: Retorna todos os equipamentos
+$app->get(API_PREFIX . "/equipamentos", function ($req, $res) use ($pdo) {
+  try {
+    $gestor = new GestorEquipamento(
+      new RepositorioEquipamentoEmBDR($pdo)
+    );
+    $saida = $gestor->obterEquipamentos(null);
+    $res->json($saida);
+  } catch (Exception $e) {
+    $res->status(500)->json([$e->getMessage()]);
+  }
+});
+
 // GET /api/equipamentoFiltro/:filtro: Busca equipamentos por critério específico
 $app->get(API_PREFIX . "/equipamentoFiltro/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();

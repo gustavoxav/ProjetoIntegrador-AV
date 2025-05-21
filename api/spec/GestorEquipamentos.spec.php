@@ -18,8 +18,20 @@ describe("GestorEquipamento", function () {
 
     it("Deve retornar null quando o equipamento não é encontrado", function () {
         $gestor = new GestorEquipamento($this->clienteRepo);
-        $equipamento = $gestor->obterEquipamentos("00000000000");
+        $equipamento = $gestor->obterEquipamentos("0");
 
         expect($equipamento)->toBe(null);
+    });
+    
+    it("Deve retornar todos os equipamentos", function () {
+        $gestor = new GestorEquipamento($this->clienteRepo);
+        $equipamentos = $gestor->obterEquipamentos(null);
+        
+        expect($equipamentos)->toBeA('array');
+        expect(count($equipamentos))->toBeGreaterThan(0);
+        
+        foreach ($equipamentos as $equipamento) {
+            expect($equipamento)->toBeAnInstanceOf(Equipamento::class);
+        }
     });
 });

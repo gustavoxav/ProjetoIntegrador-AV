@@ -8,14 +8,17 @@ class GestorEquipamento
     ) {}
 
     /**
-     * Buscar um Equipamento por Código.
+     * Buscar um Equipamento por Código. Caso não tenha nenhum filtro, retorna todos os equipamentos.
      *
-     * @param int $filtro
-     * @return Equipamento|null
+     * @param int|null $filtro
+     * @return Equipamento[]
      */
-    public function obterEquipamentos(int $filtro): Equipamento|null
+    public function obterEquipamentos(int|null $filtro): array|Equipamento|null
     {
         try {
+            if (is_null($filtro)) {
+                return $this->repositorioEquipamento->buscarEquipamentos();
+            }
             return $this->repositorioEquipamento->buscarEquipamentoFiltro($filtro);
         } catch (\Throwable $error) {
             throw $error;
