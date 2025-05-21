@@ -5,12 +5,35 @@ import type { VisaoEquipamento } from "./visao-equipamento.js";
 export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   private controladora: ControladoraEquipamento;
   private equipamentosSelecionados: Equipamento[] = [];
+  private todosEquipamentos: Equipamento[] = [];
 
   constructor() {
     this.controladora = new ControladoraEquipamento(this);
     document
       .getElementById("btn-buscar-equipamento")
       ?.addEventListener("click", () => this.controladora.buscarEquipamento());
+    
+    const equipamentoInput = document.getElementById("equipamento") as HTMLInputElement;
+    equipamentoInput?.addEventListener("click", () => {
+      if (this.todosEquipamentos.length === 0) {
+        this.controladora.buscarTodosEquipamentos();
+      } else {
+        this.displayEquipamentoDropdown(this.todosEquipamentos);
+      }
+    });
+    
+    equipamentoInput?.addEventListener("input", () => {
+      const filtro = equipamentoInput.value.trim();
+      if (filtro === "") {
+        this.displayEquipamentoDropdown(this.todosEquipamentos);
+      } else if (this.todosEquipamentos.length > 0) {
+        const filtrado = this.todosEquipamentos.filter(eq => 
+          eq.codigo.toString().includes(filtro) || 
+          eq.descricao.toLowerCase().includes(filtro.toLowerCase())
+        );
+        this.displayEquipamentoDropdown(filtrado);
+      }
+    });
     
     document
       .getElementById("hora")
@@ -32,11 +55,113 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     return { filtro: valor };
   }
 
+  retornarTodosEquipamentos(equipamentos: Equipamento[]): void {
+    this.todosEquipamentos = equipamentos;
+    this.displayEquipamentoDropdown(equipamentos);
+  }
+  
+  private displayEquipamentoDropdown(equipamentos: Equipamento[]): void {
+    const ul = document.getElementById("mostrar-equipamento");
+    if (!ul) return;
+    
+    ul.innerHTML = "";
+    ul.style.display = "block";
+    ul.style.maxHeight = "300px";
+    ul.style.overflowY = "auto";
+    
+    if (equipamentos.length === 0) {
+      const li = document.createElement("li");
+      li.className = "list-group-item text-muted";
+      li.textContent = "Nenhum equipamento encontrado";
+      ul.appendChild(li);
+      return;
+    }
+    
+    for (const equipamento of equipamentos) {
+      const li = document.createElement("li");
+      li.className = "list-group-item d-flex align-items-center gap-3";
+      li.style.cursor = "pointer";
+      
+      const textoContainer = document.createElement("div");
+      textoContainer.className = "flex-grow-1";
+      
+      const titulo = document.createElement("div");
+      titulo.textContent = `${equipamento.codigo} - ${equipamento.descricao}`;
+      titulo.className = "fw-bold";
+      
+      const infoSecundaria = document.createElement("div");
+      infoSecundaria.className = "small";
+      infoSecundaria.innerHTML = `R$ ${equipamento.valorHora}/h • 
+        <span class="${equipamento.disponivel ? 'text-success' : 'text-danger'}">
+          ${equipamento.disponivel ? 'Disponível' : 'Indisponível'}
+        </span>`;
+      
+      textoContainer.appendChild(titulo);
+      textoContainer.appendChild(infoSecundaria);
+      
+      const btnContainer = document.createElement("div");
+      
+      const btnAdicionar = document.createElement("button");
+      btnAdicionar.className = "btn btn-sm btn-primary";
+      btnAdicionar.textContent = "Adicionar";
+      
+      if (!equipamento.disponivel) {
+        btnAdicionar.disabled = true;
+        btnAdicionar.className = "btn btn-sm btn-secondary";
+        btnAdicionar.title = "Equipamento indisponível";
+      } else {
+        const itemJaSelecionado = this.equipamentosSelecionados.some(
+          eq => eq.codigo === equipamento.codigo
+        );
+        
+        if (itemJaSelecionado) {
+          btnAdicionar.disabled = true;
+          btnAdicionar.className = "btn btn-sm btn-success";
+          btnAdicionar.textContent = "Adicionado";
+        } else {
+          btnAdicionar.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.adicionarEquipamento(equipamento);
+          });
+        }
+      }
+      
+      btnContainer.appendChild(btnAdicionar);
+      
+      li.appendChild(textoContainer);
+      li.appendChild(btnContainer);
+      
+      li.addEventListener("click", () => {
+        (document.getElementById("equipamento") as HTMLInputElement).value = 
+          equipamento.codigo.toString();
+        this.retornarEquipamento(equipamento);
+      });
+      
+      ul.appendChild(li);
+    }
+    
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      const equipamentoInput = document.getElementById("equipamento");
+      const mostrarEquipamento = document.getElementById("mostrar-equipamento");
+      
+      if (target !== equipamentoInput && 
+          !mostrarEquipamento?.contains(target) && 
+          target.id !== "btn-buscar-equipamento") {
+        if (mostrarEquipamento) {
+          mostrarEquipamento.style.display = "none";
+        }
+      }
+    }, { capture: true });
+  }
+
   retornarEquipamento(equipamento: Equipamento): void {
     const ul = document.getElementById("mostrar-equipamento");
     if (!ul) return;
     
     ul.innerHTML = "";
+    ul.style.display = "block";
+    
     const li = document.createElement("li");
     li.className = "list-group-item d-flex align-items-center gap-3";
 
@@ -111,6 +236,11 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       (btnAdicionar as HTMLButtonElement).disabled = true;
     }
     
+    const ultimosEquipamentosExibidos = document.querySelectorAll("#mostrar-equipamento li");
+    if (ultimosEquipamentosExibidos.length > 1) {
+      this.displayEquipamentoDropdown(this.todosEquipamentos);
+    }
+    
     this.atualizarListaEquipamentosSelecionados();
     this.atualizarSubtotal();
   }
@@ -125,7 +255,12 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     
     const equipamentoAtual = document.querySelector("#mostrar-equipamento");
     if (equipamentoAtual) {
-      this.controladora.buscarEquipamento();
+      const mostrarEquipamento = document.getElementById("mostrar-equipamento");
+      if (mostrarEquipamento && mostrarEquipamento.querySelectorAll("li").length > 1) {
+        this.displayEquipamentoDropdown(this.todosEquipamentos);
+      } else {
+        this.controladora.buscarEquipamento();
+      }
     }
   }
   
