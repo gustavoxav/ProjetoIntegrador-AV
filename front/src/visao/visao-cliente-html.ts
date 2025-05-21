@@ -11,14 +11,6 @@ export class VisaoClienteEmHTML implements VisaoCliente {
     document
       .getElementById("btn-buscar-clientes")
       ?.addEventListener("click", () => this.controladora.buscarClientes());
-    
-    const clienteInput = document.getElementById("cliente") as HTMLInputElement;
-    clienteInput?.addEventListener("input", () => {
-      const filtro = clienteInput.value.trim();
-      if (filtro.length === 11 || (Number.isFinite(Number(filtro)) && Number(filtro) > 0)) {
-        this.controladora.buscarClientes();
-      }
-    });
   }
 
   filtroClientes(): { filtro: string } {
@@ -30,11 +22,6 @@ export class VisaoClienteEmHTML implements VisaoCliente {
   retornarClientes(cliente: Cliente): void {
     console.log("aq1: ", cliente);
     this.selecionarCliente(cliente);
-    
-    const clienteInput = document.getElementById("cliente") as HTMLInputElement;
-    if (clienteInput) {
-      clienteInput.value = cliente.codigo.toString();
-    }
   }
 
   selecionarCliente(cliente: Cliente): void {
