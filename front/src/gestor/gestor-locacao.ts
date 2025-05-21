@@ -64,13 +64,12 @@ export class GestorLocacao {
           .json()
           .catch(() => ({ erro: "Erro no servidor" }));
         throw ErroDominio.comProblemas([
-          errorData.erro || `Erro ao registrar locação (${response.status})`,
+          errorData.erro ?? `Erro ao registrar locação (${response.status})`,
         ]);
       }
-      console.log("TEGAHARHAFDSHB");
 
-      console.log("Resposta da API:", response);
-      return response;
+      const data = await response.json();
+      return data;
     } catch (error) {
       if (error instanceof ErroDominio) {
         throw error;
@@ -83,9 +82,11 @@ export class GestorLocacao {
     }
   }
 
-  async obterLocacoes(): Promise<RespostaLocacao[]> {
+  async obterLocacoes(filtro?: number): Promise<RespostaLocacao[]> {
     try {
-      const response = await fetch(`${this.urlApi}/locacoes`, {
+      const filtroLocacao = filtro ? `/${filtro}` : "";
+      console.log("Filtro de locação:", filtroLocacao);
+      const response = await fetch(`${this.urlApi}/locacoes${filtroLocacao}`, {
         method: "GET",
         headers: {
           Accept: "application/json",

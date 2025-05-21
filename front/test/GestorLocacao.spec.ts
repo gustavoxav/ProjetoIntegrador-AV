@@ -10,41 +10,39 @@ describe("Teste da classe Gestor Locacao", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
-
-  it("Deve retornar uma lista de locações corretamente", async () => {
-    const mockLocacao: RespostaLocacao[] = [
-      {
-        codigo: 1,
-        dataHoraLocacao: "2025-05-20T15:55:14Z",
-        horasContratadas: 4,
-        dataHoraEntregaPrevista: "2025-05-20T17:55:14Z",
-        desconto: 10,
-        valorTotal: 90,
-        cliente: {
-          codigo: 101,
-          nomeCompleto: "João da Silva",
-          telefone: "11999999999",
-        },
-        registradoPor: {
-          codigo: 201,
-          nome: "Funcionário A",
-        },
-        itens: [
-          {
-            codigo: 301,
-            tempoContratado: 4,
-            subtotal: 90,
-            equipamento: {
-              codigo: 401,
-              descricao: "Furadeira",
-              valorHora: 10,
-              disponivel: true,
-            },
-          },
-        ],
+  const mockLocacao: RespostaLocacao[] = [
+    {
+      codigo: 1,
+      dataHoraLocacao: "2025-05-20T15:55:14Z",
+      horasContratadas: 4,
+      dataHoraEntregaPrevista: "2025-05-20T17:55:14Z",
+      desconto: 10,
+      valorTotal: 90,
+      cliente: {
+        codigo: 101,
+        nomeCompleto: "João da Silva",
+        telefone: "11999999999",
       },
-    ];
-
+      registradoPor: {
+        codigo: 201,
+        nome: "Funcionário A",
+      },
+      itens: [
+        {
+          codigo: 301,
+          tempoContratado: 4,
+          subtotal: 90,
+          equipamento: {
+            codigo: 401,
+            descricao: "Furadeira",
+            valorHora: 10,
+            disponivel: true,
+          },
+        },
+      ],
+    },
+  ];
+  it("Deve retornar uma lista de locações corretamente", async () => {
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       status: 200,
@@ -57,6 +55,31 @@ describe("Teste da classe Gestor Locacao", () => {
     expect(locacoes).toEqual(mockLocacao);
     expect(fetch).toHaveBeenCalledWith(
       expect.stringContaining("/locacoes"),
+      expect.objectContaining({
+        method: "GET",
+        credentials: "include",
+        headers: expect.objectContaining({
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        }),
+      })
+    );
+  });
+
+  it("Deve retornar locações com base em um filtro", async () => {
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => mockLocacao,
+    });
+
+    const gestor = new GestorLocacao();
+    const filtro = 1;
+    const locacoes = await gestor.obterLocacoes(filtro);
+
+    expect(locacoes).toEqual(mockLocacao);
+    expect(fetch).toHaveBeenCalledWith(
+      expect.stringContaining(`/locacoes/${filtro}`),
       expect.objectContaining({
         method: "GET",
         credentials: "include",
