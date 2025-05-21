@@ -60,10 +60,6 @@ export class VisaoClienteEmHTML implements VisaoCliente {
     }
   }
 
-  getClienteSelecionado(): Cliente | null {
-    return this.clienteSelecionado;
-  }
-
   exibirMensagens(mensagens: string[]) {
     const outputElement = document.querySelector("output");
     if (outputElement) {

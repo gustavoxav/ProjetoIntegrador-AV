@@ -2,7 +2,6 @@
   <h1 class="mb-4">Cadastro de Locação</h1>
 
   <form action="/api/locacao" method="POST">
-
     <label for="funcionario" class="form-label">Selecione o Funcionário</label>
     <div class="mb-3" id="funcionarios-container"></div>
 
@@ -38,8 +37,7 @@
     <div
       id="mostrar-clientes"
       class="list-group w-100"
-      style="z-index: 1000">
-    </div>
+      style="z-index: 1000"></div>
 
     <div class="mb-3">
       <label for="hora" class="form-label">Horas para locação</label>
@@ -54,7 +52,9 @@
         value="2" />
     </div>
 
-    <label for="equipamento" class="form-label">Código ou nome do Equipamento</label>
+    <label for="equipamento" class="form-label"
+      >Código ou nome do Equipamento</label
+    >
     <div class="mb-3 input-group">
       <input
         type="text"
@@ -81,7 +81,10 @@
         </svg>
       </button>
     </div>
-    <ul id="mostrar-equipamento" class="list-group w-100" style="z-index: 1000"></ul>
+    <ul
+      id="mostrar-equipamento"
+      class="list-group w-100"
+      style="z-index: 1000"></ul>
 
     <div id="item-selecionado" class="border rounded p-3 mb-3 d-none">
       <h5>Item Selecionado</h5>
@@ -93,8 +96,11 @@
 
     <div id="subtotal-section" class="border rounded p-3 mb-4">
       <h5>Resumo da Locação</h5>
-      <p><strong>Horas Contratadas:</strong> <span id="horas-contratadas">2</span> horas</p>
-      
+      <p>
+        <strong>Horas Contratadas:</strong>
+        <span id="horas-contratadas">2</span> horas
+      </p>
+
       <div class="table-responsive mb-3">
         <table class="table table-sm">
           <thead>
@@ -108,25 +114,41 @@
           </thead>
           <tbody id="tabela-equipamentos">
             <tr>
-              <td colspan="5" class="text-center text-muted">Nenhum equipamento selecionado</td>
+              <td colspan="5" class="text-center text-muted">
+                Nenhum equipamento selecionado
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
-      
+
       <div class="row">
         <div class="col-md-6">
-          <p><strong>Subtotal dos Itens:</strong> R$ <span id="subtotal-itens">0,00</span></p>
-          <p><strong>Desconto (10% acima de 2h):</strong> R$ <span id="desconto">0,00</span></p>
-          <p><strong>Valor Total:</strong> R$ <span id="valor-total">0,00</span></p>
+          <p>
+            <strong>Subtotal dos Itens:</strong> R$
+            <span id="subtotal-itens">0,00</span>
+          </p>
+          <p>
+            <strong>Desconto (10% acima de 2h):</strong> R$
+            <span id="desconto">0,00</span>
+          </p>
+          <p>
+            <strong>Valor Total:</strong> R$ <span id="valor-total">0,00</span>
+          </p>
         </div>
         <div class="col-md-6">
-          <p><strong>Data e Hora de Locação:</strong> <span id="data-locacao">-</span></p>
-          <p><strong>Data e Hora de Devolução:</strong> <span id="data-devolucao">-</span></p>
+          <p>
+            <strong>Data e Hora de Locação:</strong>
+            <span id="data-locacao">-</span>
+          </p>
+          <p>
+            <strong>Data e Hora de Devolução:</strong>
+            <span id="data-devolucao">-</span>
+          </p>
         </div>
       </div>
     </div>
-    
+
     <button
       id="cancelar"
       type="button"

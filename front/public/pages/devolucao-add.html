@@ -57,18 +57,82 @@
       <ul class="list-group" id="lista-itens"></ul>
     </div>
 
-    <div class="mb-3 d-none" id="valores-container">
-      <p><strong>Desconto:</strong> R$ <span id="desconto">0,00</span></p>
+    <div id="item-selecionado" class="border rounded p-3 mb-3 d-none">
+      <h5>Item Selecionado</h5>
+      <p><strong>Descrição:</strong> <span id="desc"></span></p>
+      <p><strong>Valor:</strong> R$ <span id="valor"></span></p>
+      <p><strong>Avarias:</strong> <span id="avarias"></span></p>
+      <p><strong>Disponibilidade:</strong> <span id="disponivel"></span></p>
+    </div>
+
+    <div id="subtotal-section" class="border rounded p-3 mb-4">
+      <h5>Resumo da Devolução</h5>
       <p>
-        <strong>Valor a Pagar:</strong> R$ <span id="valor-pagar">0,00</span>
+        <strong>Horas Contratadas:</strong>
+        <span id="horas-contratadas">2</span> horas
       </p>
+
+      <div class="table-responsive mb-3">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Equipamento</th>
+              <th>Valor por hora</th>
+              <th>Valor Subtotal</th>
+              <th>Desconto</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-equipamentos">
+            <tr>
+              <td colspan="5" class="text-center text-muted">
+                Nenhum equipamento foi encontrado
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <p>
+            <strong>Subtotal dos Itens:</strong> R$
+            <span id="subtotal-itens">0,00</span>
+          </p>
+          <p>
+            <strong>Desconto (10% acima de 2h):</strong> R$
+            <span id="desconto">0,00</span>
+          </p>
+          <p>
+            <strong>Valor Total:</strong> R$ <span id="valor-total">0,00</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p>
+            <strong>Data e Hora de Locação:</strong>
+            <span id="data-locacao">-</span>
+          </p>
+          <p>
+            <strong>Data e Hora de Devolução:</strong>
+            <span id="data-devolucao">-</span>
+          </p>
+        </div>
+      </div>
     </div>
 
     <button
-      class="btn btn-primary mt-3 d-none"
-      id="registrar-devolucao"
-      type="submit">
-      Registrar Devolução
+      id="cancelar-devolucao"
+      type="button"
+      class="btn btn-light"
+      style="width: 200px; margin-right: 20px">
+      Cancelar
+    </button>
+    <button
+      id="salvar-devolucao"
+      type="button"
+      class="btn btn-secondary w-22"
+      style="width: 200px">
+      Adicionar
     </button>
   </form>
 </div>

@@ -7,7 +7,7 @@ export type Cliente = {
   email: string;
   endereco: string;
   foto: string;
-}
+};
 
 export type Equipamento = {
   codigo: number;
@@ -18,12 +18,12 @@ export type Equipamento = {
   avarias: string;
   disponivel: boolean;
   seguro: number;
-}
+};
 
 export type Funcionario = {
   codigo: number;
   nome: string;
-}
+};
 
 type EquipamentoResumo = {
   codigo: number;
@@ -54,7 +54,7 @@ export type RespostaLocacao = {
     subtotal: number;
     equipamento: EquipamentoResumo;
   }>;
-}
+};
 
 export type DadosLocacao = {
   cliente: {
@@ -67,4 +67,33 @@ export type DadosLocacao = {
   itens: Array<{
     equipamento: EquipamentoResumo;
   }>;
-}
+};
+
+export type DadosDevolucao = {
+  locacao: {
+    codigo: number;
+  };
+  registradoPor: {
+    codigo: number;
+  };
+};
+
+export type RespostaDevolucao = {
+  codigo: number;
+  dataHoraLocacao: string;
+  horasContratadas: number;
+  dataHoraEntregaPrevista: string;
+  desconto: number;
+  valorTotal: number;
+  cliente: {
+    codigo: number;
+    nomeCompleto: string;
+  };
+  registradoPor: {
+    codigo: number;
+    nome: string;
+  };
+  locacao: {
+    codigo: number;
+  };
+};
