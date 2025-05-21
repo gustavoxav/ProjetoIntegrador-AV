@@ -7,6 +7,7 @@ export class ControladoraLocacao {
 
   constructor(private visao: VisaoLocacao) {
     this.gestor = new GestorLocacao();
+    this.buscarLocacoes();
   }
 
   public async registrarLocacao(): Promise<void> {
@@ -115,9 +116,13 @@ export class ControladoraLocacao {
   }
 
     public async buscarLocacoes() {
+      console.log("Buscando locações...");
       const gestor = new GestorLocacao();
       try {
+      console.log("Buscando locações2");
+
         const response = await gestor.obterLocacoes();
+        console.log("Locações obtidas:", response);
         this.visao.exibirListagemLocacao(response);
       } catch (error: any) {
         if (error instanceof ErroDominio) {

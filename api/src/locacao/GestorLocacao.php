@@ -68,7 +68,7 @@ class GestorLocacao {
         
         $locacaoSalva = $this->repositorio->salvar($locacao);
         
-        return $locacaoSalva->toArray();
+        return $locacaoSalva;
     }
     
     /**
@@ -104,7 +104,7 @@ class GestorLocacao {
         
         $resultado = [];
         foreach ($locacoes as $locacao) {
-            $resultado[] = $locacao->toArray();
+            $resultado[] = $locacao;
         }
         
         return $resultado;
@@ -116,13 +116,13 @@ class GestorLocacao {
      * @param int $codigo Código da locação
      * @return array|null Dados da locação ou null se não encontrada
      */
-    public function obterLocacaoPorCodigo($codigo) {
-        $locacao = $this->repositorio->obterPorCodigo($codigo);
+    public function obterLocacaoPorFiltro($filtro) {
+        $locacao = $this->repositorio->obterPorFiltro($filtro);
         
         if (!$locacao) {
             return null;
         }
         
-        return $locacao->toArray();
+        return $locacao;
     }
 }

@@ -10,10 +10,10 @@ interface RepositorioLocacao {
     
     /**
      * Obtém uma locação pelo código
-     * @param int $codigo O código da locação
-     * @return Locacao|null A locação encontrada ou null se não existir
+     * @param int $filtro O código da locação ou CPF do cliente
+     * @return Locacao[]|null A locação encontrada ou null se não existir
      */
-    public function obterPorCodigo($codigo);
+    public function obterPorFiltro($filtro);
     
     /**
      * Obtém todas as locações ou filtra por cliente ou funcionário

@@ -119,16 +119,16 @@ $app->get(API_PREFIX . "/locacoes", function ($req, $res) use ($pdo) {
   }
 });
 
-// GET /api/locacoes/:codigo: Busca uma locação pelo código
-$app->get(API_PREFIX . "/locacoes/:codigo", function ($req, $res) use ($pdo) {
+// GET /api/locacoes/:filtro: Busca uma locação pelo código ou por filtro
+$app->get(API_PREFIX . "/locacoes/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
-  $codigo = $params['codigo'] ?? null;
+  $filtro = $params['filtro'] ?? null;
 
   try {
     $gestor = new GestorLocacao(
       new RepositorioLocacaoEmBDR($pdo)
     );
-    $saida = $gestor->obterLocacaoPorCodigo($codigo);
+    $saida = $gestor->obterLocacaoPorFiltro($filtro);
     
     if (!$saida) {
       $res->status(404)->json(["erro" => "Locação não encontrada"]);

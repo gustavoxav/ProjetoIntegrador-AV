@@ -2,24 +2,55 @@
   <h1 class="mb-4">Devolução de Locação</h1>
 
   <form action="/api/devolucao" method="POST">
+    
+    <label for="buscar-locacao" class="form-label"
+      >Código da Locação ou CPF do Cliente</label
+    >
+    <div class="mb-3 input-group">
+      <input
+        type="number"
+        min="1"
+        max="11"
+        id="input-buscar-locacao"
+        name="buscar-locacao"
+        class="form-control"
+        placeholder="Digite o código da locação ou CPF"
+        autocomplete="off" />
 
-    <div class="mb-3">
-      <label for="busca" class="form-label">ID da Locação ou CPF do Cliente</label>
-      <input type="text" id="busca" class="form-control" placeholder="Digite o ID ou CPF" autocomplete="off" required />
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        id="btn-buscar-locacoes">
+        Buscar
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-search"
+          viewBox="0 0 16 16">
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+        </svg>
+      </button>
     </div>
 
     <div class="mb-3 d-none" id="itens-locacao-container">
       <h5>Itens da Locação</h5>
-      <ul class="list-group" id="lista-itens">
-      </ul>
+      <ul class="list-group" id="lista-itens"></ul>
     </div>
 
     <div class="mb-3 d-none" id="valores-container">
       <p><strong>Desconto:</strong> R$ <span id="desconto">0,00</span></p>
-      <p><strong>Valor a Pagar:</strong> R$ <span id="valor-pagar">0,00</span></p>
+      <p>
+        <strong>Valor a Pagar:</strong> R$ <span id="valor-pagar">0,00</span>
+      </p>
     </div>
 
-    <button class="btn btn-primary mt-3 d-none" id="registrar-devolucao" type="submit">
+    <button
+      class="btn btn-primary mt-3 d-none"
+      id="registrar-devolucao"
+      type="submit">
       Registrar Devolução
     </button>
   </form>

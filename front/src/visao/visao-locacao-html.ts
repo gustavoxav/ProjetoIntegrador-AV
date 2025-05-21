@@ -8,7 +8,6 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
 
   constructor() {
     this.controladora = new ControladoraLocacao(this);
-    this.controladora.buscarLocacoes();
   }
 
   public async salvar(): Promise<void> {
@@ -17,6 +16,8 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
 
     try {
       await this.controladora.registrarLocacao();
+    } catch (error) {
+      console.error("Erro ao registrar locação:", error);
     } finally {
       setTimeout(() => {
         this.isSubmitting = false;
@@ -163,11 +164,10 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
   }
 
   public exibirListagemLocacao(locacoes: RespostaLocacao[]): void {
-    const tbody = document.querySelector("table tbody");
+    const tbody = document.getElementById("tabela-locacoes");
     if (!tbody) return;
 
-    tbody.innerHTML = ""; // limpa antes de renderizar
-
+    tbody.innerHTML = "";
     for (const locacao of locacoes) {
       const row = document.createElement("tr");
 
