@@ -241,7 +241,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       this.displayEquipamentoDropdown(this.todosEquipamentos);
     }
     
-    this.atualizarListaEquipamentosSelecionados();
     this.atualizarSubtotal();
   }
   
@@ -250,74 +249,22 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       eq => eq.codigo !== codigo
     );
     
-    this.atualizarListaEquipamentosSelecionados();
     this.atualizarSubtotal();
     
-    const equipamentoAtual = document.querySelector("#mostrar-equipamento");
-    if (equipamentoAtual) {
+    const equipamentoAtual = document.querySelector("#mostrar-equipamento") as HTMLElement;
+    if (equipamentoAtual && equipamentoAtual.style.display !== "none") {
       const mostrarEquipamento = document.getElementById("mostrar-equipamento");
-      if (mostrarEquipamento && mostrarEquipamento.querySelectorAll("li").length > 1) {
-        this.displayEquipamentoDropdown(this.todosEquipamentos);
-      } else {
-        this.controladora.buscarEquipamento();
+      if (mostrarEquipamento) {
+        const singleItem = mostrarEquipamento.querySelector(`li[equip-codigo="${codigo}"]`);
+        if (singleItem) {
+          const btn = singleItem.querySelector("button");
+          if (btn) {
+            btn.textContent = "Adicionar";
+            btn.className = "btn btn-primary";
+            (btn as HTMLButtonElement).disabled = false;
+          }
+        }
       }
-    }
-  }
-  
-  atualizarListaEquipamentosSelecionados(): void {
-    const listaEquipamentos = document.getElementById("equipamentos-selecionados-lista");
-    if (!listaEquipamentos) return;
-    
-    listaEquipamentos.innerHTML = "";
-    
-    if (this.equipamentosSelecionados.length === 0) {
-      const mensagem = document.createElement("li");
-      mensagem.className = "list-group-item text-muted";
-      mensagem.textContent = "Nenhum equipamento selecionado";
-      listaEquipamentos.appendChild(mensagem);
-      return;
-    }
-    
-    const horasLocacao = this.obterHorasLocacao();
-    const temDesconto = horasLocacao > 2;
-    
-    for (const equipamento of this.equipamentosSelecionados) {
-      const subtotalItem = equipamento.valorHora * horasLocacao;
-      const descontoItem = temDesconto ? subtotalItem * 0.1 : 0;
-      const valorComDesconto = subtotalItem - descontoItem;
-      
-      const item = document.createElement("li");
-      item.className = "list-group-item d-flex justify-content-between align-items-center";
-      item.setAttribute('equip-codigo', equipamento.codigo.toString());
-      
-      const textoContainer = document.createElement("div");
-      
-      const infoEquipamento = document.createElement("div");
-      infoEquipamento.textContent = `${equipamento.codigo} - ${equipamento.descricao} - R$ ${equipamento.valorHora}/h`;
-      
-      const subtotalInfo = document.createElement("div");
-      subtotalInfo.className = "text-muted mt-1";
-      
-      if (temDesconto) {
-        subtotalInfo.innerHTML = `<small>Subtotal (${horasLocacao.toFixed(2)}h): 
-          <span style="text-decoration: line-through;">R$ ${subtotalItem.toFixed(2).replace('.', ',')}</span> 
-          R$ ${valorComDesconto.toFixed(2).replace('.', ',')} (10% desconto)</small>`;
-      } else {
-        subtotalInfo.innerHTML = `<small>Subtotal (${horasLocacao.toFixed(2)}h): 
-          R$ ${subtotalItem.toFixed(2).replace('.', ',')}</small>`;
-      }
-      
-      textoContainer.appendChild(infoEquipamento);
-      textoContainer.appendChild(subtotalInfo);
-      
-      const btnRemover = document.createElement("button");
-      btnRemover.className = "btn btn-sm btn-danger";
-      btnRemover.textContent = "Remover";
-      btnRemover.addEventListener("click", () => this.removerEquipamento(equipamento.codigo));
-      
-      item.appendChild(textoContainer);
-      item.appendChild(btnRemover);
-      listaEquipamentos.appendChild(item);
     }
   }
   
@@ -341,17 +288,21 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       if (this.equipamentosSelecionados.length === 0) {
         tabelaEquipamentos.innerHTML = `
           <tr>
-            <td colspan="3" class="text-center text-muted">Nenhum equipamento selecionado</td>
+            <td colspan="5" class="text-center text-muted">Nenhum equipamento selecionado</td>
           </tr>
         `;
       } else {
         tabelaEquipamentos.innerHTML = "";
         
+        const temDesconto = horasLocacao > 2;
+        
         for (const equipamento of this.equipamentosSelecionados) {
           const valorTotal = equipamento.valorHora * horasLocacao;
+          const descontoItem = temDesconto ? valorTotal * 0.1 : 0;
           
           const tr = document.createElement("tr");
           tr.setAttribute('equip-codigo', equipamento.codigo.toString());
+          
           const tdEquipamento = document.createElement("td");
           tdEquipamento.textContent = `${equipamento.codigo} - ${equipamento.descricao}`;
           
@@ -361,9 +312,24 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
           const tdValorTotal = document.createElement("td");
           tdValorTotal.textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
           
+          const tdDesconto = document.createElement("td");
+          tdDesconto.textContent = `R$ ${descontoItem.toFixed(2).replace('.', ',')}`;
+          if (temDesconto) {
+            tdDesconto.className = "text-success";
+          }
+          
+          const tdAcoes = document.createElement("td");
+          const btnRemover = document.createElement("button");
+          btnRemover.className = "btn btn-sm btn-danger";
+          btnRemover.textContent = "Remover";
+          btnRemover.addEventListener("click", () => this.removerEquipamento(equipamento.codigo));
+          tdAcoes.appendChild(btnRemover);
+          
           tr.appendChild(tdEquipamento);
           tr.appendChild(tdValorHora);
           tr.appendChild(tdValorTotal);
+          tr.appendChild(tdDesconto);
+          tr.appendChild(tdAcoes);
           
           tabelaEquipamentos.appendChild(tr);
         }
@@ -386,8 +352,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2).replace('.', ',');
     if (descontoEl) descontoEl.textContent = valorDesconto.toFixed(2).replace('.', ',');
     if (totalEl) totalEl.textContent = valorTotal.toFixed(2).replace('.', ',');
-    
-    this.atualizarListaEquipamentosSelecionados();
     
     this.atualizarDatas();
   }
