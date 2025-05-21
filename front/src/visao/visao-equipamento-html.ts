@@ -96,8 +96,13 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
           ${equipamento.disponivel ? 'Disponível' : 'Indisponível'}
         </span>`;
       
+      const avariasInfo = document.createElement("div");
+      avariasInfo.className = "small text-muted";
+      avariasInfo.textContent = `Avarias: ${equipamento.avarias ? equipamento.avarias : "Sem avarias"}`;
+      
       textoContainer.appendChild(titulo);
       textoContainer.appendChild(infoSecundaria);
+      textoContainer.appendChild(avariasInfo);
       
       const btnContainer = document.createElement("div");
       
@@ -170,9 +175,9 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     const descricao = document.createElement("div");
     descricao.textContent = equipamento.descricao;
     const avarias = document.createElement("div");
-    avarias.textContent = `Avarias: ${equipamento.avarias}`;
+    avarias.textContent = `Avarias: ${equipamento.avarias ? equipamento.avarias : "Sem avarias"}`;
     const valorHora = document.createElement("div");
-    valorHora.textContent = `valor Hora: R$ ${equipamento.valorHora}`;
+    valorHora.textContent = `Valor por hora: R$ ${equipamento.valorHora}`;
     const disponibilidade = document.createElement("div");
     disponibilidade.textContent = `Status: ${
       equipamento.disponivel ? "Disponível" : "Indisponível"
