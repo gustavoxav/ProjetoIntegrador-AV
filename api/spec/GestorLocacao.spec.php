@@ -44,16 +44,18 @@ describe("GestorLocacao", function () {
 
     it("Deve retornar uma locação por código", function () {
         $gestor = new GestorLocacao($this->locacaoRepo);
-        $locacao = $gestor->obterLocacaoPorCodigo(1);
+        $locacoes = $gestor->obterLocacaoPorFiltro(1);
 
-        expect($locacao)->not->toBe(null);
-        expect($locacao)->toBeAn('array');
-        expect($locacao['codigo'])->toEqual(1);
+        expect($locacoes)->not->toBe(null);
+        expect($locacoes)->toBeAn('array');
+        expect(count($locacoes))->toBe(1);
+        expect($locacoes[0])->toBeAn('array');
+        expect($locacoes[0]['codigo'])->toEqual(1);
     });
 
     it("Deve retornar null quando a locação não é encontrada", function () {
         $gestor = new GestorLocacao($this->locacaoRepo);
-        $locacao = $gestor->obterLocacaoPorCodigo(999);
+        $locacao = $gestor->obterLocacaoPorFiltro(999);
 
         expect($locacao)->toBeNull();
     });

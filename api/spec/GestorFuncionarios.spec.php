@@ -28,11 +28,11 @@ describe("GestorFuncionario", function () {
 
     it("Deve retornar um funcionario por nome", function () {
         $gestor = new GestorFuncionario($this->funcionarioRepo);
-        $funcionario = $gestor->obterFuncionarios("Gustavo Funcionario");
+        $funcionario = $gestor->obterFuncionarios("Patrícia Oliveira");
 
         expect($funcionario)->not->toBe(null);
         expect($funcionario)->toBeAnInstanceOf(Funcionario::class);
-        expect($funcionario->nome)->toEqual("Gustavo Funcionario");
+        expect($funcionario->nome)->toEqual("Patrícia Oliveira");
     });
 
     it("Deve retornar null quando o funcionario não é encontrado", function () {
