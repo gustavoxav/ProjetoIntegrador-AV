@@ -1,7 +1,5 @@
 <?php
 
-require_once 'RepositorioLocacao.php';
-
 class RepositorioLocacaoEmBDR implements RepositorioLocacao
 {
 

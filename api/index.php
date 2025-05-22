@@ -154,4 +154,101 @@ $app->get(API_PREFIX . "/locacoes/:filtro", function ($req, $res) use ($pdo) {
   }
 });
 
+// GET /api/devolucoes/simulacao/:locacaoId - Simula o valor a ser pago na devolução (sem gravar no banco)
+$app->get(API_PREFIX . "/devolucoes/simulacao/:locacaoId", function ($req, $res) use ($pdo) {
+  $params = $req->params();
+  $locacaoId = $params['locacaoId'] ?? null;
+
+  if (!$locacaoId) {
+    $res->status(400)->json(["erro" => "ID da locação não informado"]);
+    return;
+  }
+
+  try {
+    $repoLocacao = new RepositorioLocacaoEmBDR($pdo);
+    $locacoes = $repoLocacao->obterPorFiltro($locacaoId);
+    
+    if (empty($locacoes)) {
+      $res->status(404)->json(["erro" => "Locação não encontrada"]);
+      return;
+    }
+
+    $gestor = new GestorDevolucao(
+      new RepositorioDevolucaoEmBDR($pdo),
+      $repoLocacao
+    );
+    
+    $dadosDevolucao = [
+      'locacaoId' => $locacaoId,
+      'dataHoraDevolucao' => date('Y-m-d H:i:s')
+    ];
+    
+    $saida = $gestor->calcularValorPagamento($dadosDevolucao);
+    $res->json($saida);
+  } catch (Exception $e) {
+    $mensagem = $e->getMessage();
+    $status = 400;
+    
+    if (strpos($mensagem, "já foi devolvida") !== false) {
+      $status = 409; // Conflict
+    }
+    
+    $res->status($status)->json(["erro" => $mensagem]);
+  }
+});
+
+// POST /api/devolucoes - Registra uma devolução
+$app->post(API_PREFIX . "/devolucoes", function ($req, $res) use ($pdo) {
+  $dadosDevolucao = (array) $req->body();
+
+  try {
+    $gestor = new GestorDevolucao(
+      new RepositorioDevolucaoEmBDR($pdo),
+      new RepositorioLocacaoEmBDR($pdo)
+    );
+    $saida = $gestor->registrarDevolucao($dadosDevolucao);
+    $res->status(201)->json($saida);
+  } catch (Exception $e) {
+    $mensagem = $e->getMessage();
+    $status = 400;
+    
+    if (strpos($mensagem, "já foi devolvida") !== false) {
+      $status = 409;
+    }
+    
+    $res->status($status)->json(["erro" => $mensagem]);
+  }
+});
+
+// GET /api/devolucoes - Retorna todas as devoluções cadastradas no sistema
+$app->get(API_PREFIX . "/devolucoes", function ($req, $res) use ($pdo) {
+  try {
+    $gestor = new GestorDevolucao(
+      new RepositorioDevolucaoEmBDR($pdo),
+      new RepositorioLocacaoEmBDR($pdo)
+    );
+    $saida = $gestor->obterDevolucoes(null);
+    $res->json($saida);
+  } catch (Exception $e) {
+    $res->status(500)->json(["erro" => $e->getMessage()]);
+  }
+});
+
+// GET /api/devolucoes/:filtro - Busca devoluções por cliente/cpf/etc
+// $app->get(API_PREFIX . "/devolucoes/:filtro", function ($req, $res) use ($pdo) {
+//   $params = $req->params();
+//   $filtro = $params['filtro'] ?? null;
+
+//   try {
+//     $gestor = new GestorDevolucao(
+//       new RepositorioDevolucaoEmBDR($pdo),
+//       new RepositorioLocacaoEmBDR($pdo)
+//     );
+//     $saida = $gestor->obterDevolucoes($filtro);
+//     $res->json($saida);
+//   } catch (Exception $e) {
+//     $res->status(500)->json(["erro" => $e->getMessage()]);
+//   }
+// });
+
 $app->listen();

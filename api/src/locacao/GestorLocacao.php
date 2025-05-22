@@ -1,9 +1,5 @@
 <?php
 
-require_once 'Locacao.php';
-require_once 'ItemLocado.php';
-require_once 'RepositorioLocacao.php';
-
 class GestorLocacao {
 
     public function __construct(
@@ -60,7 +56,7 @@ class GestorLocacao {
         $locacao = new Locacao(
             null,
             date('Y-m-d H:i:s'), // ESSE É O CERTO!
-            // '2025-05-22 02:05:00', // MODIFICAR PARA DATA E HORA ATUAL PARA TESTE
+            // '2025-05-22 01:40:00', // MODIFICAR PARA DATA E HORA ATUAL DE TESTE
             $dadosLocacao['horasContratadas'],
             $dadosLocacao['cliente'],
             $dadosLocacao['registradoPor'],
