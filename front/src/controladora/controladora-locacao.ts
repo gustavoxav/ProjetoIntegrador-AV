@@ -135,26 +135,16 @@ export class ControladoraLocacao {
   }
 
   public async buscarLocacoes() {
-    const filtroValor = this.visao.filtroLocacao().filtro;
-    const filtro = filtroValor ? parseInt(filtroValor as string) : undefined;
-    console.log("Buscando locações...", filtro);
     const gestor = new GestorLocacao();
     try {
       console.log("Buscando locações2");
 
-      const response = await gestor.obterLocacoes(filtro);
+      const response = await gestor.obterLocacoes();
       console.log("Locações obtidas:", response);
-      if (filtro) {
-        this.visao.mostrarLocacoes(response);
-      } else {
-        this.visao.exibirListagemLocacao(response);
-      }
+
+      this.visao.exibirListagemLocacao(response);
     } catch (error: any) {
-      if (filtro) {
-        this.visao.mostrarLocacoes(undefined);
-      } else {
-        this.visao.exibirListagemLocacao(undefined);
-      }
+      this.visao.exibirListagemLocacao(undefined);
       if (error instanceof ErroDominio) {
         this.visao.exibirMensagemErro(error.getProblemas()[0]);
       } else {

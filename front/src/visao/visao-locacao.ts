@@ -16,14 +16,11 @@ export interface VisaoLocacao {
     dataLocacao: string;
     dataDevolucao: string;
   };
-  filtroLocacao(): {
-    filtro: string | undefined;
-  };
-  exibirListagemLocacao(locacoes: RespostaLocacao[]|undefined): void;
-  selecionarLocacao(locacao: RespostaLocacao): void;
-  mostrarLocacoes(locacoes: RespostaLocacao[]|undefined): void;
+
+  exibirListagemLocacao(locacoes: RespostaLocacao[] | undefined): void;
 
   salvar(): Promise<void>;
+
   exibirMensagemSucesso(x: string): void;
   exibirMensagemErro(x: string): void;
 }

@@ -1,14 +1,18 @@
 import type { VisaoDevolucao } from "./visao-devolucao.js";
 import { ControladoraDevolucao } from "../controladora/controladora-devolucao.js";
-import type { RespostaDevolucao } from "../types/types.js";
+import type { RespostaDevolucao, RespostaLocacao } from "../types/types.js";
 import { formatarDataHora } from "../infra/utils.js";
 
 export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   private readonly controladora: ControladoraDevolucao;
   private isSubmitting = false;
+  private locacaoSelecionada: RespostaLocacao | null = null;
 
   constructor() {
     this.controladora = new ControladoraDevolucao(this);
+    document
+      .getElementById("btn-buscar-locacoes")
+      ?.addEventListener("click", () => this.controladora.buscarLocacoes());
   }
 
   public async salvar(): Promise<void> {
@@ -30,8 +34,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const funcionario =
       (document.getElementById("funcionario") as HTMLSelectElement)?.value ||
       "";
-    const cliente =
-      (document.getElementById("cliente") as HTMLInputElement)?.value || "";
+    const cliente = this.locacaoSelecionada?.cliente.codigo ?? "";
 
     return {
       funcionario: {
@@ -41,8 +44,8 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         codigo: Number(cliente),
       },
       locacao: {
-        codigo: 0
-      }
+        codigo: 0,
+      },
     };
   }
 
@@ -69,12 +72,108 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       <td class="text-start align-middle">${formatarDataHora(
         formatarDataHora(devolucao.dataHoraLocacao)
       )}</td>
-      <td class="text-start align-middle">${devolucao.locacao.codigo} horas</td>
-      <td class="text-start align-middle">${devolucao.cliente.nomeCompleto}</td>
+      <td class="text-start align-middle">${
+        this.locacaoSelecionada?.codigo
+      } horas</td>
+      <td class="text-start align-middle">${
+        this.locacaoSelecionada?.cliente.nomeCompleto
+      }</td>
       <td class="text-start align-middle">${devolucao.valorTotal}</td>
     `;
 
       tbody.appendChild(row);
+    }
+  }
+
+  filtroLocacao() {
+    const button = document.getElementById(
+      "input-buscar-locacao"
+    ) as HTMLButtonElement;
+    const valor = button ? button.value : undefined;
+    return { filtro: valor };
+  }
+
+  mostrarLocacoes(locacoes: RespostaLocacao[] | undefined) {
+    const container = document.getElementById("tabela-locacoes-list");
+    if (!container) return;
+    container.innerHTML = "";
+    console.log("LOC LIST: ", locacoes);
+    if (!locacoes || locacoes.length === 0) {
+      const linha = document.createElement("tr");
+      linha.innerHTML = `
+      <td colspan="7" class="text-center">Nenhuma locação encontrada.</td>
+    `;
+      container.appendChild(linha);
+      return;
+    }
+
+    locacoes.forEach((locacao) => {
+      const tr = document.createElement("tr");
+
+      const botaoSelecionar =
+        locacoes.length === 1
+          ? `<button class="btn btn-sm btn-success" disabled>Selecionado</button>`
+          : `<button class="btn btn-sm btn-primary btn-selecionar" type="button" data-id="${locacao.codigo}">Selecionar</button>`;
+
+      tr.innerHTML = `
+      <td>${locacao.codigo}</td>
+      <td>${locacao.horasContratadas}</td>
+      <td>${locacao.horasContratadas}</td>
+      <td>${locacao.dataHoraEntregaPrevista}</td>
+      <td>${locacao.cliente.nomeCompleto}</td>
+      <td>${locacao.cliente.telefone}</td>
+      <td>${botaoSelecionar}</td>
+    `;
+      container.appendChild(tr);
+    });
+
+    if (locacoes.length === 1) {
+      this.selecionarLocacao(locacoes[0]);
+    }
+
+    if (locacoes.length > 1) {
+      document.querySelectorAll(".btn-selecionar").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          const target = e.currentTarget as HTMLButtonElement;
+          const id = Number(target.dataset.id);
+          const loc = locacoes.find((l) => l.codigo === id);
+          if (loc) this.selecionarLocacao(loc);
+        });
+      });
+    }
+  }
+
+  selecionarLocacao(locacao: RespostaLocacao) {
+    console.log("Locação selecionada:", locacao);
+    document.querySelectorAll("#tabela-locacoes-list tr").forEach((tr) => {
+      tr.classList.remove("selecionado");
+      const btn = tr.querySelector(".btn-selecionar") as HTMLButtonElement;
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Selecionar";
+        btn.classList.remove("btn-success");
+        btn.classList.add("btn-primary");
+      }
+    });
+
+    const linhaSelecionada = Array.from(
+      document.querySelectorAll("#tabela-locacoes-list tr")
+    ).find((tr) => {
+      const id = tr.querySelector(".btn-selecionar")?.getAttribute("data-id");
+      return Number(id) === locacao.codigo;
+    });
+
+    if (linhaSelecionada) {
+      linhaSelecionada.classList.add("selecionado");
+      const btn = linhaSelecionada.querySelector(
+        ".btn-selecionar"
+      ) as HTMLButtonElement;
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Selecionado";
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-success");
+      }
     }
   }
 

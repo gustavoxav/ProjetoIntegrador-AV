@@ -9,9 +9,6 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
 
   constructor() {
     this.controladora = new ControladoraLocacao(this);
-    document
-      .getElementById("btn-buscar-locacoes")
-      ?.addEventListener("click", () => this.controladora.buscarLocacoes());
   }
 
   public async salvar(): Promise<void> {
@@ -155,98 +152,6 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
     `;
 
       tbody.appendChild(row);
-    }
-  }
-
-  filtroLocacao() {
-    const button = document.getElementById(
-      "input-buscar-locacao"
-    ) as HTMLButtonElement;
-    const valor = button ? button.value : undefined;
-    return { filtro: valor };
-  }
-
-  mostrarLocacoes(locacoes: RespostaLocacao[] | undefined) {
-    const container = document.getElementById("tabela-locacoes-list");
-    if (!container) return;
-    container.innerHTML = "";
-    console.log("LOC LIST: ", locacoes);
-    if (!locacoes || locacoes.length === 0) {
-      const linha = document.createElement("tr");
-      linha.innerHTML = `
-      <td colspan="7" class="text-center">Nenhuma locação encontrada.</td>
-    `;
-      container.appendChild(linha);
-      return;
-    }
-
-    locacoes.forEach((locacao) => {
-      const tr = document.createElement("tr");
-
-      const botaoSelecionar =
-        locacoes.length === 1
-          ? `<button class="btn btn-sm btn-success" disabled>Selecionado</button>`
-          : `<button class="btn btn-sm btn-primary btn-selecionar" type="button" data-id="${locacao.codigo}">Selecionar</button>`;
-
-      tr.innerHTML = `
-      <td>${locacao.codigo}</td>
-      <td>${locacao.horasContratadas}</td>
-      <td>${locacao.horasContratadas}</td>
-      <td>${locacao.dataHoraEntregaPrevista}</td>
-      <td>${locacao.cliente.nomeCompleto}</td>
-      <td>${locacao.cliente.telefone}</td>
-      <td>${botaoSelecionar}</td>
-    `;
-      container.appendChild(tr);
-    });
-
-    if (locacoes.length === 1) {
-      this.selecionarLocacao(locacoes[0]);
-    }
-
-    if (locacoes.length > 1) {
-      document.querySelectorAll(".btn-selecionar").forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          const target = e.currentTarget as HTMLButtonElement;
-          const id = Number(target.dataset.id);
-          const loc = locacoes.find((l) => l.codigo === id);
-          if (loc) this.selecionarLocacao(loc);
-        });
-      });
-    }
-  }
-  selecionarLocacao(locacao: RespostaLocacao) {
-    console.log("Locação selecionada:", locacao);
-
-    document.querySelectorAll("#tabela-locacoes-list tr").forEach((tr) => {
-      tr.classList.remove("selecionado");
-      const btn = tr.querySelector(".btn-selecionar") as HTMLButtonElement;
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = "Selecionar";
-        btn.classList.remove("btn-success");
-        btn.classList.add("btn-primary");
-      }
-    });
-
-    const linhaSelecionada = Array.from(
-      document.querySelectorAll("#tabela-locacoes-list tr")
-    ).find((tr) => {
-      const id = tr.querySelector(".btn-selecionar")?.getAttribute("data-id");
-      return Number(id) === locacao.codigo;
-    });
-
-    if (linhaSelecionada) {
-      linhaSelecionada.classList.add("selecionado");
-      const btn = linhaSelecionada.querySelector(
-        ".btn-selecionar"
-      ) as HTMLButtonElement;
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = "Selecionado";
-        btn.classList.remove("btn-primary");
-        btn.classList.add("btn-success");
-      }
     }
   }
 

@@ -1,6 +1,7 @@
 import { ErroDominio } from "../infra/ErroDominio.js";
 import { GestorDevolucao } from "../gestor/gestor-devolucao.js";
 import type { VisaoDevolucao } from "../visao/visao-devolucao.js";
+import { GestorLocacao } from "../gestor/gestor-locacao.js";
 
 export class ControladoraDevolucao {
   private gestor: GestorDevolucao;
@@ -73,7 +74,9 @@ export class ControladoraDevolucao {
         this.visao.exibirMensagemErro(error.getProblemas()[0]);
       } else {
         const errorMessage =
-          error instanceof Error ? error.message : "Erro ao registrar devolução";
+          error instanceof Error
+            ? error.message
+            : "Erro ao registrar devolução";
         this.visao.exibirMensagemErro(errorMessage);
       }
     }
@@ -89,7 +92,30 @@ export class ControladoraDevolucao {
       this.visao.exibirListagemDevolucao(response);
     } catch (error: any) {
       this.visao.exibirListagemDevolucao(undefined);
-      
+
+      if (error instanceof ErroDominio) {
+        this.visao.exibirMensagemErro(error.getProblemas()[0]);
+      } else {
+        this.visao.exibirMensagemErro(error.message);
+      }
+    }
+  }
+
+  public async buscarLocacoes() {
+    const filtroValor = this.visao.filtroLocacao().filtro;
+    const filtro = filtroValor ? parseInt(filtroValor as string) : undefined;
+    console.log("Buscando locações...3", filtro);
+    const gestor = new GestorLocacao();
+    try {
+      console.log("Buscando locações23");
+
+      const response = await gestor.obterLocacoes(filtro);
+      console.log("Locações obtidas 2:", response);
+
+      this.visao.mostrarLocacoes(response);
+    } catch (error: any) {
+      this.visao.mostrarLocacoes(undefined);
+
       if (error instanceof ErroDominio) {
         this.visao.exibirMensagemErro(error.getProblemas()[0]);
       } else {

@@ -8,6 +8,7 @@ export function initLocacaoAdd() {
   new VisaoClienteEmHTML();
   new VisaoEquipamentoEmHTML();
   new VisaoFuncionarioEmHTML();
+
   const visaoLocacao = new VisaoLocacaoEmHTML();
   const output = document.querySelector("output");
   if (output) output.innerHTML = "";
