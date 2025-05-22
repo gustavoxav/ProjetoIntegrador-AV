@@ -59,7 +59,8 @@ class GestorLocacao {
         
         $locacao = new Locacao(
             null,
-            date('Y-m-d H:i:s'),
+            date('Y-m-d H:i:s'), // ESSE É O CERTO!
+            // '2025-05-22 02:05:00', // MODIFICAR PARA DATA E HORA ATUAL PARA TESTE
             $dadosLocacao['horasContratadas'],
             $dadosLocacao['cliente'],
             $dadosLocacao['registradoPor'],
