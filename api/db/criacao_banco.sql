@@ -60,8 +60,21 @@ create table item_locado (
   FOREIGN KEY (locacao_id) REFERENCES locacao(id)
 );
 
+-- Criação Devolução
+create table devolucao (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  data_hora_devolucao TIMESTAMP,
+  valor_pago DECIMAL(10,2) NOT NULL,
+  locacao_id INTEGER NOT NULL,
+  funcionario_id INTEGER NOT NULL,
+  FOREIGN KEY (locacao_id) REFERENCES locacao(id),
+  FOREIGN KEY (funcionario_id) REFERENCES funcionario(id)
+);
+
 -- Índices para as tabelas
 CREATE INDEX idx_locacao_cliente ON locacao(cliente_id);
 CREATE INDEX idx_locacao_funcionario ON locacao(funcionario_id);
 CREATE INDEX idx_item_locado_equipamento ON item_locado(equipamento_id);
 CREATE INDEX idx_item_locado_locacao ON item_locado(locacao_id);
+CREATE INDEX idx_devolucao_locacao ON devolucao(locacao_id);
+CREATE INDEX idx_devolucao_funcionario ON devolucao(funcionario_id);
