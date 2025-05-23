@@ -49,9 +49,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     };
   }
 
-  public exibirListagemDevolucao(
-    devolucoes: RespostaDevolucao[] | undefined
-  ): void {
+  public exibirListagemDevolucao(devolucoes: RespostaDevolucao[] | undefined): void {
     const tbody = document.getElementById("tabela-devolucao");
     if (!tbody) return;
 
@@ -59,26 +57,24 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     if (!devolucoes || devolucoes.length === 0) {
       const linha = document.createElement("tr");
       linha.innerHTML = `
-      <td colspan="7" class="text-center">Nenhuma devolucao encontrada.</td>
+      <td colspan="6" class="text-center">Nenhuma devolução encontrada.</td>
     `;
       tbody.appendChild(linha);
       return;
     }
+    
     for (const devolucao of devolucoes) {
       const row = document.createElement("tr");
 
       row.innerHTML = `
       <td class="text-start align-middle">${devolucao.codigo}</td>
       <td class="text-start align-middle">${formatarDataHora(
-        formatarDataHora(devolucao.dataHoraLocacao)
+        devolucao.dataHoraDevolucao
       )}</td>
-      <td class="text-start align-middle">${
-        this.locacaoSelecionada?.codigo
-      } ${this.locacaoSelecionada?.horasContratadas === 1 ? 'hora' : 'horas'}</td>
-      <td class="text-start align-middle">${
-        this.locacaoSelecionada?.cliente.nomeCompleto
-      }</td>
-      <td class="text-start align-middle">${devolucao.valorTotal}</td>
+      <td class="text-start align-middle">${devolucao.locacao.codigo}</td>
+      <td class="text-start align-middle">${devolucao.locacao.cliente.nomeCompleto}</td>
+      <td class="text-start align-middle">${devolucao.registradoPor.nome}</td>
+      <td class="text-start align-middle">R$ ${devolucao.valorPago.replace('.', ',')}</td>
     `;
 
       tbody.appendChild(row);
@@ -107,7 +103,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       return;
     }
 
-    locacoes.forEach((locacao) => {
+    for (const locacao of locacoes) {
       const tr = document.createElement("tr");
 
       const botaoSelecionar =
@@ -125,27 +121,27 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       <td>${botaoSelecionar}</td>
     `;
       container.appendChild(tr);
-    });
+    }
 
     if (locacoes.length === 1) {
       this.selecionarLocacao(locacoes[0]);
     }
 
     if (locacoes.length > 1) {
-      document.querySelectorAll(".btn-selecionar").forEach((btn) => {
+      for (const btn of document.querySelectorAll(".btn-selecionar")) {
         btn.addEventListener("click", (e) => {
           const target = e.currentTarget as HTMLButtonElement;
           const id = Number(target.dataset.id);
           const loc = locacoes.find((l) => l.codigo === id);
           if (loc) this.selecionarLocacao(loc);
         });
-      });
+      }
     }
   }
 
   selecionarLocacao(locacao: RespostaLocacao) {
     console.log("Locação selecionada:", locacao);
-    document.querySelectorAll("#tabela-locacoes-list tr").forEach((tr) => {
+    for (const tr of document.querySelectorAll("#tabela-locacoes-list tr")) {
       tr.classList.remove("selecionado");
       const btn = tr.querySelector(".btn-selecionar") as HTMLButtonElement;
       if (btn) {
@@ -154,7 +150,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         btn.classList.remove("btn-success");
         btn.classList.add("btn-primary");
       }
-    });
+    }
 
     const linhaSelecionada = Array.from(
       document.querySelectorAll("#tabela-locacoes-list tr")

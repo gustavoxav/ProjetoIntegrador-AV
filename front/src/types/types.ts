@@ -81,20 +81,21 @@ export type DadosDevolucao = {
 
 export type RespostaDevolucao = {
   codigo: number;
-  dataHoraLocacao: string;
-  horasContratadas: number;
-  dataHoraEntregaPrevista: string;
-  desconto: number;
-  valorTotal: number;
-  cliente: {
+  dataHoraDevolucao: string;
+  valorPago: string;
+  locacao: {
     codigo: number;
-    nomeCompleto: string;
+    dataHoraLocacao: string;
+    horasContratadas: number;
+    dataHoraEntregaPrevista: string;
+    cliente: {
+      codigo: number;
+      nomeCompleto: string;
+      cpf: string;
+    };
   };
   registradoPor: {
     codigo: number;
     nome: string;
   };
-  locacao: {
-    codigo: number;
-  }
 }
