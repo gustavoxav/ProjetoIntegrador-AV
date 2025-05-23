@@ -102,7 +102,7 @@ class RepositorioDevolucaoEmBDR implements RepositorioDevolucao {
         return $devolucao->toArray();
     }
     
-    public function obterTodos($filtro = null) {
+    public function obterTodos($filtro = null, $apenasLocacaoId = false) {
         $sql = '
             SELECT d.*, 
                 l.id as locacao_id, l.data_hora_locacao, l.cliente_id,
@@ -117,7 +117,11 @@ class RepositorioDevolucaoEmBDR implements RepositorioDevolucao {
         $params = [];
         
         if ($filtro) {
-            if (strlen($filtro) === 11) {
+            if ($apenasLocacaoId) {
+                $sql .= ' WHERE d.locacao_id = ?';
+                $params = [$filtro];
+            }
+            else if (strlen($filtro) === 11) {
                 $sql .= ' WHERE c.cpf = ?';
                 $params = [$filtro];
             } 

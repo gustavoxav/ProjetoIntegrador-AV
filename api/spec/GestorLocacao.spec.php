@@ -59,4 +59,23 @@ describe("GestorLocacao", function () {
 
         expect($locacao)->toBeNull();
     });
+    
+    describe("Método obterPorId específico para devoluções", function () {
+        it("Deve retornar uma locação específica pelo ID", function () {
+            $locacao = $this->locacaoRepo->obterPorId(1);
+            
+            expect($locacao)->not->toBe(null);
+            expect($locacao)->toBeAn('array');
+            expect($locacao['codigo'])->toEqual(1);
+            expect($locacao)->toContainKey('cliente');
+            expect($locacao)->toContainKey('registradoPor');
+            expect($locacao)->toContainKey('itens');
+        });
+        
+        it("Deve retornar null quando ID da locação não existe", function () {
+            $locacao = $this->locacaoRepo->obterPorId(999);
+            
+            expect($locacao)->toBe(null);
+        });
+    });
 });

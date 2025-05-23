@@ -166,9 +166,9 @@ $app->get(API_PREFIX . "/devolucoes/simulacao/:locacaoId", function ($req, $res)
 
   try {
     $repoLocacao = new RepositorioLocacaoEmBDR($pdo);
-    $locacoes = $repoLocacao->obterPorFiltro($locacaoId);
+    $locacao = $repoLocacao->obterPorId($locacaoId); 
     
-    if (empty($locacoes)) {
+    if (!$locacao) {
       $res->status(404)->json(["erro" => "Locação não encontrada"]);
       return;
     }

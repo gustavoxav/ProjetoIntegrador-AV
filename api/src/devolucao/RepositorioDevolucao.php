@@ -18,7 +18,8 @@ interface RepositorioDevolucao {
     /**
      * Obtém todas as devoluções ou filtra por locação ou funcionário
      * @param string|null $filtro Filtro opcional por código da locação ou funcionário
+     * @param bool $apenasLocacaoId Se true, busca apenas por locacao_id
      * @return array Lista de devoluções
      */
-    public function obterTodos($filtro = null);
+    public function obterTodos($filtro = null, $apenasLocacaoId = false);
 } 

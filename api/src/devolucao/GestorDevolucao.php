@@ -23,16 +23,10 @@ class GestorDevolucao {
         
         $this->verificarDevolucaoExistente($dadosDevolucao['locacaoId']);
         
-        $locacoes = $this->repositorioLocacao->obterPorFiltro($dadosDevolucao['locacaoId']);
+        $locacao = $this->repositorioLocacao->obterPorId($dadosDevolucao['locacaoId']);
         
-        if (empty($locacoes)) {
-            throw new Exception("Locação não encontrada");
-        }
-        
-        $locacao = $locacoes[0];
-        
-        if (empty($locacao)) {
-            throw new Exception("Locação não encontrada ou em formato inválido");
+        if (!$locacao) {
+            throw new Exception("Locação não encontrada para o ID: " . $dadosDevolucao['locacaoId']);
         }
         
         date_default_timezone_set('America/Sao_Paulo');
@@ -66,16 +60,10 @@ class GestorDevolucao {
             throw new Exception("Funcionário não informado");
         }
         
-        $locacoes = $this->repositorioLocacao->obterPorFiltro($dadosDevolucao['locacaoId']);
+        $locacao = $this->repositorioLocacao->obterPorId($dadosDevolucao['locacaoId']);
         
-        if (empty($locacoes)) {
-            throw new Exception("Locação não encontrada");
-        }
-        
-        $locacao = $locacoes[0];
-        
-        if (empty($locacao)) {
-            throw new Exception("Locação não encontrada ou em formato inválido");
+        if (!$locacao) {
+            throw new Exception("Locação não encontrada para o ID: " . $dadosDevolucao['locacaoId']);
         }
         
         $this->verificarDevolucaoExistente($dadosDevolucao['locacaoId']);
@@ -148,7 +136,7 @@ class GestorDevolucao {
      * @throws Exception Se a locação já tiver sido devolvida
      */
     private function verificarDevolucaoExistente($locacaoId) {
-        $devolucoes = $this->repositorio->obterTodos($locacaoId);
+        $devolucoes = $this->repositorio->obterTodos($locacaoId, true);
         
         if (!empty($devolucoes)) {
             throw new Exception("Esta locação já foi devolvida");

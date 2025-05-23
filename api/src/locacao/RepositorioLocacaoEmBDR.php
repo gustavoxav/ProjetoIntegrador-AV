@@ -148,10 +148,79 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
         return $locacoes;
     }
 
-    public function obterPorId($id)
-    {
-        $resultados = $this->obterPorFiltro($id);
-        return $resultados[0] ?? null;
+    public function obterPorId($id) {
+        $query = '
+        SELECT l.*, 
+            c.id as cliente_id, c.nome_completo as cliente_nome, 
+            c.telefone as cliente_telefone,
+            f.id as funcionario_id, f.nome as funcionario_nome
+        FROM locacao l
+        INNER JOIN cliente c ON l.cliente_id = c.id
+        INNER JOIN funcionario f ON l.funcionario_id = f.id
+        WHERE l.id = ?';
+
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([$id]);
+        $locacaoData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$locacaoData) {
+            return null;
+        }
+
+        $locacaoId = $locacaoData['id'];
+
+        $stmtItens = $this->pdo->prepare('
+            SELECT i.*, e.*
+            FROM item_locado i
+            INNER JOIN equipamento e ON i.equipamento_id = e.id
+            WHERE i.locacao_id = ?
+        ');
+
+        $stmtItens->execute([$locacaoId]);
+        $itens = $stmtItens->fetchAll(PDO::FETCH_ASSOC);
+
+        $cliente = [
+            'codigo' => $locacaoData['cliente_id'],
+            'nomeCompleto' => $locacaoData['cliente_nome'],
+            'telefone' => $locacaoData['cliente_telefone']
+        ];
+
+        $funcionario = [
+            'codigo' => $locacaoData['funcionario_id'],
+            'nome' => $locacaoData['funcionario_nome']
+        ];
+
+        $itensObj = [];
+        foreach ($itens as $item) {
+            $equipamento = [
+                'codigo' => $item['id'],
+                'modelo' => $item['modelo'],
+                'fabricante' => $item['fabricante'],
+                'descricao' => $item['descricao'],
+                'valorHora' => $item['valor_hora'],
+                'avarias' => $item['avarias'],
+                'disponivel' => (bool)$item['disponivel']
+            ];
+
+            $itemObj = new ItemLocado(
+                $item['id'],
+                $item['tempo_contratado'],
+                $equipamento
+            );
+
+            $itensObj[] = $itemObj;
+        }
+
+        $locacao = new Locacao(
+            $locacaoData['id'],
+            $locacaoData['data_hora_locacao'],
+            $locacaoData['horas_contratadas'],
+            $cliente,
+            $funcionario,
+            $itensObj
+        );
+
+        return $locacao->toArray();
     }
 
     public function obterTodos($filtro = null)

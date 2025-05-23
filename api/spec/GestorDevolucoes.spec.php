@@ -232,4 +232,50 @@ describe("GestorDevolucao", function () {
       //     expect($devolucoes)->toBeEmpty();
       // });
   });
+  
+  describe("Problema de várias locações do mesmo cliente", function () {
+    it("Deve impedir devolução da mesma locação duas vezes", function () {
+      $this->pdo->exec("
+        INSERT INTO locacao 
+        (id, data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, 
+        desconto, valor_total, cliente_id, funcionario_id)
+        VALUES 
+        (5, NOW(), 2, DATE_ADD(NOW(), INTERVAL 2 HOUR), 0, 30.00, {$this->clienteId}, {$this->funcionarioId})
+      ");
+      
+      $this->pdo->exec("
+        INSERT INTO item_locado
+        (tempo_contratado, subtotal, equipamento_id, locacao_id)
+        VALUES
+        (2, 30.00, {$this->equipamentoId}, 5)
+      ");
+      
+      $this->pdo->exec("
+        INSERT INTO devolucao
+        (data_hora_devolucao, valor_pago, locacao_id, funcionario_id)
+        VALUES
+        (NOW(), 30.00, 5, {$this->funcionarioId})
+      ");
+      
+      $gestor = new GestorDevolucao($this->devolucaoRepo, $this->locacaoRepo);
+      
+      $dadosDevolucao = [
+        'locacaoId' => 5,
+        'dataHoraDevolucao' => date('Y-m-d H:i:s'),
+        'registradoPor' => [
+          'codigo' => $this->funcionarioId
+        ]
+      ];
+      
+      $exception = null;
+      try {
+        $gestor->registrarDevolucao($dadosDevolucao);
+      } catch (Exception $e) {
+        $exception = $e;
+      }
+      
+      expect($exception)->not->toBe(null);
+      expect($exception->getMessage())->toContain('já foi devolvida');
+    });
+  });
 });
