@@ -1,6 +1,7 @@
 import { expect, describe, it, vi, beforeEach, afterEach } from "vitest";
 import { GestorLocacao } from "../src/gestor/gestor-locacao";
 import type { DadosLocacao, RespostaLocacao } from "../src/types/types";
+import { ErroDominio } from "../src/infra/ErroDominio";
 
 describe("Teste da classe Gestor Locacao", () => {
   beforeEach(() => {
@@ -18,6 +19,7 @@ describe("Teste da classe Gestor Locacao", () => {
       dataHoraEntregaPrevista: "2025-05-20T17:55:14Z",
       desconto: 10,
       valorTotal: 90,
+      devolvida: false,
       cliente: {
         codigo: 101,
         nomeCompleto: "João da Silva",
@@ -119,6 +121,7 @@ describe("Teste da classe Gestor Locacao", () => {
       dataHoraEntregaPrevista: "2025-05-20T17:55:14Z",
       desconto: 0,
       valorTotal: 100,
+      devolvida: false,
       cliente: {
         codigo: 101,
         nomeCompleto: "João da Silva",
@@ -165,5 +168,61 @@ describe("Teste da classe Gestor Locacao", () => {
         body: JSON.stringify(dadosLocacao),
       })
     );
+  });
+
+  it("Deve lançar erro quando falha ao obter locações", async () => {
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => ({ erro: "Erro interno do servidor" }),
+    });
+
+    const gestor = new GestorLocacao();
+
+    await expect(gestor.obterLocacoes()).rejects.toBeInstanceOf(ErroDominio);
+  });
+
+  it("Deve lançar erro quando falha ao obter locações com filtro", async () => {
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+      json: async () => ({}),
+    });
+
+    const gestor = new GestorLocacao();
+
+    await expect(gestor.obterLocacoes(999)).rejects.toBeInstanceOf(ErroDominio);
+  });
+
+  it("Deve lançar erro quando falha ao registrar locação", async () => {
+    const dadosLocacao: DadosLocacao = {
+      cliente: {
+        codigo: 101,
+      },
+      registradoPor: {
+        codigo: 201,
+      },
+      horasContratadas: 3,
+      itens: [
+        {
+          equipamento: {
+            codigo: 401,
+            descricao: "Furadeira",
+            valorHora: 10,
+            disponivel: true,
+          },
+        },
+      ],
+    };
+
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      json: async () => ({ erro: "Dados inválidos" }),
+    });
+
+    const gestor = new GestorLocacao();
+
+    await expect(gestor.registrarLocacao(dadosLocacao)).rejects.toBeInstanceOf(ErroDominio);
   });
 });
