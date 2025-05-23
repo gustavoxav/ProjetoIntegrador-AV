@@ -30,21 +30,43 @@ class CalculadoraPagamento {
         $dataHoraEntregaPrevista = new DateTime($locacao['dataHoraEntregaPrevista']);
         $dataHoraDevolucaoObj = new DateTime($dataHoraDevolucao);
         
-        $dataHoraEntregaComTolerancia = clone $dataHoraEntregaPrevista;
+        $dataHoraLocacaoCalculo = clone $dataHoraLocacao;
+        $dataHoraLocacaoCalculo->setTime(
+            (int)$dataHoraLocacao->format('H'),
+            (int)$dataHoraLocacao->format('i'),
+            0 // tirar os segs do calculo
+        );
+        
+        $dataHoraEntregaPrevistaCalculo = clone $dataHoraEntregaPrevista;
+        $dataHoraEntregaPrevistaCalculo->setTime(
+            (int)$dataHoraEntregaPrevista->format('H'),
+            (int)$dataHoraEntregaPrevista->format('i'),
+            0
+        );
+        
+        $dataHoraDevolucaoCalculo = clone $dataHoraDevolucaoObj;
+        $dataHoraDevolucaoCalculo->setTime(
+            (int)$dataHoraDevolucaoObj->format('H'),
+            (int)$dataHoraDevolucaoObj->format('i'),
+            0
+        );
+        
+        $dataHoraEntregaComTolerancia = clone $dataHoraEntregaPrevistaCalculo;
         $dataHoraEntregaComTolerancia->add(new DateInterval('PT15M'));
         
-        if ($dataHoraDevolucaoObj <= $dataHoraEntregaComTolerancia) {
+        if ($dataHoraDevolucaoCalculo <= $dataHoraEntregaComTolerancia) {
             $horasReais = (int)$locacao['horasContratadas'];
         } else {
-            $timestampLocacao = $dataHoraLocacao->getTimestamp();
-            $timestampDevolucao = $dataHoraDevolucaoObj->getTimestamp();
+            $diferencaEmMinutos = floor(($dataHoraDevolucaoCalculo->getTimestamp() - $dataHoraLocacaoCalculo->getTimestamp()) / 60);
+            $horasCompletas = floor($diferencaEmMinutos / 60);
+            $minutosExcedentes = $diferencaEmMinutos % 60;
             
-            $segundosTotais = $timestampDevolucao - $timestampLocacao;
-            
-            $horasReais = ceil($segundosTotais / 3600);
+            $horasReais = $horasCompletas;
+            if ($minutosExcedentes > 0) {
+                $horasReais += 1;
+            }
         }
         
-
         $valorTotal = 0;
         
         foreach ($locacao['itens'] as $item) {

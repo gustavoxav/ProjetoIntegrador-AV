@@ -51,8 +51,25 @@ class Locacao {
         date_default_timezone_set('America/Sao_Paulo');
         
         $dataHora = new DateTime($this->dataHoraLocacao);
-        $dataHora->add(new DateInterval('PT' . $this->horasContratadas . 'H'));
-        return $dataHora->format('Y-m-d H:i:s');
+        
+        $dataHoraCalculo = clone $dataHora;
+        $dataHoraCalculo->setTime(
+            (int)$dataHora->format('H'),
+            (int)$dataHora->format('i'),
+            0
+        );
+        
+        $dataHoraCalculo->add(new DateInterval('PT' . $this->horasContratadas . 'H'));
+        
+        $segundos = (int)$dataHora->format('s');
+        $resultado = clone $dataHoraCalculo;
+        $resultado->setTime(
+            (int)$dataHoraCalculo->format('H'),
+            (int)$dataHoraCalculo->format('i'),
+            $segundos
+        );
+        
+        return $resultado->format('Y-m-d H:i:s');
     }
 
     public function getCodigo() {

@@ -363,9 +363,16 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   
   atualizarDatas(): void {
     const agora = new Date();
+    
+    const agoraCalculo = new Date(agora);
+    agoraCalculo.setSeconds(0, 0);
+    
     const horasLocacao = this.obterHorasLocacao();
     
-    const dataDevolucao = new Date(agora.getTime() + (horasLocacao * 60 * 60 * 1000));
+    const dataDevolucaoCalculo = new Date(agoraCalculo.getTime() + (horasLocacao * 60 * 60 * 1000));
+    
+    const dataDevolucao = new Date(dataDevolucaoCalculo);
+    dataDevolucao.setSeconds(agora.getSeconds(), agora.getMilliseconds());
     
     const formatarData = (data: Date): string => {
       return new Intl.DateTimeFormat('pt-BR', {
@@ -373,7 +380,8 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
         month: '2-digit',
         year: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        second: '2-digit'
       }).format(data);
     };
     
