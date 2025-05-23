@@ -288,6 +288,9 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     const horasContratadasEl = document.getElementById("horas-contratadas");
     if (horasContratadasEl) horasContratadasEl.textContent = horasLocacao.toString();
     
+    const horasTextoEl = document.getElementById("horas-texto");
+    if (horasTextoEl) horasTextoEl.textContent = horasLocacao === 1 ? "hora" : "horas";
+    
     const tabelaEquipamentos = document.getElementById("tabela-equipamentos");
     if (tabelaEquipamentos) {
       if (this.equipamentosSelecionados.length === 0) {

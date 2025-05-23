@@ -134,7 +134,7 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
       <td class="text-start align-middle">${formatarDataHora(
         locacao.dataHoraLocacao
       )}</td>
-      <td class="text-start align-middle">${locacao.horasContratadas} horas</td>
+      <td class="text-start align-middle">${locacao.horasContratadas} ${locacao.horasContratadas === 1 ? 'hora' : 'horas'}</td>
       <td class="text-start align-middle">${formatarDataHora(
         locacao.dataHoraEntregaPrevista
       )}</td>

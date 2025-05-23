@@ -74,7 +74,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       )}</td>
       <td class="text-start align-middle">${
         this.locacaoSelecionada?.codigo
-      } horas</td>
+      } ${this.locacaoSelecionada?.horasContratadas === 1 ? 'hora' : 'horas'}</td>
       <td class="text-start align-middle">${
         this.locacaoSelecionada?.cliente.nomeCompleto
       }</td>
