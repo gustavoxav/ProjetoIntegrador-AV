@@ -39,6 +39,7 @@ export type RespostaLocacao = {
   dataHoraEntregaPrevista: string;
   desconto: number;
   valorTotal: number;
+  devolvida: boolean;
   cliente: {
     codigo: number;
     nomeCompleto: string;

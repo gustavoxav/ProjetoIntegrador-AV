@@ -72,10 +72,12 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
         SELECT l.*, 
             c.id as cliente_id, c.nome_completo as cliente_nome, 
             c.telefone as cliente_telefone,
-            f.id as funcionario_id, f.nome as funcionario_nome
+            f.id as funcionario_id, f.nome as funcionario_nome,
+            d.id as devolucao_id
         FROM locacao l
         INNER JOIN cliente c ON l.cliente_id = c.id
         INNER JOIN funcionario f ON l.funcionario_id = f.id
+        LEFT JOIN devolucao d ON l.id = d.locacao_id
         ' . $where;
 
         $stmt = $this->pdo->prepare($query);
@@ -142,7 +144,9 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
                 $itensObj
             );
 
-            $locacoes[] = $locacao->toArray();
+            $locacaoArray = $locacao->toArray();
+            $locacaoArray['devolvida'] = !is_null($locacaoData['devolucao_id']);
+            $locacoes[] = $locacaoArray;
         }
 
         return $locacoes;
@@ -228,10 +232,12 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
         $sql = '
             SELECT l.*, 
             c.id as cliente_id, c.nome_completo as cliente_nome, c.telefone as cliente_telefone,
-            f.id as funcionario_id, f.nome as funcionario_nome
+            f.id as funcionario_id, f.nome as funcionario_nome,
+            d.id as devolucao_id
             FROM locacao l
             INNER JOIN cliente c ON l.cliente_id = c.id
             INNER JOIN funcionario f ON l.funcionario_id = f.id
+            LEFT JOIN devolucao d ON l.id = d.locacao_id
         ';
 
         $params = [];
@@ -249,7 +255,9 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
 
         $locacoes = [];
         foreach ($locacoesData as $locacaoData) {
-            $locacoes[] = $this->obterPorId($locacaoData['id']);
+            $locacao = $this->obterPorId($locacaoData['id']);
+            $locacao['devolvida'] = !is_null($locacaoData['devolucao_id']);
+            $locacoes[] = $locacao;
         }
 
         return $locacoes;

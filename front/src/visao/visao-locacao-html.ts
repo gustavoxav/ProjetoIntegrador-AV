@@ -129,6 +129,16 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
     for (const locacao of locacoes) {
       const row = document.createElement("tr");
 
+      const acaoColuna = locacao.devolvida 
+        ? `<span class="btn btn-sm btn-success" style="pointer-events: none; cursor: default;">Devolvida</span>`
+        : `<a 
+            href="/devolucao-add?codigo=${locacao.codigo}" 
+            class="btn btn-sm btn-outline-dark"
+            data-route
+          >
+            Devolver
+          </a>`;
+
       row.innerHTML = `
       <td class="text-start align-middle">${locacao.codigo}</td>
       <td class="text-start align-middle">${formatarDataHora(
@@ -141,13 +151,7 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
       <td class="text-start align-middle">${locacao.cliente.nomeCompleto}</td>
       <td class="text-start align-middle">${locacao.cliente.telefone}</td>
       <td class="text-start align-middle">
-        <a 
-          href="/devolucao-add?codigo=${locacao.codigo}" 
-          class="btn btn-sm btn-outline-dark"
-          data-route
-        >
-          Devolver
-        </a>
+        ${acaoColuna}
       </td>
     `;
 
