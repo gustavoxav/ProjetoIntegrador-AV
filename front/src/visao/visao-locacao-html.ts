@@ -8,12 +8,8 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
     const horas =
       Number((document.getElementById("hora") as HTMLInputElement)?.value) || 0;
 
-    const equipamentos = this.obterEquipamentos();
-    console.log(`Equips selecionados: ${equipamentos.length}`, equipamentos);
-
     return {
       horas,
-      equipamentos,
       subtotal:
         document.getElementById("subtotal-itens")?.textContent ?? "0,00",
       desconto: document.getElementById("desconto")?.textContent ?? "0,00",
@@ -22,66 +18,6 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
       dataDevolucao:
         document.getElementById("data-devolucao")?.textContent ?? "-",
     };
-  }
-
-  private obterEquipamentos(): Array<{
-    codigo: number;
-    descricao: string;
-    valor: number;
-  }> {
-    type EquipamentoTemp = { codigo: number; descricao: string; valor: number };
-    const equipamentos: EquipamentoTemp[] = [];
-
-    console.log("Buscando equipamentos na tabela");
-
-    const tabela = document.getElementById("tabela-equipamentos");
-    console.log("Tabela de equipamentos encontrada?", !!tabela);
-
-    if (tabela) {
-      const linhas = tabela.querySelectorAll("tbody tr");
-      console.log(
-        `Encontradas ${linhas.length} linhas na tabela de equipamentos`
-      );
-
-      for (const linha of Array.from(linhas)) {
-        if (linha.querySelector("th") || linha.querySelector("td[colspan]")) {
-          continue;
-        }
-
-        try {
-          const colunas = linha.querySelectorAll("td");
-          if (colunas.length >= 2) {
-            const descricao = colunas[0].textContent?.trim() ?? "";
-
-            const valorTexto = colunas[1].textContent ?? "";
-            const valorMatch = valorTexto.match(/R\$ ([\d.,]+)/);
-            const valor = valorMatch
-              ? Number(valorMatch[1].replace(",", "."))
-              : 0;
-
-            const codigo = Number(linha.getAttribute("equip-codigo")) || 0;
-
-            console.log(
-              `Processando linha: "${descricao}" -> código ${codigo}, valor ${valor}`
-            );
-
-            if (codigo > 0) {
-              equipamentos.push({
-                codigo,
-                descricao,
-                valor,
-              });
-              console.log(
-                `Equipamento adicionado: ${descricao} (código ${codigo})`
-              );
-            }
-          }
-        } catch (err) {
-          console.error("Erro ao processar linha:", err);
-        }
-      }
-    }
-    return equipamentos;
   }
 
   public exibirListagemLocacao(locacoes: RespostaLocacao[] | undefined): void {

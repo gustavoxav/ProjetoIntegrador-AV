@@ -4,6 +4,7 @@ import type { VisaoLocacao } from "../visao/visao-locacao.js";
 import { VisaoCliente } from "../visao/visao-clientes.js";
 import { VisaoFuncionario } from "../visao/visao-funcionario.js";
 import { VisaoEquipamento } from "../visao/visao-equipamento.js";
+import { Equipamento } from "../models/Equipamento.js";
 
 export class ControladoraLocacao {
   private readonly gestor: GestorLocacao;
@@ -24,6 +25,8 @@ export class ControladoraLocacao {
         ...this.visao.obterDadosLocacao(),
         cliente: this.visaoCliente?.obterDadosCliente(),
         funcionario: this.visaoFuncionario?.obterDadosFuncionario(),
+        equipamentos:
+          this.visaoEquipamento?.obterEquipamentosSelecionados() || [],
       };
       console.log("Dados locação obtidos:", dadosLocacao);
 
@@ -86,7 +89,7 @@ export class ControladoraLocacao {
           equipamento: {
             codigo: eq.codigo,
             descricao: eq.descricao,
-            valorHora: eq.valor,
+            valorHora: eq.valorHora,
             disponivel: true,
           },
         })),
