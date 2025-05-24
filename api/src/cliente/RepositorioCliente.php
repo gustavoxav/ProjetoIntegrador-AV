@@ -15,7 +15,7 @@ public function buscarClienteFiltro(string|int $parametro): Cliente|null;
  * Buscar todos os clientes. Retorna null caso não encontre.
  *
  * @throws \RepositorioException
- * @return array|null
+ * @return Cliente[]|null
  */
 public function buscarClientes(): array|null;
 }

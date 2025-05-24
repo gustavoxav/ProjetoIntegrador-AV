@@ -6,6 +6,12 @@ class RepositorioClienteEmBDR implements RepositorioCliente
     private PDO $pdo
   ) {}
 
+  /**
+   * Buscar todos os clientes. Retorna null caso não encontre.
+   *
+   * @throws \RepositorioException
+   * @return Cliente[]|null
+   */
   public function buscarClientes(): array|null
   {
     try {

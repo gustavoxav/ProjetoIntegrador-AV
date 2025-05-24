@@ -1,19 +1,23 @@
 <?php
 
 class ItemLocado {
-    private $codigo;
-    private $tempoContratado;
-    private $subtotal;
-    private $equipamento;
+    private int $codigo;
+    private int $tempoContratado;
+    private float $subtotal;
+    /** @var array<string,float|int> */
+    private array $equipamento;
 
-    public function __construct($codigo, $tempoContratado, $equipamento) {
+    /**
+     * @param array<string,float|int> $equipamento
+     */
+    public function __construct(int $codigo, int $tempoContratado, array $equipamento) {
         $this->codigo = $codigo;
         $this->tempoContratado = $tempoContratado;
         $this->equipamento = $equipamento;
         $this->subtotal = $this->calcularSubtotal();
     }
 
-    public function calcularSubtotal() {
+    public function calcularSubtotal(): float {
         if (isset($this->equipamento['calcularValorHora'])) {
             return $this->equipamento['calcularValorHora'];
         }
@@ -22,23 +26,29 @@ class ItemLocado {
         return $valorHora * $this->tempoContratado;
     }
 
-    public function getCodigo() {
+    public function getCodigo(): int {
         return $this->codigo;
     }
 
-    public function getTempoContratado() {
+    public function getTempoContratado(): int {
         return $this->tempoContratado;
     }
 
-    public function getSubtotal() {
+    public function getSubtotal(): float {
         return $this->subtotal;
     }
 
-    public function getEquipamento() {
+    /**
+     * @return array<string,float|int>
+     */
+    public function getEquipamento(): array {
         return $this->equipamento;
     }
 
-    public function toArray() {
+    /**
+     * @return array<string,int|float|array<string,float|int>>
+     */
+    public function toArray(): array {
         return [
             'codigo' => $this->codigo,
             'tempoContratado' => $this->tempoContratado,
