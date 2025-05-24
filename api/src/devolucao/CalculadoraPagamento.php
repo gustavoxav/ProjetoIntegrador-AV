@@ -4,11 +4,21 @@ class CalculadoraPagamento {
     /**
      * Calcula o valor a ser pago na devolução
      * 
-     * @param array $locacao Dados da locação
+     * @param array{
+     *     dataHoraLocacao: string,
+     *     horasContratadas: int,
+     *     dataHoraEntregaPrevista: string,
+     *     itens: array<int, array{
+     *         equipamento: array{
+     *             valorHora: float
+     *         }
+     *     }>
+     * } $locacao Dados da locação
      * @param string $dataHoraDevolucao Data e hora da devolução
      * @return float Valor a ser pago
+     * @throws Exception erro
      */
-    public function calcularValorPagamento($locacao, $dataHoraDevolucao) {
+    public function calcularValorPagamento(array $locacao, string $dataHoraDevolucao): float {
         if (!isset($locacao['dataHoraLocacao']) || empty($locacao['dataHoraLocacao'])) {
             throw new Exception("Data e hora da locação não informados");
         }

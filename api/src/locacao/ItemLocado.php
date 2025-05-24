@@ -4,11 +4,11 @@ class ItemLocado {
     private int $codigo;
     private int $tempoContratado;
     private float $subtotal;
-    /** @var array<string,float|int> */
+    /** @var array<string,float|int|string|bool> */
     private array $equipamento;
 
     /**
-     * @param array<string,float|int> $equipamento
+     * @param array<string,float|int|string|bool> $equipamento
      */
     public function __construct(int $codigo, int $tempoContratado, array $equipamento) {
         $this->codigo = $codigo;
@@ -39,14 +39,14 @@ class ItemLocado {
     }
 
     /**
-     * @return array<string,float|int>
+     * @return array<string,float|int|string|bool>
      */
     public function getEquipamento(): array {
         return $this->equipamento;
     }
 
     /**
-     * @return array<string,int|float|array<string,float|int>>
+     * @return array<string,int|float|array<string,float|int|string|bool>>
      */
     public function toArray(): array {
         return [

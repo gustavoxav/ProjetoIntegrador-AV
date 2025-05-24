@@ -1,17 +1,35 @@
 <?php
 
 class Locacao {
-    private $codigo;
-    private $dataHoraLocacao;
-    private $horasContratadas;
-    private $dataHoraEntregaPrevista;
-    private $desconto;
-    private $valorTotal;
-    private $cliente;
-    private $registradoPor;
-    private $itens = [];
+    private ?int $codigo;
+    private string $dataHoraLocacao;
+    private int $horasContratadas;
+    private string $dataHoraEntregaPrevista;
+    private float $desconto;
+    private float $valorTotal;
+    /** @var array{codigo: int, nomeCompleto?: string, telefone?: string} */
+    private array $cliente;
+    /** @var array{codigo: int, nome?: string} */
+    private array $registradoPor;
+    /** @var array<int,ItemLocado> */
+    private array $itens = [];
 
-    public function __construct($codigo, $dataHoraLocacao, $horasContratadas, $cliente, $registradoPor, $itens = []) {
+    /**
+     * @param ?int $codigo
+     * @param string $dataHoraLocacao
+     * @param int $horasContratadas
+     * @param array{codigo: int, nomeCompleto?: string, telefone?: string} $cliente
+     * @param array{codigo: int, nome?: string} $registradoPor
+     * @param array<int,ItemLocado> $itens
+     */
+    public function __construct(
+        ?int $codigo,
+        string $dataHoraLocacao,
+        int $horasContratadas,
+        array $cliente,
+        array $registradoPor,
+        array $itens = []
+    ) {
         $this->codigo = $codigo;
         $this->dataHoraLocacao = $dataHoraLocacao;
         $this->horasContratadas = $horasContratadas;
@@ -24,7 +42,7 @@ class Locacao {
         $this->valorTotal = $this->calcularTotal();
     }
 
-    public function calcularTotal() {
+    public function calcularTotal(): float {
         $total = 0;
         foreach ($this->itens as $item) {
             $total += $item->getSubtotal();
@@ -32,14 +50,14 @@ class Locacao {
         return $total - $this->desconto;
     }
 
-    public function calcularDesconto() {
+    public function calcularDesconto(): float {
         if ($this->horasContratadas > 2) {
             return $this->calcularSubtotalBruto() * 0.1;
         }
         return 0;
     }
     
-    private function calcularSubtotalBruto() {
+    private function calcularSubtotalBruto(): float {
         $total = 0;
         foreach ($this->itens as $item) {
             $total += $item->getSubtotal();
@@ -47,7 +65,7 @@ class Locacao {
         return $total;
     }
 
-    public function calcularHoraEntrega() {
+    public function calcularHoraEntrega(): string {
         date_default_timezone_set('America/Sao_Paulo');
         
         $dataHora = new DateTime($this->dataHoraLocacao);
@@ -72,43 +90,65 @@ class Locacao {
         return $resultado->format('Y-m-d H:i:s');
     }
 
-    public function getCodigo() {
+    public function getCodigo(): ?int {
         return $this->codigo;
     }
 
-    public function getDataHoraLocacao() {
+    public function getDataHoraLocacao(): string {
         return $this->dataHoraLocacao;
     }
 
-    public function getHorasContratadas() {
+    public function getHorasContratadas(): int {
         return $this->horasContratadas;
     }
 
-    public function getDataHoraEntregaPrevista() {
+    public function getDataHoraEntregaPrevista(): string {
         return $this->dataHoraEntregaPrevista;
     }
 
-    public function getDesconto() {
+    public function getDesconto(): float {
         return $this->desconto;
     }
 
-    public function getValorTotal() {
+    public function getValorTotal(): float {
         return $this->valorTotal;
     }
 
-    public function getCliente() {
+    /**
+     * @return array{codigo: int, nomeCompleto?: string, telefone?: string}
+     */
+    public function getCliente(): array {
         return $this->cliente;
     }
 
-    public function getRegistradoPor() {
+    /**
+     * @return array{codigo: int, nome?: string}
+     */
+    public function getRegistradoPor(): array {
         return $this->registradoPor;
     }
 
-    public function getItens() {
+    /**
+     * @return array<int,ItemLocado>
+     */
+    public function getItens(): array {
         return $this->itens;
     }
 
-    public function toArray() {
+    /**
+     * @return array{
+     *   codigo: ?int,
+     *   dataHoraLocacao: string,
+     *   horasContratadas: int,
+     *   dataHoraEntregaPrevista: string,
+     *   desconto: float,
+     *   valorTotal: float,
+     *   cliente: array{codigo: int, nomeCompleto?: string, telefone?: string},
+     *   registradoPor: array{codigo: int, nome?: string},
+     *   itens: array<int,array<string,mixed>>
+     * }
+     */
+    public function toArray(): array {
         $itens = [];
         foreach ($this->itens as $item) {
             $itens[] = $item->toArray();

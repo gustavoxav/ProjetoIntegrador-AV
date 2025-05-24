@@ -1,13 +1,28 @@
 <?php
 
 class Devolucao {
-    private $codigo;
-    private $dataHoraDevolucao;
-    private $valorPago;
-    private $locacao;
-    private $registradoPor;
+    private ?int $codigo;
+    private string $dataHoraDevolucao;
+    private float $valorPago;
+    /** @var array<string,mixed> */
+    private array $locacao;
+    /** @var array{codigo: int, nome?: string} */
+    private array $registradoPor;
 
-    public function __construct($codigo, $dataHoraDevolucao, $valorPago, $locacao, $registradoPor) {
+    /**
+     * @param ?int $codigo
+     * @param string $dataHoraDevolucao
+     * @param float $valorPago
+     * @param array<string,mixed> $locacao
+     * @param array{codigo: int, nome?: string} $registradoPor
+     */
+    public function __construct(
+        ?int $codigo,
+        string $dataHoraDevolucao,
+        float $valorPago,
+        array $locacao,
+        array $registradoPor
+    ) {
         $this->codigo = $codigo;
         $this->dataHoraDevolucao = $dataHoraDevolucao;
         $this->valorPago = $valorPago;
@@ -15,27 +30,42 @@ class Devolucao {
         $this->registradoPor = $registradoPor;
     }
 
-    public function getCodigo() {
+    public function getCodigo(): ?int {
         return $this->codigo;
     }
 
-    public function getDataHoraDevolucao() {
+    public function getDataHoraDevolucao(): string {
         return $this->dataHoraDevolucao;
     }
 
-    public function getValorPago() {
+    public function getValorPago(): float {
         return $this->valorPago;
     }
 
-    public function getLocacao() {
+    /**
+     * @return array<string,mixed>
+     */
+    public function getLocacao(): array {
         return $this->locacao;
     }
 
-    public function getRegistradoPor() {
+    /**
+     * @return array{codigo: int, nome?: string}
+     */
+    public function getRegistradoPor(): array {
         return $this->registradoPor;
     }
 
-    public function toArray() {
+    /**
+     * @return array{
+     *   codigo: ?int,
+     *   dataHoraDevolucao: string,
+     *   valorPago: float,
+     *   locacao: array<string,mixed>,
+     *   registradoPor: array{codigo: int, nome?: string}
+     * }
+     */
+    public function toArray(): array {
         return [
             'codigo' => $this->codigo,
             'dataHoraDevolucao' => $this->dataHoraDevolucao,

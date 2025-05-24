@@ -5,3 +5,4 @@ parameters:
     excludePaths:
         - spec
     inferPrivatePropertyTypeFromConstructor: true
+    treatPhpDocTypesAsCertain: false
