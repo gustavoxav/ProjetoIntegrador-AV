@@ -22,37 +22,34 @@ export class ControladoraDevolucao {
 
   public async registrarDevolucao(): Promise<void> {
     try {
-      const dadosDevolucao = {
-        locacaoId: this.visao.obterLocacaoId(),
-        funcionario: this.visaoFuncionario?.obterDadosFuncionario(),
-      };
-      console.log("Dados devolução obtidos:", dadosDevolucao);
-
-      if (!dadosDevolucao.locacaoId) {
+      const dadosSimulacao = this.visao.obterDadosDevolucao();
+      const dadosFuncionario = this.visaoFuncionario?.obterDadosFuncionario()
+      if (!dadosSimulacao?.locacao.codigo) {
         this.visao.exibirMensagemErro("Selecione uma locação existente");
         return;
       }
 
-      if (!dadosDevolucao.funcionario) {
+      if (!dadosFuncionario) {
         this.visao.exibirMensagemErro(
           "Selecione um funcionário responsável pela devolução"
         );
         return;
       }
 
-      const dadosFormatados = {
-        locacaoId: Number(dadosDevolucao.locacaoId),
-        registradoPor: dadosDevolucao.funcionario,
-        dataHoraDevolucao: "2025-05-24 01:46:00",
-        valorPago: 0,
+      const dadosDevolucaoFormatado = {
+        locacaoId: Number(dadosSimulacao?.locacao.codigo),
+        registradoPor: dadosFuncionario,
+        dataHoraDevolucao: dadosSimulacao?.dataHoraDevolucao,
+        valorPago: dadosSimulacao?.valorPago,
       };
+      console.log("Dados devolução obtidos:", dadosDevolucaoFormatado);
 
       console.log(
         "Enviando para API:",
         JSON.stringify(
           {
-            locacaoId: Number(dadosDevolucao.locacaoId),
-            registradoPor: dadosDevolucao.funcionario,
+            locacaoId: Number(dadosDevolucaoFormatado.locacaoId),
+            registradoPor: dadosDevolucaoFormatado.registradoPor,
           },
           null,
           2
@@ -60,7 +57,9 @@ export class ControladoraDevolucao {
       );
 
       try {
-        const resultado = await this.gestor.registrarDevolucao(dadosFormatados);
+        const resultado = await this.gestor.registrarDevolucao(
+          dadosDevolucaoFormatado
+        );
         console.log("Cadastro realizado com sucesso:", resultado);
 
         this.visao.exibirMensagemSucesso("Devolução registrada com sucesso!");
@@ -136,8 +135,11 @@ export class ControladoraDevolucao {
       const equipamentos = response.locacao.itens.map(
         (item) => item.equipamento
       );
-        this.visaoEquipamento?.exibirEquipamentosDevolucao(equipamentos, response.locacao.horasContratadas);
-      
+      this.visaoEquipamento?.exibirEquipamentosDevolucao(
+        equipamentos,
+        response.locacao.horasContratadas
+      );
+
       this.visao.preencherDevolucao(response);
     } catch (error: any) {
       if (error instanceof ErroDominio) {

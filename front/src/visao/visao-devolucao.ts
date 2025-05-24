@@ -5,7 +5,7 @@ import type {
 } from "../types/types";
 
 export interface VisaoDevolucao {
-  obterLocacaoId(): number | null;
+  obterDadosDevolucao(): RespostaSimulacaoDevolucao | null;
   exibirListagemDevolucao(devolucoes: RespostaDevolucao[] | undefined): void;
   selecionarLocacao(locacao: RespostaLocacao): void;
   aoSelecionarLocacao(callback: (locacao: RespostaLocacao) => void): void;

@@ -8,11 +8,11 @@ import type {
 import { formatarDataHora } from "../infra/utils.js";
 
 export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
-  private locacaoSelecionada: RespostaLocacao | null = null;
+  private devolucaoData: RespostaSimulacaoDevolucao | null = null;
   private callbackSelecionarLocacao?: (locacao: RespostaLocacao) => void;
 
-  obterLocacaoId() {
-    return this.locacaoSelecionada?.codigo ?? null;
+  obterDadosDevolucao() {
+    return this.devolucaoData;
   }
 
   aoSelecionarLocacao(callback: (locacao: RespostaLocacao) => void): void {
@@ -115,6 +115,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
 
   public preencherDevolucao(devolucao: RespostaSimulacaoDevolucao) {
     console.log("Preenchendo devolução:", devolucao);
+    this.devolucaoData = devolucao;
     this.atualizarValoresTotais({
       horasContratadas: devolucao.locacao.horasContratadas,
       desconto: devolucao.locacao.desconto,
@@ -125,7 +126,6 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
 
   selecionarLocacao(locacao: RespostaLocacao) {
     console.log("Locação selecionada:", locacao);
-    this.locacaoSelecionada = locacao;
     this.callbackSelecionarLocacao?.(locacao);
     for (const tr of document.querySelectorAll("#tabela-locacoes-list tr")) {
       tr.classList.remove("selecionado");
