@@ -55,7 +55,7 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
             }
 
             $this->pdo->commit();
-            return $this->obterPorId($codigoLocacao);
+            return $this->obterPorId((int)$codigoLocacao);
         } catch (Exception $e) {
             $this->pdo->rollBack();
             throw $e;
@@ -64,7 +64,7 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
 
     public function obterPorFiltro($filtro)
     {
-        $where = (strlen($filtro) === 11)
+        $where = (strlen((string)$filtro) === 11)
             ? 'WHERE c.cpf = ?'
             : 'WHERE l.id = ?';
 

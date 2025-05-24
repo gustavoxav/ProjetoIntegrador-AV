@@ -10,7 +10,7 @@ class GestorLocacao {
      * Registra uma nova locação no sistema
      * 
      * @param array $dadosLocacao Array com os dados da locação
-     * @return Locacao Dados da locação registrada
+     * @return array Dados da locação registrada
      * @throws Exception Se houver algum erro durante o registro
      */
     public function registrarLocacao($dadosLocacao) {

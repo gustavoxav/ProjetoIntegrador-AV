@@ -4,14 +4,14 @@ interface RepositorioDevolucao {
     /**
      * Salva uma devolução no repositório
      * @param Devolucao $devolucao A devolução a ser salva
-     * @return Devolucao A devolução salva com código gerado
+     * @return array A devolução salva com código gerado
      */
     public function salvar(Devolucao $devolucao);
     
     /**
      * Obtém uma devolução pelo código
      * @param int $codigo O código da devolução
-     * @return Devolucao|null A devolução encontrada ou null se não existir
+     * @return array|null A devolução encontrada ou null se não existir
      */
     public function obterPorId($codigo);
     

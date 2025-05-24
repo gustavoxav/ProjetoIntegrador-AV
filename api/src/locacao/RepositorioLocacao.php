@@ -4,21 +4,21 @@ interface RepositorioLocacao {
     /**
      * Salva uma locação no repositório
      * @param Locacao $locacao A locação a ser salva
-     * @return Locacao A locação salva com código gerado
+     * @return array A locação salva com código gerado
      */
     public function salvar(Locacao $locacao);
     
     /**
      * Obtém uma locação pelo código
      * @param int $filtro O código da locação ou CPF do cliente
-     * @return Locacao[]|null A locação encontrada ou null se não existir
+     * @return array A locação encontrada ou array vazio se não existir
      */
     public function obterPorFiltro($filtro);
     
     /**
      * Obtém uma locação pelo ID
      * @param int $id O código da locação
-     * @return Locacao|null A locação encontrada ou null se não existir
+     * @return array|null A locação encontrada ou null se não existir
      */
     public function obterPorId($id);
     

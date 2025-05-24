@@ -46,7 +46,7 @@ class GestorDevolucao {
      * Registra uma nova devolução no sistema
      * 
      * @param array $dadosDevolucao Array com os dados da devolução
-     * @return Devolucao Dados da devolução registrada
+     * @return array Dados da devolução registrada
      * @throws Exception Se houver algum erro durante o registro
      */
     public function registrarDevolucao($dadosDevolucao) {
@@ -143,7 +143,7 @@ class GestorDevolucao {
      * @throws Exception Se a locação já tiver sido devolvida
      */
     private function verificarDevolucaoExistente($locacaoId) {
-        $devolucoes = $this->repositorio->obterTodos($locacaoId, true);
+        $devolucoes = $this->repositorio->obterTodos((string)$locacaoId, true);
         
         if (!empty($devolucoes)) {
             throw new Exception("Esta locação já foi devolvida");
