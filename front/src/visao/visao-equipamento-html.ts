@@ -58,7 +58,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   filtroEquipamento(): { filtro: string } {
     const valor = (document.getElementById("equipamento") as HTMLInputElement)
       .value;
-    console.log("equipamento", { filtro: valor });
     return { filtro: valor };
   }
 
@@ -180,7 +179,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   }
 
   retornarEquipamento(equipamento: Equipamento): void {
-    console.log("retornarEquipamento", equipamento);
     const ul = document.getElementById("mostrar-equipamento");
     if (!ul) return;
 
@@ -248,7 +246,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   }
 
   adicionarEquipamento(equipamento: Equipamento): void {
-    console.log("adicionarEquipament TESTE", equipamento);
     if (!equipamento.disponivel) return;
 
     const itemJaSelecionado = this.equipamentosSelecionados.some(
@@ -318,7 +315,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   ): void {
     const horasLocacao = horas ?? this.obterHorasLocacao();
     const equipamentosToUse = equipamentos || this.equipamentosSelecionados;
-    console.log("atualizarSubtotal", equipamentosToUse, horasLocacao);
     this.atualizarHorasNaTela(horasLocacao);
     if (!somenteVisualizacao) {
       this.atualizarValoresTotais(equipamentosToUse, horasLocacao);
@@ -381,16 +377,13 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     }
 
     tabelaEquipamentos.innerHTML = "";
-    console.log("PASSOU AQUI");
     for (const equipamento of equipamentos) {
-      console.log("PASSOU AQUI2");
 
       const tr = this.criarLinhaEquipamento(
         equipamento,
         horas,
         somenteVisualizacao
       );
-      console.log("Adicionando linha: ", tr.outerHTML);
       tabelaEquipamentos.appendChild(tr);
     }
   }
@@ -400,7 +393,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     horas: number,
     somenteVisualizacao: boolean = false
   ): HTMLTableRowElement {
-    console.log("PASSOU AQUI3");
 
     const temDesconto = horas > 2;
     const valorTotal = equipamento.valorHora * horas;
@@ -428,7 +420,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   }
 
   private criarCelula(texto: string): HTMLTableCellElement {
-    console.log("Criando celula", texto);
     const td = document.createElement("td");
     td.textContent = texto;
     return td;

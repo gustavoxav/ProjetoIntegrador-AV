@@ -20,7 +20,6 @@ export class VisaoClienteEmHTML implements VisaoCliente {
   }
 
   retornarClientes(cliente: Cliente): void {
-    console.log("aq1: ", cliente);
     this.selecionarCliente(cliente);
   }
 

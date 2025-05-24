@@ -67,7 +67,6 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const container = document.getElementById("tabela-locacoes-list");
     if (!container) return;
     container.innerHTML = "";
-    console.log("LOC LIST: ", locacoes);
     if (!locacoes || locacoes.length === 0) {
       const linha = document.createElement("tr");
       linha.innerHTML = `
@@ -114,7 +113,6 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   }
 
   public preencherDevolucao(devolucao: RespostaSimulacaoDevolucao) {
-    console.log("Preenchendo devolução:", devolucao);
     this.devolucaoData = devolucao;
     this.atualizarValoresTotais({
       horasContratadas: devolucao.locacao.horasContratadas,
@@ -125,7 +123,6 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   }
 
   selecionarLocacao(locacao: RespostaLocacao) {
-    console.log("Locação selecionada:", locacao);
     this.callbackSelecionarLocacao?.(locacao);
     for (const tr of document.querySelectorAll("#tabela-locacoes-list tr")) {
       tr.classList.remove("selecionado");

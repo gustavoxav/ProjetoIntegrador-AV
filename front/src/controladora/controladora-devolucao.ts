@@ -42,25 +42,23 @@ export class ControladoraDevolucao {
         dataHoraDevolucao: dadosSimulacao?.dataHoraDevolucao,
         valorPago: dadosSimulacao?.valorPago,
       };
-      console.log("Dados devolução obtidos:", dadosDevolucaoFormatado);
 
-      console.log(
-        "Enviando para API:",
-        JSON.stringify(
-          {
-            locacaoId: Number(dadosDevolucaoFormatado.locacaoId),
-            registradoPor: dadosDevolucaoFormatado.registradoPor,
-          },
-          null,
-          2
-        )
-      );
+      // console.log(
+      //   "Enviando para API:",
+      //   JSON.stringify(
+      //     {
+      //       locacaoId: Number(dadosDevolucaoFormatado.locacaoId),
+      //       registradoPor: dadosDevolucaoFormatado.registradoPor,
+      //     },
+      //     null,
+      //     2
+      //   )
+      // );
 
       try {
         const resultado = await this.gestor.registrarDevolucao(
           dadosDevolucaoFormatado
         );
-        console.log("Cadastro realizado com sucesso:", resultado);
 
         this.visao.exibirMensagemSucesso("Devolução registrada com sucesso!");
 
@@ -89,10 +87,7 @@ export class ControladoraDevolucao {
 
   public async buscarDevolucoes() {
     try {
-      console.log("Buscando devolucoes");
-
       const response = await this.gestor.obterDevolucoes();
-      console.log("Devoluções obtidas:", response);
       this.visao.exibirListagemDevolucao(response);
     } catch (error: any) {
       this.visao.exibirListagemDevolucao(undefined);
@@ -108,13 +103,9 @@ export class ControladoraDevolucao {
   public async buscarLocacoes() {
     const filtroValor = this.visao.filtroLocacao().filtro;
     const filtro = filtroValor ? parseInt(filtroValor as string) : undefined;
-    console.log("Buscando locações...3", filtro);
     const gestor = new GestorLocacao();
     try {
-      console.log("Buscando locações23");
-
       const response = await gestor.obterLocacoes(filtro);
-      console.log("Locações obtidas 2:", response);
 
       this.visao.mostrarLocacoes(response);
     } catch (error: any) {
@@ -131,7 +122,6 @@ export class ControladoraDevolucao {
   public async obterSimulacao(locacaoId: number) {
     try {
       const response = await this.gestor.obterSimulacaoDevolucoes(locacaoId);
-      console.log("Simulação da Devolução", response);
       const equipamentos = response.locacao.itens.map(
         (item) => item.equipamento
       );

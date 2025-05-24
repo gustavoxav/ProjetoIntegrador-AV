@@ -5,7 +5,6 @@ import { VisaoFuncionarioEmHTML } from "../visao/visao-funcionario-html.js";
 import { VisaoLocacaoEmHTML } from "../visao/visao-locacao-html.js";
 
 export function initLocacaoAdd() {
-  console.log("Locacao add page initialized");
 
   const controladoraLocacao = new ControladoraLocacao(
     new VisaoLocacaoEmHTML(),

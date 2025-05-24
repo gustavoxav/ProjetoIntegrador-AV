@@ -4,16 +4,10 @@ import { VisaoEquipamentoEmHTML } from "../visao/visao-equipamento-html";
 import { VisaoFuncionarioEmHTML } from "../visao/visao-funcionario-html";
 
 export function initDevolucaoAdd() {
-  console.log("Devolucao add page initialized");
-
-  const visaoDevolucao = new VisaoDevolucaoEmHTML();
-  const visaoFuncionario = new VisaoFuncionarioEmHTML();
-  const visaoEquipamento = new VisaoEquipamentoEmHTML();
-
   const controladora = new ControladoraDevolucao(
-    visaoDevolucao,
-    visaoFuncionario,
-    visaoEquipamento
+    new VisaoDevolucaoEmHTML(),
+    new VisaoFuncionarioEmHTML(),
+    new VisaoEquipamentoEmHTML()
   );
 
   const salvarButton = document.getElementById("salvar-devolucao");
@@ -34,7 +28,6 @@ export function initDevolucaoAdd() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const codigo = urlParams.get("codigo");
-  console.log("Código da locação:", codigo);
 
   if (codigo) {
     const input = document.getElementById(

@@ -28,7 +28,6 @@ export class ControladoraLocacao {
         equipamentos:
           this.visaoEquipamento?.obterEquipamentosSelecionados() || [],
       };
-      console.log("Dados locação obtidos:", dadosLocacao);
 
       if (!dadosLocacao.cliente) {
         console.error("Dados do cliente não encontrados");
@@ -63,11 +62,6 @@ export class ControladoraLocacao {
         return;
       }
 
-      console.log(
-        `Encontrados ${dadosLocacao.equipamentos.length} equipamentos:`,
-        dadosLocacao.equipamentos.map((e) => `${e.descricao} (${e.codigo})`)
-      );
-
       const equipamentosInvalidos = dadosLocacao.equipamentos.filter(
         (e) => !e.codigo
       );
@@ -95,31 +89,28 @@ export class ControladoraLocacao {
         })),
       };
 
-      console.log(
-        "Enviando para API:",
-        JSON.stringify(
-          {
-            cliente: dadosFormatados.cliente,
-            registradoPor: dadosFormatados.registradoPor,
-            horasContratadas: dadosFormatados.horasContratadas,
-            itens: dadosFormatados.itens.map((i) => ({
-              equipamento: {
-                codigo: i.equipamento.codigo,
-                descricao: i.equipamento.descricao,
-              },
-            })),
-          },
-          null,
-          2
-        )
-      );
+      // console.log(
+      //   "Enviando para API:",
+      //   JSON.stringify(
+      //     {
+      //       cliente: dadosFormatados.cliente,
+      //       registradoPor: dadosFormatados.registradoPor,
+      //       horasContratadas: dadosFormatados.horasContratadas,
+      //       itens: dadosFormatados.itens.map((i) => ({
+      //         equipamento: {
+      //           codigo: i.equipamento.codigo,
+      //           descricao: i.equipamento.descricao,
+      //         },
+      //       })),
+      //     },
+      //     null,
+      //     2
+      //   )
+      // );
 
       try {
-        const resultado = await this.gestor.registrarLocacao(dadosFormatados);
-        console.log("Cadastro realizado com sucesso:", resultado);
-
+        await this.gestor.registrarLocacao(dadosFormatados);
         this.visao.exibirMensagemSucesso("Locação registrada com sucesso!");
-
         window.location.href = "/";
       } catch (apiError) {
         console.error("Erro na API:", apiError);
@@ -144,10 +135,7 @@ export class ControladoraLocacao {
   public async buscarLocacoes() {
     const gestor = new GestorLocacao();
     try {
-      console.log("Buscando locações2");
-
       const response = await gestor.obterLocacoes();
-      console.log("Locações obtidas:", response);
 
       this.visao.exibirListagemLocacao(response);
     } catch (error: any) {

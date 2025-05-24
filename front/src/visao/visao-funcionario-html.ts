@@ -16,7 +16,6 @@ export class VisaoFuncionarioEmHTML implements VisaoFuncionario {
   }
 
   obterDadosFuncionario() {
-    console.log("OBTERdados Func: ", this.funcionarioSelecionado);
     return {
       codigo: this.funcionarioSelecionado?.codigo ?? 0,
       nome: this.funcionarioSelecionado?.nome ?? "",
@@ -24,7 +23,6 @@ export class VisaoFuncionarioEmHTML implements VisaoFuncionario {
   }
 
   mostrarTodosFuncionarios(funcionarios: Funcionario[]): void {
-    console.log("Carregando todos os funcionários", funcionarios);
     const container = document.getElementById("funcionarios-container");
 
     if (!container) return;
@@ -55,7 +53,6 @@ export class VisaoFuncionarioEmHTML implements VisaoFuncionario {
       const selecionado =
         funcionarios.find((f) => f.codigo === selecionadoId) ?? null;
       this.funcionarioSelecionado = selecionado;
-      console.log("Funcionário selecionado:", this.funcionarioSelecionado, selecionado);
     });
 
     container.appendChild(selectElement);

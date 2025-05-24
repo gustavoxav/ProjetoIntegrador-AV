@@ -7,7 +7,6 @@ export class ControladoraCliente {
 
   public async buscarClientes() {
     const visaoFilter = this.visao.filtroClientes();
-    console.log("Filtro de clientes:", visaoFilter);
     const gestor = new GestorCliente();
     try {
       const response = await gestor.obterClientes(Number.parseInt(visaoFilter.filtro));
