@@ -60,6 +60,10 @@ class GestorDevolucao {
             throw new Exception("Funcionário não informado");
         }
         
+        if (empty($dadosDevolucao['valorPago']) && $dadosDevolucao['valorPago'] !== 0) {
+            throw new Exception("Valor pago é obrigatório");
+        }
+        
         $locacao = $this->repositorioLocacao->obterPorId($dadosDevolucao['locacaoId']);
         
         if (!$locacao) {
@@ -71,12 +75,15 @@ class GestorDevolucao {
         date_default_timezone_set('America/Sao_Paulo');
         $dataHoraDevolucao = $dadosDevolucao['dataHoraDevolucao'] ?? date('Y-m-d H:i:s');
         
-        if (empty($dadosDevolucao['valorPago'])) {
-            $calculadora = new CalculadoraPagamento();
-            $valorPago = $calculadora->calcularValorPagamento($locacao, $dataHoraDevolucao);
-        } else {
-            $valorPago = $dadosDevolucao['valorPago'];
+        $calculadora = new CalculadoraPagamento();
+        $valorCalculado = $calculadora->calcularValorPagamento($locacao, $dataHoraDevolucao);
+        
+        $valorPago = floatval($dadosDevolucao['valorPago']);
+        if (abs($valorPago - $valorCalculado) > 0.01) {
+            throw new Exception("O valor informado não está correto. Valor esperado: R$ " . number_format($valorCalculado, 2, ',', '.') . ". Tente novamente.");
         }
+        
+        $valorPago = $valorCalculado;
         
         if ($valorPago <= 0) {
             throw new Exception("Valor pago inválido");
