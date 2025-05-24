@@ -38,7 +38,7 @@ class RepositorioFuncionarioEmBDR implements RepositorioFuncionario
   public function buscarFuncionarioFiltro(int|string $query): Funcionario|null
   {
     try {
-      $query = $query !== null ? ltrim((string) $query, '/') : null;
+      $query = ltrim((string) $query, '/');
 
       if (is_numeric($query)) {
         $sql = "SELECT * FROM funcionario WHERE id = :param LIMIT 1";

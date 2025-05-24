@@ -7,6 +7,12 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
         private PDO $pdo
     ) {}
 
+    /**
+     * Salva uma locação no repositório
+     * @param Locacao $locacao A locação a ser salva
+     * @return array<string,mixed> A locação salva com código gerado
+     * @throws Exception erro
+     */
     public function salvar(Locacao $locacao)
     {
         try {
@@ -55,16 +61,22 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
             }
 
             $this->pdo->commit();
-            return $this->obterPorId($codigoLocacao);
+            return $this->obterPorId((int)$codigoLocacao);
         } catch (Exception $e) {
             $this->pdo->rollBack();
             throw $e;
         }
     }
 
+    /**
+     * Obtém uma locação pelo código
+     * @param int $filtro O código da locação ou CPF do cliente
+     * @return array<int,array<string,mixed>> A locação encontrada ou array vazio se não existir
+     * @throws Exception erro
+     */
     public function obterPorFiltro($filtro)
     {
-        $where = (strlen($filtro) === 11)
+        $where = (strlen((string)$filtro) === 11)
             ? 'WHERE c.cpf = ?'
             : 'WHERE l.id = ?';
 
@@ -152,6 +164,12 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
         return $locacoes;
     }
 
+    /**
+     * Obtém uma locação pelo ID
+     * @param int $id O código da locação
+     * @return array<string,mixed>|null A locação encontrada ou null se não existir
+     * @throws Exception erro
+     */
     public function obterPorId($id) {
         $query = '
         SELECT l.*, 
@@ -227,6 +245,12 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
         return $locacao->toArray();
     }
 
+    /**
+     * Obtém todas as locações ou filtra por cliente ou funcionário
+     * @param string|null $filtro Filtro opcional por código do cliente ou funcionário
+     * @return array<int,array<string,mixed>> Lista de locações
+     * @throws Exception erro
+     */
     public function obterTodos($filtro = null)
     {
         $sql = '

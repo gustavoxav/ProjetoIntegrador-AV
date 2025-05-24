@@ -3,6 +3,7 @@
   "scripts": {
     "start": "composer dump-autoload && php -S localhost:8000",
     "test": "kahlan",
+    "phpstan": "phpstan analyse",
     "db-prepare": "php db/connection.php < db/criacao_banco.sql && php db/connection.php < db/class_insert.sql",
     "db-create": "php db/connection.php < db/criacao_banco.sql",
     "db-populate": "php db/connection.php < db/class_insert.sql"
@@ -41,6 +42,7 @@
     "vlucas/phpdotenv": "^5.6"
   },
   "require-dev": {
-    "kahlan/kahlan": "^6.0"
+    "kahlan/kahlan": "^6.0",
+    "phpstan/phpstan": "^2.1"
   }
 }

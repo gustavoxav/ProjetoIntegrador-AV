@@ -9,11 +9,24 @@ class GestorLocacao {
     /**
      * Registra uma nova locação no sistema
      * 
-     * @param array $dadosLocacao Array com os dados da locação
-     * @return array Dados da locação registrada
+     * @param array{
+     *   cliente: array{codigo: int, nomeCompleto?: string, telefone?: string},
+     *   registradoPor: array{codigo: int, nome?: string},
+     *   itens: array<int,array{equipamento: array{
+     *     codigo: int,
+     *     modelo?: string,
+     *     fabricante?: string,
+     *     descricao?: string,
+     *     valorHora: float,
+     *     avarias?: string,
+     *     disponivel: bool
+     *   }}>,
+     *   horasContratadas: int
+     * } $dadosLocacao Array com os dados da locação
+     * @return array<string,mixed> Dados da locação registrada
      * @throws Exception Se houver algum erro durante o registro
      */
-    public function registrarLocacao($dadosLocacao) {
+    public function registrarLocacao(array $dadosLocacao): array {
         $dadosLocacao = $this->objectToArray($dadosLocacao);
         
         if (empty($dadosLocacao['cliente']) || empty($dadosLocacao['cliente']['codigo'])) {
@@ -43,7 +56,7 @@ class GestorLocacao {
             }
             
             $item = new ItemLocado(
-                null,
+                $itemData['equipamento']['codigo'],
                 $dadosLocacao['horasContratadas'],
                 $itemData['equipamento']
             );
@@ -94,9 +107,9 @@ class GestorLocacao {
      * Obtém locações do sistema, com filtro opcional
      * 
      * @param string|null $filtro Filtro opcional por código do cliente ou funcionário
-     * @return array Lista de locações
+     * @return array<int,array<string,mixed>> Lista de locações
      */
-    public function obterLocacoes($filtro = null) {
+    public function obterLocacoes(?string $filtro = null): array {
         $locacoes = $this->repositorio->obterTodos($filtro);
         
         $resultado = [];
@@ -110,10 +123,10 @@ class GestorLocacao {
     /**
      * Obtém uma locação específica pelo código
      * 
-     * @param int $codigo Código da locação
-     * @return array|null Dados da locação ou null se não encontrada
+     * @param int $filtro Código da locação
+     * @return array<int,array<string,mixed>>|null Dados da locação ou null se não encontrada
      */
-    public function obterLocacaoPorFiltro($filtro) {
+    public function obterLocacaoPorFiltro(int $filtro): ?array {
         $locacao = $this->repositorio->obterPorFiltro($filtro);
         
         if (!$locacao) {

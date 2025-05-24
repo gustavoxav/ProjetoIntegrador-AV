@@ -10,11 +10,18 @@ class GestorDevolucao {
     /**
      * Calcula o valor pra pagar na devolução
      * 
-     * @param array $dadosDevolucao Array com os dados da devolução
-     * @return array Dados com o valor a ser pago
-     * @throws Exception Se houver algum erro durante o cálculo
+     * @param array{
+     *   locacaoId: int,
+     *   dataHoraDevolucao?: string
+     * } $dadosDevolucao Array com os dados da devolução
+     * @return array{
+     *   locacao: array<string,mixed>,
+     *   dataHoraDevolucao: string,
+     *   valorPago: float
+     * } Dados com o valor a ser pago
+     * @throws Exception erro
      */
-    public function calcularValorPagamento($dadosDevolucao) {
+    public function calcularValorPagamento(array $dadosDevolucao): array {
         $dadosDevolucao = $this->objectToArray($dadosDevolucao);
         
         if (empty($dadosDevolucao['locacaoId'])) {
@@ -45,11 +52,16 @@ class GestorDevolucao {
     /**
      * Registra uma nova devolução no sistema
      * 
-     * @param array $dadosDevolucao Array com os dados da devolução
-     * @return array Dados da devolução registrada
-     * @throws Exception Se houver algum erro durante o registro
+     * @param array{
+     *   locacaoId: int,
+     *   registradoPor: array{codigo: int, nome?: string},
+     *   valorPago: float,
+     *   dataHoraDevolucao?: string
+     * } $dadosDevolucao Array com os dados da devolução
+     * @return array<string,mixed> Dados da devolução registrada
+     * @throws Exception erro
      */
-    public function registrarDevolucao($dadosDevolucao) {
+    public function registrarDevolucao(array $dadosDevolucao): array {
         $dadosDevolucao = $this->objectToArray($dadosDevolucao);
         
         if (empty($dadosDevolucao['locacaoId'])) {
@@ -58,6 +70,14 @@ class GestorDevolucao {
         
         if (empty($dadosDevolucao['registradoPor']) || empty($dadosDevolucao['registradoPor']['codigo'])) {
             throw new Exception("Funcionário não informado");
+        }
+        
+        if (!isset($dadosDevolucao['valorPago'])) {
+            throw new Exception("Valor pago é obrigatório");
+        }
+        
+        if ($dadosDevolucao['valorPago'] === '') {
+            throw new Exception("Valor pago é obrigatório e não pode ser uma string vazia");
         }
         
         $locacao = $this->repositorioLocacao->obterPorId($dadosDevolucao['locacaoId']);
@@ -71,12 +91,15 @@ class GestorDevolucao {
         date_default_timezone_set('America/Sao_Paulo');
         $dataHoraDevolucao = $dadosDevolucao['dataHoraDevolucao'] ?? date('Y-m-d H:i:s');
         
-        if (empty($dadosDevolucao['valorPago'])) {
-            $calculadora = new CalculadoraPagamento();
-            $valorPago = $calculadora->calcularValorPagamento($locacao, $dataHoraDevolucao);
-        } else {
-            $valorPago = $dadosDevolucao['valorPago'];
+        $calculadora = new CalculadoraPagamento();
+        $valorCalculado = $calculadora->calcularValorPagamento($locacao, $dataHoraDevolucao);
+        
+        $valorPago = floatval($dadosDevolucao['valorPago']);
+        if (abs($valorPago - $valorCalculado) > 0.01) {
+            throw new Exception("O valor informado não está correto. Valor esperado: R$ " . number_format($valorCalculado, 2, ',', '.') . ". Tente novamente.");
         }
+        
+        $valorPago = $valorCalculado;
         
         if ($valorPago <= 0) {
             throw new Exception("Valor pago inválido");
@@ -99,9 +122,9 @@ class GestorDevolucao {
      * Obtém devoluções do sistema, com filtro opcional
      * 
      * @param string|null $filtro Filtro opcional por código da locação ou funcionário
-     * @return array Lista de devoluções
+     * @return array<int,array<string,mixed>> Lista de devoluções
      */
-    public function obterDevolucoes($filtro = null) {
+    public function obterDevolucoes(?string $filtro = null): array {
         $devolucoes = $this->repositorio->obterTodos($filtro);
         
         return $devolucoes;
@@ -133,10 +156,11 @@ class GestorDevolucao {
      * Verifica se uma locação já possui uma devolução
      * 
      * @param int $locacaoId ID da locação a ser verificada
-     * @throws Exception Se a locação já tiver sido devolvida
+     * @return void
+     * @throws Exception erro
      */
-    private function verificarDevolucaoExistente($locacaoId) {
-        $devolucoes = $this->repositorio->obterTodos($locacaoId, true);
+    private function verificarDevolucaoExistente(int $locacaoId): void {
+        $devolucoes = $this->repositorio->obterTodos((string)$locacaoId, true);
         
         if (!empty($devolucoes)) {
             throw new Exception("Esta locação já foi devolvida");

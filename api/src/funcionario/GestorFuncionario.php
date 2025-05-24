@@ -10,7 +10,7 @@ class GestorFuncionario
     /**
      * Buscar um Funcionario por Código ou Nome. Caso não tenha nenhum filtro, retorna todos os funcionarios.
      *
-     * @param string|number|null $filtro
+     * @param int|string|null $filtro
      * @return Funcionario[]
      */
     public function obterFuncionarios(int|string|null $filtro): array|Funcionario|null

@@ -77,7 +77,9 @@ Todos os exemplos abaixo são da mesma locação/devolução, para facilitar a c
 
 2. **POST /api/devolucoes**
    - Registra uma nova devolução no sistema
-   - Corpo da requisição: Dados da devolução. "locacaoId" e "registradoPor" são obrigatórios. "dataHoraDevolucao" e "valorPago" são opcionais. Se não for passado, ele vai calcular e colocar no banco de dados. Sugiro passar esses parâmetros, que você recebe na rota de simulação (tem os mesmos nomes), para garantir que vai ser o mais correto.
+   - Corpo da requisição: Dados da devolução. "locacaoId", "registradoPor" e "valorPago" são obrigatórios. "dataHoraDevolucao" é opcional, se não informado usará a data/hora atual.
+   - **IMPORTANTE**: O "valorPago" deve ser exatamente o valor retornado pela simulação. Se o valor informado for diferente do calculado pelo sistema, será retornado um erro solicitando para tentar novamente.
+   - **Segurança**: O valor gravado no banco será sempre o calculado pelo sistema, não o valor informado na requisição. O valor informado serve apenas para validação.
    - Retorna: Dados da devolução registrada
    
    **Exemplo de corpo da requisição:**
@@ -88,12 +90,12 @@ Todos os exemplos abaixo são da mesma locação/devolução, para facilitar a c
          "codigo": 5,
          "nome": "Aline Fernandes"
       },
-      "dataHoraDevolucao": "2025-05-22 05:03:05",
-      "valorPago": 1
+      "valorPago": 1,
+      "dataHoraDevolucao": "2025-05-22 05:03:05"
    }
    ```
    
-   **Exemplo de resposta:**
+   **Exemplo de resposta (sucesso):**
    ```json
    {
       "codigo": 1,
@@ -114,6 +116,13 @@ Todos os exemplos abaixo são da mesma locação/devolução, para facilitar a c
          "codigo": 5,
          "nome": "Aline Fernandes"
       }
+   }
+   ```
+   
+   **Exemplo de resposta (erro de valor):**
+   ```json
+   {
+      "erro": "O valor informado não está correto. Valor esperado: R$ 1,50. Tente novamente."
    }
    ```
 

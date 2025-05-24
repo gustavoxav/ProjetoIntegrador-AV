@@ -116,12 +116,19 @@ describe("GestorDevolucao", function () {
     it("Deve registrar corretamente uma devolução", function () {
       $this->pdo->exec("DELETE FROM devolucao WHERE 1=1");
       $gestor = new GestorDevolucao($this->devolucaoRepo, $this->locacaoRepo);
+
+      $simulacao = $gestor->calcularValorPagamento([
+        'locacaoId' => $this->locacaoId,
+        'dataHoraDevolucao' => date('Y-m-d H:i:s')
+      ]);
+
       $dadosDevolucao = [
         'locacaoId' => $this->locacaoId,
-        'dataHoraDevolucao' => date('Y-m-d H:i:s'),
+        'dataHoraDevolucao' => $simulacao['dataHoraDevolucao'],
         'registradoPor' => [
           'codigo' => $this->funcionarioId
-        ]
+        ],
+        'valorPago' => $simulacao['valorPago']
       ];
       
       $resultado = $gestor->registrarDevolucao($dadosDevolucao);
@@ -177,8 +184,38 @@ describe("GestorDevolucao", function () {
       
     it("Deve lançar uma exceção quando tentar registrar uma devolução para uma locação já devolvida", function () {
       $gestor = new GestorDevolucao($this->devolucaoRepo, $this->locacaoRepo);
+
+      $simulacao = $gestor->calcularValorPagamento([
+        'locacaoId' => $this->locacaoId,
+        'dataHoraDevolucao' => date('Y-m-d H:i:s')
+      ]);
+
       $dadosDevolucao = [
         'locacaoId' => $this->locacaoComDevolucaoId,
+        'dataHoraDevolucao' => $simulacao['dataHoraDevolucao'],
+        'registradoPor' => [
+          'codigo' => $this->funcionarioId
+        ],
+        'valorPago' => $simulacao['valorPago']
+      ];
+      
+      $exception = null;
+      try {
+        $gestor->registrarDevolucao($dadosDevolucao);
+      } catch (Exception $e) {
+        $exception = $e;
+      }
+      
+      expect($exception)->not->toBe(null);
+      expect($exception->getMessage())->toContain('já foi devolvida');
+    });
+
+    it("Deve lançar uma exceção quando valorPago não for informado", function () {
+      $this->pdo->exec("DELETE FROM devolucao WHERE 1=1");
+      $gestor = new GestorDevolucao($this->devolucaoRepo, $this->locacaoRepo);
+
+      $dadosDevolucao = [
+        'locacaoId' => $this->locacaoId,
         'dataHoraDevolucao' => date('Y-m-d H:i:s'),
         'registradoPor' => [
           'codigo' => $this->funcionarioId
@@ -193,7 +230,121 @@ describe("GestorDevolucao", function () {
       }
       
       expect($exception)->not->toBe(null);
-      expect($exception->getMessage())->toContain('já foi devolvida');
+      expect($exception->getMessage())->toContain('obrigatório');
+      expect($exception->getMessage())->toContain('Valor');
+    });
+
+    it("Deve lançar uma exceção quando valorPago for uma string vazia", function () {
+      $this->pdo->exec("DELETE FROM devolucao WHERE 1=1");
+      $gestor = new GestorDevolucao($this->devolucaoRepo, $this->locacaoRepo);
+
+      $dadosDevolucao = [
+        'locacaoId' => $this->locacaoId,
+        'dataHoraDevolucao' => date('Y-m-d H:i:s'),
+        'valorPago' => '',
+        'registradoPor' => [
+          'codigo' => $this->funcionarioId
+        ]
+      ];
+      
+      $exception = null;
+      try {
+        $gestor->registrarDevolucao($dadosDevolucao);
+      } catch (Exception $e) {
+        $exception = $e;
+      }
+      
+      expect($exception)->not->toBe(null);
+      expect($exception->getMessage())->toContain('obrigatório');
+      expect($exception->getMessage())->toContain('string vazia');
+    });
+
+    it("Deve lançar uma exceção quando valorPago for diferente do valor calculado", function () {
+      $this->pdo->exec("DELETE FROM devolucao WHERE 1=1");
+      $gestor = new GestorDevolucao($this->devolucaoRepo, $this->locacaoRepo);
+      
+      $dadosSimulacao = [
+        'locacaoId' => $this->locacaoId,
+        'dataHoraDevolucao' => date('Y-m-d H:i:s')
+      ];
+
+      $simulacao = $gestor->calcularValorPagamento($dadosSimulacao);
+      
+      $dadosDevolucao = [
+        'locacaoId' => $this->locacaoId,
+        'dataHoraDevolucao' => $simulacao['dataHoraDevolucao'],
+        'valorPago' => $simulacao['valorPago'] + 1,
+        'registradoPor' => [
+          'codigo' => $this->funcionarioId
+        ]
+      ];
+      
+      $exception = null;
+      try {
+        $gestor->registrarDevolucao($dadosDevolucao);
+      } catch (Exception $e) {
+        $exception = $e;
+      }
+      
+      expect($exception)->not->toBe(null);
+      expect($exception->getMessage())->toContain('não está correto');
+      expect($exception->getMessage())->toContain('Valor esperado');
+      expect($exception->getMessage())->toContain('Tente novamente');
+    });
+
+    it("Deve registrar devolução com sucesso quando valorPago for igual ao valor calculado", function () {
+      $this->pdo->exec("DELETE FROM devolucao WHERE 1=1");
+      $gestor = new GestorDevolucao($this->devolucaoRepo, $this->locacaoRepo);
+
+      $dadosSimulacao = [
+        'locacaoId' => $this->locacaoId,
+        'dataHoraDevolucao' => date('Y-m-d H:i:s')
+      ];
+      $simulacao = $gestor->calcularValorPagamento($dadosSimulacao);
+      
+      $dadosDevolucao = [
+        'locacaoId' => $this->locacaoId,
+        'dataHoraDevolucao' => $simulacao['dataHoraDevolucao'],
+        'valorPago' => $simulacao['valorPago'],
+        'registradoPor' => [
+          'codigo' => $this->funcionarioId
+        ]
+      ];
+      
+      $resultado = $gestor->registrarDevolucao($dadosDevolucao);
+      
+      expect($resultado)->not->toBe(null);
+      expect($resultado)->toBeAn('array');
+      expect($resultado)->toContainKey('codigo');
+      expect($resultado)->toContainKey('valorPago');
+      expect($resultado['locacao']['codigo'])->toEqual($this->locacaoId);
+      expect(floatval($resultado['valorPago']))->toEqual($simulacao['valorPago']);
+    });
+
+    it("Deve usar o valor calculado no banco mesmo quando valor informado for um pouquinho diferente por causa do arredondamento", function () {
+      $this->pdo->exec("DELETE FROM devolucao WHERE 1=1");
+      $gestor = new GestorDevolucao($this->devolucaoRepo, $this->locacaoRepo);
+      
+      $dadosSimulacao = [
+        'locacaoId' => $this->locacaoId,
+        'dataHoraDevolucao' => date('Y-m-d H:i:s')
+      ];
+      $simulacao = $gestor->calcularValorPagamento($dadosSimulacao);
+      
+      $dadosDevolucao = [
+        'locacaoId' => $this->locacaoId,
+        'dataHoraDevolucao' => $simulacao['dataHoraDevolucao'],
+        'valorPago' => $simulacao['valorPago'] + 0.005,
+        'registradoPor' => [
+          'codigo' => $this->funcionarioId
+        ]
+      ];
+      
+      $resultado = $gestor->registrarDevolucao($dadosDevolucao);
+      
+      expect($resultado)->not->toBe(null);
+      expect($resultado)->toBeAn('array');
+      expect(floatval($resultado['valorPago']))->toEqual($simulacao['valorPago']);
     });
   });
   
@@ -264,7 +415,8 @@ describe("GestorDevolucao", function () {
         'dataHoraDevolucao' => date('Y-m-d H:i:s'),
         'registradoPor' => [
           'codigo' => $this->funcionarioId
-        ]
+        ],
+        'valorPago' => 30.00
       ];
       
       $exception = null;

@@ -6,6 +6,12 @@ class RepositorioClienteEmBDR implements RepositorioCliente
     private PDO $pdo
   ) {}
 
+  /**
+   * Buscar todos os clientes. Retorna null caso não encontre.
+   *
+   * @throws \RepositorioException
+   * @return Cliente[]|null
+   */
   public function buscarClientes(): array|null
   {
     try {
@@ -45,8 +51,7 @@ class RepositorioClienteEmBDR implements RepositorioCliente
   public function buscarClienteFiltro(int|string $query): Cliente|null
   {
     try {
-      // echo "buscando cliente filto";
-      $query = $query !== null ? ltrim((string) $query, '/') : null;
+      $query = ltrim((string) $query, '/');
 
       if (strlen($query) === 11) {
         $sql = "SELECT * FROM cliente WHERE cpf = :param LIMIT 1";
