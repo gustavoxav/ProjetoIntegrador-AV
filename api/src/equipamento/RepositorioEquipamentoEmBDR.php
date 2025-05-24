@@ -43,7 +43,7 @@ class RepositorioEquipamentoEmBDR implements RepositorioEquipamento
   public function buscarEquipamentoFiltro(int $query): Equipamento|null
   {
     try {
-      $query = $query !== null ? ltrim((string) $query, '/') : null;
+      $query = ltrim((string) $query, '/');
 
       $sql = "SELECT * FROM equipamento WHERE id = :param LIMIT 1";
 

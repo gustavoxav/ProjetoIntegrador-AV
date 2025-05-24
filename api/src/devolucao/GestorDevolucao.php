@@ -46,7 +46,7 @@ class GestorDevolucao {
      * Registra uma nova devolução no sistema
      * 
      * @param array $dadosDevolucao Array com os dados da devolução
-     * @return array Dados da devolução registrada
+     * @return Devolucao Dados da devolução registrada
      * @throws Exception Se houver algum erro durante o registro
      */
     public function registrarDevolucao($dadosDevolucao) {

@@ -10,7 +10,7 @@ class GestorCliente
     /**
      * Buscar um Cliente por CPF ou Código. Caso não tenha nenhum filtro, retorna todos os clientes.
      *
-     * @param string|number|null $filtro
+     * @param int|string|null $filtro
      * @return Cliente[]
      */
     public function obterClientes(int|string|null $filtro): array|Cliente|null

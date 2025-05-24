@@ -10,7 +10,7 @@ class GestorLocacao {
      * Registra uma nova locação no sistema
      * 
      * @param array $dadosLocacao Array com os dados da locação
-     * @return array Dados da locação registrada
+     * @return Locacao Dados da locação registrada
      * @throws Exception Se houver algum erro durante o registro
      */
     public function registrarLocacao($dadosLocacao) {
@@ -110,7 +110,7 @@ class GestorLocacao {
     /**
      * Obtém uma locação específica pelo código
      * 
-     * @param int $codigo Código da locação
+     * @param int $filtro Código da locação
      * @return array|null Dados da locação ou null se não encontrada
      */
     public function obterLocacaoPorFiltro($filtro) {
