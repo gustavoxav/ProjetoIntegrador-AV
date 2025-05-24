@@ -161,7 +161,7 @@ describe("GestorDevolucao", function () {
       }
       
       expect($exception)->not->toBe(null);
-      // expect($exception->getMessage())->toContain('não informada');
+      expect($exception->getMessage())->toContain('não informada');
     });
       
     it("Deve lançar uma exceção quando tentar registrar uma devolução sem funcionário", function () {
@@ -230,7 +230,8 @@ describe("GestorDevolucao", function () {
       }
       
       expect($exception)->not->toBe(null);
-      // expect($exception->getMessage())->toContain('já foi devolvida');
+      expect($exception->getMessage())->toContain('obrigatório');
+      expect($exception->getMessage())->toContain('Valor');
     });
 
     it("Deve lançar uma exceção quando valorPago for uma string vazia", function () {
@@ -255,6 +256,7 @@ describe("GestorDevolucao", function () {
       
       expect($exception)->not->toBe(null);
       expect($exception->getMessage())->toContain('obrigatório');
+      expect($exception->getMessage())->toContain('string vazia');
     });
 
     it("Deve lançar uma exceção quando valorPago for diferente do valor calculado", function () {
@@ -287,7 +289,7 @@ describe("GestorDevolucao", function () {
       expect($exception)->not->toBe(null);
       expect($exception->getMessage())->toContain('não está correto');
       expect($exception->getMessage())->toContain('Valor esperado');
-      expect($exception->getMessage())->toContain('Tente novamente'); // TODO: Adicionar essas verificações em todos os testes.
+      expect($exception->getMessage())->toContain('Tente novamente');
     });
 
     it("Deve registrar devolução com sucesso quando valorPago for igual ao valor calculado", function () {
@@ -413,7 +415,8 @@ describe("GestorDevolucao", function () {
         'dataHoraDevolucao' => date('Y-m-d H:i:s'),
         'registradoPor' => [
           'codigo' => $this->funcionarioId
-        ]
+        ],
+        'valorPago' => 30.00
       ];
       
       $exception = null;
@@ -424,7 +427,7 @@ describe("GestorDevolucao", function () {
       }
       
       expect($exception)->not->toBe(null);
-      // expect($exception->getMessage())->toContain('já foi devolvida');
+      expect($exception->getMessage())->toContain('já foi devolvida');
     });
   });
 });

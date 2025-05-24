@@ -72,8 +72,12 @@ class GestorDevolucao {
             throw new Exception("Funcionário não informado");
         }
         
-        if (empty($dadosDevolucao['valorPago']) && $dadosDevolucao['valorPago'] !== 0) {
+        if (!isset($dadosDevolucao['valorPago'])) {
             throw new Exception("Valor pago é obrigatório");
+        }
+        
+        if ($dadosDevolucao['valorPago'] === '') {
+            throw new Exception("Valor pago é obrigatório e não pode ser uma string vazia");
         }
         
         $locacao = $this->repositorioLocacao->obterPorId($dadosDevolucao['locacaoId']);
