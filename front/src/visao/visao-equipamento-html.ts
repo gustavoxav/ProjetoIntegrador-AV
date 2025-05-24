@@ -1,6 +1,7 @@
 import type { Equipamento } from "../types/types.js";
 import { ControladoraEquipamento } from "../controladora/controladora-equipamento.js";
 import type { VisaoEquipamento } from "./visao-equipamento.js";
+import { formatarDataHora } from "../infra/utils.js";
 
 export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   private controladora: ControladoraEquipamento;
@@ -47,6 +48,11 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     });
 
     this.atualizarDatas();
+  }
+
+  exibirEquipamentosDevolucao(equipamento: Equipamento[], horas: number): void {
+    this.equipamentosSelecionados = equipamento;
+    this.atualizarSubtotal(equipamento, horas, true);
   }
 
   filtroEquipamento(): { filtro: string } {
@@ -242,6 +248,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   }
 
   adicionarEquipamento(equipamento: Equipamento): void {
+    console.log("adicionarEquipament TESTE", equipamento);
     if (!equipamento.disponivel) return;
 
     const itemJaSelecionado = this.equipamentosSelecionados.some(
@@ -301,85 +308,42 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     const horaInput = document.getElementById("hora") as HTMLInputElement;
     if (!horaInput || !horaInput.value) return 2;
 
-    // const [horas, minutos] = horaInput.value.split(':').map(Number);
-    // return horas + (minutos / 60);
-    return Number(horaInput.value); // considera apenas a hora
+    return Number(horaInput.value);
   }
 
-  atualizarSubtotal(): void {
-    const horasLocacao = this.obterHorasLocacao();
+  atualizarSubtotal(
+    equipamentos?: Equipamento[],
+    horas?: number,
+    somenteVisualizacao = false
+  ): void {
+    const horasLocacao = horas ?? this.obterHorasLocacao();
+    const equipamentosToUse = equipamentos || this.equipamentosSelecionados;
+    console.log("atualizarSubtotal", equipamentosToUse, horasLocacao);
+    this.atualizarHorasNaTela(horasLocacao);
+    if (!somenteVisualizacao) {
+      this.atualizarValoresTotais(equipamentosToUse, horasLocacao);
+    }
+    this.atualizarTabelaEquipamentos(
+      equipamentosToUse,
+      horasLocacao,
+      somenteVisualizacao
+    );
+  }
 
+  private atualizarHorasNaTela(horas: number): void {
     const horasContratadasEl = document.getElementById("horas-contratadas");
-    if (horasContratadasEl)
-      horasContratadasEl.textContent = horasLocacao.toString();
+    if (horasContratadasEl) horasContratadasEl.textContent = horas.toString();
 
     const horasTextoEl = document.getElementById("horas-texto");
-    if (horasTextoEl)
-      horasTextoEl.textContent = horasLocacao === 1 ? "hora" : "horas";
+    if (horasTextoEl) horasTextoEl.textContent = horas === 1 ? "hora" : "horas";
+  }
 
-    const tabelaEquipamentos = document.getElementById("tabela-equipamentos");
-    if (tabelaEquipamentos) {
-      if (this.equipamentosSelecionados.length === 0) {
-        tabelaEquipamentos.innerHTML = `
-          <tr>
-            <td colspan="5" class="text-center text-muted">Nenhum equipamento selecionado</td>
-          </tr>
-        `;
-      } else {
-        tabelaEquipamentos.innerHTML = "";
-
-        const temDesconto = horasLocacao > 2;
-
-        for (const equipamento of this.equipamentosSelecionados) {
-          const valorTotal = equipamento.valorHora * horasLocacao;
-          const descontoItem = temDesconto ? valorTotal * 0.1 : 0;
-
-          const tr = document.createElement("tr");
-          tr.setAttribute("equip-codigo", equipamento.codigo.toString());
-
-          const tdEquipamento = document.createElement("td");
-          tdEquipamento.textContent = `${equipamento.codigo} - ${equipamento.descricao}`;
-
-          const tdValorHora = document.createElement("td");
-          tdValorHora.textContent = `R$ ${equipamento.valorHora
-            .toFixed(2)
-            .replace(".", ",")}`;
-
-          const tdValorTotal = document.createElement("td");
-          tdValorTotal.textContent = `R$ ${valorTotal
-            .toFixed(2)
-            .replace(".", ",")}`;
-
-          const tdDesconto = document.createElement("td");
-          tdDesconto.textContent = `R$ ${descontoItem
-            .toFixed(2)
-            .replace(".", ",")}`;
-          if (temDesconto) {
-            tdDesconto.className = "text-success";
-          }
-
-          const tdAcoes = document.createElement("td");
-          const btnRemover = document.createElement("button");
-          btnRemover.className = "btn btn-sm btn-danger";
-          btnRemover.textContent = "Remover";
-          btnRemover.addEventListener("click", () =>
-            this.removerEquipamento(equipamento.codigo)
-          );
-          tdAcoes.appendChild(btnRemover);
-
-          tr.appendChild(tdEquipamento);
-          tr.appendChild(tdValorHora);
-          tr.appendChild(tdValorTotal);
-          tr.appendChild(tdDesconto);
-          tr.appendChild(tdAcoes);
-
-          tabelaEquipamentos.appendChild(tr);
-        }
-      }
-    }
-
+  private atualizarValoresTotais(
+    equipamentos: Equipamento[],
+    horasLocacao: number
+  ): void {
     let subtotal = 0;
-    for (const equipamento of this.equipamentosSelecionados) {
+    for (const equipamento of equipamentos) {
       subtotal += equipamento.valorHora * horasLocacao;
     }
 
@@ -396,8 +360,104 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     if (descontoEl)
       descontoEl.textContent = valorDesconto.toFixed(2).replace(".", ",");
     if (totalEl) totalEl.textContent = valorTotal.toFixed(2).replace(".", ",");
+  }
 
-    this.atualizarDatas();
+  private atualizarTabelaEquipamentos(
+    equipamentos: Equipamento[],
+    horas: number,
+    somenteVisualizacao = false
+  ): void {
+    const tabelaEquipamentos = document.getElementById("tabela-equipamentos");
+    if (!tabelaEquipamentos) return;
+
+    this.atualizarCabecalhoTabela(somenteVisualizacao);
+    if (equipamentos.length === 0) {
+      tabelaEquipamentos.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-center text-muted">Nenhum equipamento selecionado</td>
+      </tr>
+    `;
+      return;
+    }
+
+    tabelaEquipamentos.innerHTML = "";
+    console.log("PASSOU AQUI");
+    for (const equipamento of equipamentos) {
+      console.log("PASSOU AQUI2");
+
+      const tr = this.criarLinhaEquipamento(
+        equipamento,
+        horas,
+        somenteVisualizacao
+      );
+      console.log("Adicionando linha: ", tr.outerHTML);
+      tabelaEquipamentos.appendChild(tr);
+    }
+  }
+
+  private criarLinhaEquipamento(
+    equipamento: Equipamento,
+    horas: number,
+    somenteVisualizacao: boolean = false
+  ): HTMLTableRowElement {
+    console.log("PASSOU AQUI3");
+
+    const temDesconto = horas > 2;
+    const valorTotal = equipamento.valorHora * horas;
+    const desconto = temDesconto ? valorTotal * 0.1 : 0;
+
+    const tr = document.createElement("tr");
+    tr.setAttribute("equip-codigo", equipamento.codigo.toString());
+    tr.appendChild(
+      this.criarCelula(`${equipamento.codigo} - ${equipamento.descricao}`)
+    );
+    tr.appendChild(this.criarCelula(this.formatarValor(equipamento.valorHora)));
+    tr.appendChild(this.criarCelula(this.formatarValor(valorTotal)));
+
+    const tdDesconto = this.criarCelula(this.formatarValor(desconto));
+    if (temDesconto) tdDesconto.className = "text-success";
+    tr.appendChild(tdDesconto);
+
+    const tdAcoes = document.createElement("td");
+    if (!somenteVisualizacao) {
+      const btnRemover = this.criarBotaoRemover(equipamento.codigo);
+      tdAcoes.appendChild(btnRemover);
+    }
+    tr.appendChild(tdAcoes);
+    return tr;
+  }
+
+  private criarCelula(texto: string): HTMLTableCellElement {
+    console.log("Criando celula", texto);
+    const td = document.createElement("td");
+    td.textContent = texto;
+    return td;
+  }
+
+  private criarBotaoRemover(codigo: number): HTMLButtonElement {
+    const btn = document.createElement("button");
+    btn.className = "btn btn-sm btn-danger";
+    btn.textContent = "Remover";
+    btn.addEventListener("click", () => this.removerEquipamento(codigo));
+    return btn;
+  }
+
+  private formatarValor(valor: number | undefined | null): string {
+    if (typeof valor !== "number" || isNaN(valor)) {
+      return "R$ 0,00";
+    }
+
+    const valorFormatado = valor.toFixed(2).replace(".", ",");
+    return `R$ ${valorFormatado}`;
+  }
+
+  private atualizarCabecalhoTabela(somenteVisualizacao: boolean): void {
+    const thAcoes = document.getElementById("acoes-coluna");
+    if (thAcoes) {
+      if (somenteVisualizacao) {
+        thAcoes.remove();
+      }
+    }
   }
 
   atualizarDatas(): void {
@@ -415,23 +475,13 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     const dataDevolucao = new Date(dataDevolucaoCalculo);
     dataDevolucao.setSeconds(agora.getSeconds(), agora.getMilliseconds());
 
-    const formatarData = (data: Date): string => {
-      return new Intl.DateTimeFormat("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      }).format(data);
-    };
-
     const dataLocacaoEl = document.getElementById("data-locacao");
     const dataDevolucaoEl = document.getElementById("data-devolucao");
 
-    if (dataLocacaoEl) dataLocacaoEl.textContent = formatarData(agora);
+    if (dataLocacaoEl)
+      dataLocacaoEl.textContent = formatarDataHora(agora.toString());
     if (dataDevolucaoEl)
-      dataDevolucaoEl.textContent = formatarData(dataDevolucao);
+      dataDevolucaoEl.textContent = formatarDataHora(dataDevolucao.toString());
   }
 
   obterEquipamentosSelecionados(): Equipamento[] {

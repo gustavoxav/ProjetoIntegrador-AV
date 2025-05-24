@@ -131,14 +131,13 @@ export class ControladoraDevolucao {
 
   public async obterSimulacao(locacaoId: number) {
     try {
-      console.log("Buscando simulação AFSGSDFHADH");
-
       const response = await this.gestor.obterSimulacaoDevolucoes(locacaoId);
       console.log("Simulação da Devolução", response);
-      response.locacao.itens.map((item) => {
-        this.visaoEquipamento?.retornarEquipamento(item.equipamento);
-      });
-      this.visao;
+      const equipamentos = response.locacao.itens.map(
+        (item) => item.equipamento
+      );
+        this.visaoEquipamento?.exibirEquipamentosDevolucao(equipamentos, response.locacao.horasContratadas);
+      
       this.visao.preencherDevolucao(response);
     } catch (error: any) {
       if (error instanceof ErroDominio) {

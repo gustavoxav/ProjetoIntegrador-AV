@@ -122,16 +122,7 @@ export type RespostaSimulacaoDevolucao = {
       codigo: number;
       tempoContratado: number;
       subtotal: number;
-      equipamento: {
-        codigo: number;
-        modelo: string;
-        fabricante: string;
-        descricao: string;
-        valorHora: number;
-        avarias: string;
-        disponivel: boolean;
-        seguro: number;
-      };
+      equipamento: Equipamento;
     }[];
   };
   dataHoraDevolucao: string;

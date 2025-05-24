@@ -1,5 +1,6 @@
 import type { VisaoDevolucao } from "./visao-devolucao.js";
 import type {
+  Equipamento,
   RespostaDevolucao,
   RespostaLocacao,
   RespostaSimulacaoDevolucao,
@@ -47,10 +48,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         devolucao.locacao.cliente.nomeCompleto
       }</td>
       <td class="text-start align-middle">${devolucao.registradoPor.nome}</td>
-      <td class="text-start align-middle">R$ ${devolucao.valorPago.replace(
-        ".",
-        ","
-      )}</td>
+      <td class="text-start align-middle">R$ ${devolucao.valorPago}</td>
     `;
 
       tbody.appendChild(row);
@@ -117,6 +115,12 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
 
   public preencherDevolucao(devolucao: RespostaSimulacaoDevolucao) {
     console.log("Preenchendo devolução:", devolucao);
+    this.atualizarValoresTotais({
+      horasContratadas: devolucao.locacao.horasContratadas,
+      desconto: devolucao.locacao.desconto,
+      valorTotal: devolucao.locacao.valorTotal,
+      equipamentos: devolucao.locacao.itens.map((item) => item.equipamento),
+    });
   }
 
   selecionarLocacao(locacao: RespostaLocacao) {
@@ -153,6 +157,31 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         btn.classList.add("btn-success");
       }
     }
+  }
+
+  private atualizarValoresTotais(devolucaoData: {
+    desconto: number;
+    valorTotal: number;
+    horasContratadas: number;
+    equipamentos: Equipamento[];
+  }): void {
+    const subtotalEl = document.getElementById("subtotal-itens");
+    const descontoEl = document.getElementById("desconto");
+    const totalEl = document.getElementById("valor-total");
+    const subtotal = devolucaoData.equipamentos.reduce(
+      (acc, equipamento) => acc + equipamento.valorHora * (devolucaoData.horasContratadas ?? 0),
+      0
+    );
+    if (subtotalEl)
+      subtotalEl.textContent = subtotal.toFixed(2).replace(".", ",");
+    if (descontoEl)
+      descontoEl.textContent = devolucaoData.desconto
+        .toFixed(2)
+        .replace(".", ",");
+    if (totalEl)
+      totalEl.textContent = devolucaoData.valorTotal
+        .toFixed(2)
+        .replace(".", ",");
   }
 
   exibirMensagemSucesso(x: string): void {
