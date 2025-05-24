@@ -2,8 +2,6 @@ import type { RespostaLocacao } from "../types/types";
 
 export interface VisaoLocacao {
   obterDadosLocacao(): {
-    funcionario: string;
-    cliente: string;
     horas: number;
     equipamentos: Array<{
       codigo: number;
@@ -18,8 +16,6 @@ export interface VisaoLocacao {
   };
 
   exibirListagemLocacao(locacoes: RespostaLocacao[] | undefined): void;
-
-  salvar(): Promise<void>;
 
   exibirMensagemSucesso(x: string): void;
   exibirMensagemErro(x: string): void;

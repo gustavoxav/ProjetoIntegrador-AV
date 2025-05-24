@@ -2,26 +2,38 @@ import { ErroDominio } from "../infra/ErroDominio.js";
 import { GestorDevolucao } from "../gestor/gestor-devolucao.js";
 import type { VisaoDevolucao } from "../visao/visao-devolucao.js";
 import { GestorLocacao } from "../gestor/gestor-locacao.js";
+import { VisaoEquipamento } from "../visao/visao-equipamento.js";
+import { VisaoFuncionario } from "../visao/visao-funcionario.js";
 
 export class ControladoraDevolucao {
-  private gestor: GestorDevolucao;
+  private readonly gestor: GestorDevolucao;
 
-  constructor(private visao: VisaoDevolucao) {
+  constructor(
+    private readonly visao: VisaoDevolucao,
+    private readonly visaoFuncionario: VisaoFuncionario | null = null,
+    private readonly visaoEquipamento: VisaoEquipamento | null = null
+  ) {
     this.gestor = new GestorDevolucao();
     this.buscarDevolucoes();
+    this.visao.aoSelecionarLocacao((locacao) => {
+      this.obterSimulacao(locacao.codigo);
+    });
   }
 
   public async registrarDevolucao(): Promise<void> {
     try {
-      const dadosDevolucao = this.visao.obterDadosDevolucao();
+      const dadosDevolucao = {
+        locacaoId: this.visao.obterLocacaoId(),
+        funcionario: this.visaoFuncionario?.obterDadosFuncionario(),
+      };
       console.log("Dados devolução obtidos:", dadosDevolucao);
 
-      if (!dadosDevolucao.locacao.codigo) {
+      if (!dadosDevolucao.locacaoId) {
         this.visao.exibirMensagemErro("Selecione uma locação existente");
         return;
       }
 
-      if (!dadosDevolucao.funcionario.codigo) {
+      if (!dadosDevolucao.funcionario) {
         this.visao.exibirMensagemErro(
           "Selecione um funcionário responsável pela devolução"
         );
@@ -29,24 +41,18 @@ export class ControladoraDevolucao {
       }
 
       const dadosFormatados = {
-        locacao: {
-          codigo: Number(dadosDevolucao.locacao),
-        },
-        registradoPor: {
-          codigo: Number(dadosDevolucao.funcionario.codigo),
-        },
+        locacaoId: Number(dadosDevolucao.locacaoId),
+        registradoPor: dadosDevolucao.funcionario,
+        dataHoraDevolucao: "2025-05-24 01:46:00",
+        valorPago: 0,
       };
 
       console.log(
         "Enviando para API:",
         JSON.stringify(
           {
-            locacao: {
-              codigo: Number(dadosDevolucao.locacao),
-            },
-            registradoPor: {
-              codigo: Number(dadosDevolucao.funcionario),
-            },
+            locacaoId: Number(dadosDevolucao.locacaoId),
+            registradoPor: dadosDevolucao.funcionario,
           },
           null,
           2
@@ -83,11 +89,10 @@ export class ControladoraDevolucao {
   }
 
   public async buscarDevolucoes() {
-    const gestor = new GestorDevolucao();
     try {
       console.log("Buscando devolucoes");
 
-      const response = await gestor.obterDevolucoes();
+      const response = await this.gestor.obterDevolucoes();
       console.log("Devoluções obtidas:", response);
       this.visao.exibirListagemDevolucao(response);
     } catch (error: any) {
@@ -116,6 +121,26 @@ export class ControladoraDevolucao {
     } catch (error: any) {
       this.visao.mostrarLocacoes(undefined);
 
+      if (error instanceof ErroDominio) {
+        this.visao.exibirMensagemErro(error.getProblemas()[0]);
+      } else {
+        this.visao.exibirMensagemErro(error.message);
+      }
+    }
+  }
+
+  public async obterSimulacao(locacaoId: number) {
+    try {
+      console.log("Buscando simulação AFSGSDFHADH");
+
+      const response = await this.gestor.obterSimulacaoDevolucoes(locacaoId);
+      console.log("Simulação da Devolução", response);
+      response.locacao.itens.map((item) => {
+        this.visaoEquipamento?.retornarEquipamento(item.equipamento);
+      });
+      this.visao;
+      this.visao.preencherDevolucao(response);
+    } catch (error: any) {
       if (error instanceof ErroDominio) {
         this.visao.exibirMensagemErro(error.getProblemas()[0]);
       } else {

@@ -1,3 +1,4 @@
+import { ControladoraLocacao } from "../controladora/controladora-locacao.js";
 import { VisaoClienteEmHTML } from "../visao/visao-cliente-html.js";
 import { VisaoEquipamentoEmHTML } from "../visao/visao-equipamento-html.js";
 import { VisaoFuncionarioEmHTML } from "../visao/visao-funcionario-html.js";
@@ -5,14 +6,16 @@ import { VisaoLocacaoEmHTML } from "../visao/visao-locacao-html.js";
 
 export function initLocacaoAdd() {
   console.log("Locacao add page initialized");
-  new VisaoClienteEmHTML();
-  new VisaoEquipamentoEmHTML();
-  new VisaoFuncionarioEmHTML();
 
-  const visaoLocacao = new VisaoLocacaoEmHTML();
+  const controladoraLocacao = new ControladoraLocacao(
+    new VisaoLocacaoEmHTML(),
+    new VisaoClienteEmHTML(),
+    new VisaoFuncionarioEmHTML(),
+    new VisaoEquipamentoEmHTML()
+  );
+  
   const output = document.querySelector("output");
   if (output) output.innerHTML = "";
-  // Impede que o form seja enviaddo pelo evento padrão
   const form = document.querySelector("form");
   if (form) {
     form.onsubmit = (e) => {
@@ -21,7 +24,6 @@ export function initLocacaoAdd() {
     };
   }
 
-  // Remove event listener antes do botão salvar
   const salvarButton = document.getElementById("salvar");
   if (salvarButton) {
     const newButton = salvarButton.cloneNode(true);
@@ -29,7 +31,7 @@ export function initLocacaoAdd() {
 
     newButton.addEventListener("click", (e) => {
       e.preventDefault();
-      visaoLocacao.salvar();
+      controladoraLocacao.registrarLocacao();
       return false;
     });
   }

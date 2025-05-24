@@ -13,31 +13,33 @@ describe("Teste da classe Gestor Devolucao", () => {
   });
 
   const mockDadosDevolucao: DadosDevolucao = {
-    locacao: {
-      codigo: 1,
-    },
+    locacaoId: 1,
     registradoPor: {
       codigo: 201,
+      nome: "Funcionário",
     },
+    dataHoraDevolucao: "2025-05-20T17:55:14Z",
+    valorPago: 90,
   };
 
   const mockRespostaDevolucao: RespostaDevolucao = {
     codigo: 1,
-    dataHoraLocacao: "2025-05-20T15:55:14Z",
-    horasContratadas: 4,
-    dataHoraEntregaPrevista: "2025-05-20T17:55:14Z",
-    desconto: 10,
-    valorTotal: 90,
-    cliente: {
-      codigo: 101,
-      nomeCompleto: "João Silva",
-    },
+    dataHoraDevolucao: "2025-05-20T17:55:14Z",
+    valorPago: "4,00",
     registradoPor: {
       codigo: 201,
       nome: "Funcionário",
     },
     locacao: {
       codigo: 1,
+      dataHoraLocacao: "2025-05-20T17:55:14Z",
+      horasContratadas: 2,
+      dataHoraEntregaPrevista: "2025-05-20T17:55:14Z",
+      cliente: {
+        codigo: 3,
+        nomeCompleto: "teste ",
+        cpf: "1111111111",
+      },
     },
   };
 
@@ -54,7 +56,7 @@ describe("Teste da classe Gestor Devolucao", () => {
 
       expect(resposta).toEqual(mockRespostaDevolucao);
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining("/devolucao"),
+        expect.stringContaining("/devolucoes"),
         expect.objectContaining({
           method: "POST",
           credentials: "include",
@@ -75,8 +77,12 @@ describe("Teste da classe Gestor Devolucao", () => {
 
       const gestor = new GestorDevolucao();
 
-      await expect(gestor.registrarDevolucao(dadosInvalidos)).rejects.toBeInstanceOf(ErroDominio);
-      await expect(gestor.registrarDevolucao(dadosInvalidos)).rejects.toMatchObject({
+      await expect(
+        gestor.registrarDevolucao(dadosInvalidos)
+      ).rejects.toBeInstanceOf(ErroDominio);
+      await expect(
+        gestor.registrarDevolucao(dadosInvalidos)
+      ).rejects.toMatchObject({
         getProblemas: expect.any(Function),
       });
     });
@@ -89,7 +95,9 @@ describe("Teste da classe Gestor Devolucao", () => {
 
       const gestor = new GestorDevolucao();
 
-      await expect(gestor.registrarDevolucao(dadosInvalidos)).rejects.toBeInstanceOf(ErroDominio);
+      await expect(
+        gestor.registrarDevolucao(dadosInvalidos)
+      ).rejects.toBeInstanceOf(ErroDominio);
     });
   });
 
@@ -99,10 +107,6 @@ describe("Teste da classe Gestor Devolucao", () => {
       {
         ...mockRespostaDevolucao,
         codigo: 2,
-        cliente: {
-          codigo: 102,
-          nomeCompleto: "Maria Santos",
-        },
       },
     ];
 
@@ -138,7 +142,9 @@ describe("Teste da classe Gestor Devolucao", () => {
 
       const gestor = new GestorDevolucao();
 
-      await expect(gestor.obterDevolucoes()).rejects.toBeInstanceOf(ErroDominio);
+      await expect(gestor.obterDevolucoes()).rejects.toBeInstanceOf(
+        ErroDominio
+      );
     });
   });
-}); 
+});

@@ -1,55 +1,26 @@
 import type { VisaoDevolucao } from "./visao-devolucao.js";
-import { ControladoraDevolucao } from "../controladora/controladora-devolucao.js";
-import type { RespostaDevolucao, RespostaLocacao } from "../types/types.js";
+import type {
+  RespostaDevolucao,
+  RespostaLocacao,
+  RespostaSimulacaoDevolucao,
+} from "../types/types.js";
 import { formatarDataHora } from "../infra/utils.js";
 
 export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
-  private readonly controladora: ControladoraDevolucao;
-  private isSubmitting = false;
   private locacaoSelecionada: RespostaLocacao | null = null;
+  private callbackSelecionarLocacao?: (locacao: RespostaLocacao) => void;
 
-  constructor() {
-    this.controladora = new ControladoraDevolucao(this);
-    document
-      .getElementById("btn-buscar-locacoes")
-      ?.addEventListener("click", () => this.controladora.buscarLocacoes());
+  obterLocacaoId() {
+    return this.locacaoSelecionada?.codigo ?? null;
   }
 
-  public async salvar(): Promise<void> {
-    if (this.isSubmitting) return;
-    this.isSubmitting = true;
-
-    try {
-      await this.controladora.registrarDevolucao();
-    } catch (error) {
-      console.error("Erro ao registrar devolução:", error);
-    } finally {
-      setTimeout(() => {
-        this.isSubmitting = false;
-      }, 1000);
-    }
+  aoSelecionarLocacao(callback: (locacao: RespostaLocacao) => void): void {
+    this.callbackSelecionarLocacao = callback;
   }
 
-  obterDadosDevolucao() {
-    const funcionario =
-      (document.getElementById("funcionario") as HTMLSelectElement)?.value ||
-      "";
-    const cliente = this.locacaoSelecionada?.cliente.codigo ?? "";
-
-    return {
-      funcionario: {
-        codigo: Number(funcionario),
-      },
-      cliente: {
-        codigo: Number(cliente),
-      },
-      locacao: {
-        codigo: 0,
-      },
-    };
-  }
-
-  public exibirListagemDevolucao(devolucoes: RespostaDevolucao[] | undefined): void {
+  public exibirListagemDevolucao(
+    devolucoes: RespostaDevolucao[] | undefined
+  ): void {
     const tbody = document.getElementById("tabela-devolucao");
     if (!tbody) return;
 
@@ -62,7 +33,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       tbody.appendChild(linha);
       return;
     }
-    
+
     for (const devolucao of devolucoes) {
       const row = document.createElement("tr");
 
@@ -72,9 +43,14 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         devolucao.dataHoraDevolucao
       )}</td>
       <td class="text-start align-middle">${devolucao.locacao.codigo}</td>
-      <td class="text-start align-middle">${devolucao.locacao.cliente.nomeCompleto}</td>
+      <td class="text-start align-middle">${
+        devolucao.locacao.cliente.nomeCompleto
+      }</td>
       <td class="text-start align-middle">${devolucao.registradoPor.nome}</td>
-      <td class="text-start align-middle">R$ ${devolucao.valorPago.replace('.', ',')}</td>
+      <td class="text-start align-middle">R$ ${devolucao.valorPago.replace(
+        ".",
+        ","
+      )}</td>
     `;
 
       tbody.appendChild(row);
@@ -113,9 +89,9 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
 
       tr.innerHTML = `
       <td>${locacao.codigo}</td>
-      <td>${locacao.horasContratadas}</td>
-      <td>${locacao.horasContratadas}</td>
-      <td>${locacao.dataHoraEntregaPrevista}</td>
+      <td>${formatarDataHora(locacao.dataHoraLocacao)}</td>
+      <td>${locacao.horasContratadas} Horas</td>
+      <td>${formatarDataHora(locacao.dataHoraEntregaPrevista)}</td>
       <td>${locacao.cliente.nomeCompleto}</td>
       <td>${locacao.cliente.telefone}</td>
       <td>${botaoSelecionar}</td>
@@ -139,8 +115,14 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     }
   }
 
+  public preencherDevolucao(devolucao: RespostaSimulacaoDevolucao) {
+    console.log("Preenchendo devolução:", devolucao);
+  }
+
   selecionarLocacao(locacao: RespostaLocacao) {
     console.log("Locação selecionada:", locacao);
+    this.locacaoSelecionada = locacao;
+    this.callbackSelecionarLocacao?.(locacao);
     for (const tr of document.querySelectorAll("#tabela-locacoes-list tr")) {
       tr.classList.remove("selecionado");
       const btn = tr.querySelector(".btn-selecionar") as HTMLButtonElement;

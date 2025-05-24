@@ -1,5 +1,5 @@
 import { ErroDominio } from "../infra/ErroDominio.js";
-import type { DadosDevolucao, RespostaDevolucao } from "../types/types.js";
+import type { DadosDevolucao, RespostaDevolucao, RespostaSimulacaoDevolucao } from "../types/types.js";
 
 export class GestorDevolucao {
   private readonly urlApi: string = import.meta.env.VITE_API_URL || "";
@@ -9,14 +9,14 @@ export class GestorDevolucao {
       throw ErroDominio.comProblemas(["Funcionário não informado"]);
     }
 
-    if (!dadosDevolucao.locacao.codigo) {
+    if (!dadosDevolucao.locacaoId) {
       throw ErroDominio.comProblemas(["Locação não informada"]);
     }
 
     const reqBody = JSON.stringify(dadosDevolucao);
 
     try {
-      const response = await fetch(`${this.urlApi}/devolucao`, {
+      const response = await fetch(`${this.urlApi}/devolucoes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,6 +69,29 @@ export class GestorDevolucao {
     } catch (error) {
       throw ErroDominio.comProblemas([
         error instanceof Error ? error.message : "Erro ao buscar devoluções",
+      ]);
+    }
+  }
+
+    async obterSimulacaoDevolucoes(locacaoId: number): Promise<RespostaSimulacaoDevolucao> {
+    try {
+      const response = await fetch(`${this.urlApi}/devolucoes/simulacao/${locacaoId}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar simulação da decolução (${response.status})`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw ErroDominio.comProblemas([
+        error instanceof Error ? error.message : "Erro ao buscar simulação devoluções",
       ]);
     }
   }

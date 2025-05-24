@@ -1,26 +1,40 @@
 import { ErroDominio } from "../infra/ErroDominio.js";
 import { GestorLocacao } from "../gestor/gestor-locacao.js";
 import type { VisaoLocacao } from "../visao/visao-locacao.js";
+import { VisaoCliente } from "../visao/visao-clientes.js";
+import { VisaoFuncionario } from "../visao/visao-funcionario.js";
+import { VisaoEquipamento } from "../visao/visao-equipamento.js";
 
 export class ControladoraLocacao {
-  private gestor: GestorLocacao;
+  private readonly gestor: GestorLocacao;
 
-  constructor(private visao: VisaoLocacao) {
+  constructor(
+    private readonly visao: VisaoLocacao,
+    private readonly visaoCliente?: VisaoCliente,
+    private readonly visaoFuncionario?: VisaoFuncionario,
+    private readonly visaoEquipamento?: VisaoEquipamento
+  ) {
     this.gestor = new GestorLocacao();
     this.buscarLocacoes();
   }
 
   public async registrarLocacao(): Promise<void> {
     try {
-      const dadosLocacao = this.visao.obterDadosLocacao();
+      const dadosLocacao = {
+        ...this.visao.obterDadosLocacao(),
+        cliente: this.visaoCliente?.obterDadosCliente(),
+        funcionario: this.visaoFuncionario?.obterDadosFuncionario(),
+      };
       console.log("Dados locação obtidos:", dadosLocacao);
 
       if (!dadosLocacao.cliente) {
+        console.error("Dados do cliente não encontrados");
         this.visao.exibirMensagemErro("Informe o código ou CPF do cliente");
         return;
       }
 
       if (!dadosLocacao.funcionario) {
+        console.error("Dados do funcionário não encontrados");
         this.visao.exibirMensagemErro(
           "Selecione um funcionário responsável pela locação"
         );
@@ -65,7 +79,7 @@ export class ControladoraLocacao {
           codigo: Number(dadosLocacao.cliente),
         },
         registradoPor: {
-          codigo: Number(dadosLocacao.funcionario),
+          codigo: dadosLocacao.funcionario.codigo,
         },
         horasContratadas: dadosLocacao.horas,
         itens: dadosLocacao.equipamentos.map((eq) => ({
@@ -96,16 +110,6 @@ export class ControladoraLocacao {
           2
         )
       );
-
-      if (!dadosFormatados.cliente.codigo) {
-        this.visao.exibirMensagemErro("Informe um cliente válido");
-        return;
-      }
-
-      if (!dadosFormatados.registradoPor.codigo) {
-        this.visao.exibirMensagemErro("Selecione um funcionário responsável");
-        return;
-      }
 
       try {
         const resultado = await this.gestor.registrarLocacao(dadosFormatados);

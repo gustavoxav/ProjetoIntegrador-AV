@@ -1,37 +1,10 @@
 import type { VisaoLocacao } from "./visao-locacao.js";
-import { ControladoraLocacao } from "../controladora/controladora-locacao.js";
 import type { RespostaLocacao } from "../types/types.js";
 import { formatarDataHora } from "../infra/utils.js";
 
 export class VisaoLocacaoEmHTML implements VisaoLocacao {
-  private readonly controladora: ControladoraLocacao;
-  private isSubmitting = false;
-
-  constructor() {
-    this.controladora = new ControladoraLocacao(this);
-  }
-
-  public async salvar(): Promise<void> {
-    if (this.isSubmitting) return;
-    this.isSubmitting = true;
-
-    try {
-      await this.controladora.registrarLocacao();
-    } catch (error) {
-      console.error("Erro ao registrar locação:", error);
-    } finally {
-      setTimeout(() => {
-        this.isSubmitting = false;
-      }, 1000);
-    }
-  }
 
   obterDadosLocacao() {
-    const funcionario =
-      (document.getElementById("funcionario") as HTMLSelectElement)?.value ||
-      "";
-    const cliente =
-      (document.getElementById("cliente") as HTMLInputElement)?.value || "";
     const horas =
       Number((document.getElementById("hora") as HTMLInputElement)?.value) || 0;
 
@@ -39,8 +12,6 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
     console.log(`Equips selecionados: ${equipamentos.length}`, equipamentos);
 
     return {
-      funcionario,
-      cliente,
       horas,
       equipamentos,
       subtotal:

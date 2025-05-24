@@ -24,9 +24,13 @@ export class VisaoClienteEmHTML implements VisaoCliente {
     this.selecionarCliente(cliente);
   }
 
+  obterDadosCliente() {
+    return this.clienteSelecionado?.codigo ?? 0;
+  }
+
   selecionarCliente(cliente: Cliente): void {
     this.clienteSelecionado = cliente;
-    
+
     const ul = document.getElementById("mostrar-clientes");
     if (ul) {
       ul.innerHTML = "";
@@ -52,7 +56,7 @@ export class VisaoClienteEmHTML implements VisaoCliente {
 
       textoContainer.appendChild(nome);
       textoContainer.appendChild(cpf);
-      
+
       li.appendChild(avatar);
       li.appendChild(textoContainer);
       ul.appendChild(li);
