@@ -112,12 +112,7 @@ class GestorLocacao {
     public function obterLocacoes(?string $filtro = null): array {
         $locacoes = $this->repositorio->obterTodos($filtro);
         
-        $resultado = [];
-        foreach ($locacoes as $locacao) {
-            $resultado[] = $locacao;
-        }
-        
-        return $resultado;
+        return $locacoes;
     }
     
     /**
@@ -128,6 +123,22 @@ class GestorLocacao {
      */
     public function obterLocacaoPorFiltro(int $filtro): ?array {
         $locacao = $this->repositorio->obterPorFiltro($filtro);
+        
+        if (!$locacao) {
+            return null;
+        }
+        
+        return $locacao;
+    }
+
+    /**
+     * Obtém uma locação específica pelo ID
+     * 
+     * @param int $id O ID da locação
+     * @return array<string,mixed>|null Dados da locação ou null se não encontrada
+     */
+    public function obterPorId(int $id): ?array {
+        $locacao = $this->repositorio->obterPorId($id);
         
         if (!$locacao) {
             return null;

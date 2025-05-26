@@ -165,8 +165,10 @@ $app->get(API_PREFIX . "/devolucoes/simulacao/:locacaoId", function ($req, $res)
   }
 
   try {
-    $repoLocacao = new RepositorioLocacaoEmBDR($pdo);
-    $locacao = $repoLocacao->obterPorId($locacaoId); 
+    $gestorLocacao = new GestorLocacao(
+      new RepositorioLocacaoEmBDR($pdo)
+    );
+    $locacao = $gestorLocacao->obterPorId($locacaoId); 
     
     if (!$locacao) {
       $res->status(404)->json(["erro" => "Locação não encontrada"]);
@@ -175,7 +177,7 @@ $app->get(API_PREFIX . "/devolucoes/simulacao/:locacaoId", function ($req, $res)
 
     $gestor = new GestorDevolucao(
       new RepositorioDevolucaoEmBDR($pdo),
-      $repoLocacao
+      new RepositorioLocacaoEmBDR($pdo)
     );
     
     $dadosDevolucao = [
@@ -233,22 +235,5 @@ $app->get(API_PREFIX . "/devolucoes", function ($req, $res) use ($pdo) {
     $res->status(500)->json(["erro" => $e->getMessage()]);
   }
 });
-
-// GET /api/devolucoes/:filtro - Busca devoluções por cliente/cpf/etc
-// $app->get(API_PREFIX . "/devolucoes/:filtro", function ($req, $res) use ($pdo) {
-//   $params = $req->params();
-//   $filtro = $params['filtro'] ?? null;
-
-//   try {
-//     $gestor = new GestorDevolucao(
-//       new RepositorioDevolucaoEmBDR($pdo),
-//       new RepositorioLocacaoEmBDR($pdo)
-//     );
-//     $saida = $gestor->obterDevolucoes($filtro);
-//     $res->json($saida);
-//   } catch (Exception $e) {
-//     $res->status(500)->json(["erro" => $e->getMessage()]);
-//   }
-// });
 
 $app->listen();

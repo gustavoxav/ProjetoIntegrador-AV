@@ -77,7 +77,7 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
     public function obterPorFiltro($filtro)
     {
         $where = (strlen((string)$filtro) === 11)
-            ? 'WHERE c.cpf = ?'
+            ? 'WHERE c.cpf = ? ORDER BY l.data_hora_locacao DESC'
             : 'WHERE l.id = ?';
 
         $query = '
