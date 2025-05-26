@@ -37,11 +37,12 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
       const row = document.createElement("tr");
 
       const acaoColuna = locacao.devolvida 
-        ? `<span class="btn btn-sm btn-success" style="pointer-events: none; cursor: default;">Devolvida</span>`
+        ? `<span class="btn btn-sm btn-success" style="pointer-events: none; cursor: default; width: 92.63px">Devolvida</span>`
         : `<a 
             href="/devolucao-add?codigo=${locacao.codigo}" 
             class="btn btn-sm btn-outline-dark"
             data-route
+            style="width: 92.63px"
           >
             Devolver
           </a>`;

@@ -79,10 +79,14 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     for (const locacao of locacoes) {
       const tr = document.createElement("tr");
 
-      const botaoSelecionar =
-        locacoes.length === 1
-          ? `<button class="btn btn-sm btn-success" disabled>Selecionado</button>`
-          : `<button class="btn btn-sm btn-primary btn-selecionar" type="button" data-id="${locacao.codigo}">Selecionar</button>`;
+      let button;
+      if (locacao.devolvida) {
+        button = `<button class="btn btn-sm btn-success" style="pointer-events: none; cursor: default;width: 92.63px" disable type="button">Devolvida</button>`;
+      } else if (locacoes.length === 1) {
+        button = `<button class="btn btn-sm btn-dark" disabled>Selecionado</button>`;
+      } else {
+        button = `<button class="btn btn-sm btn-outline-dark btn-selecionar" style="width: 92.63px" type="button" data-id="${locacao.codigo}">Selecionar</button>`;
+      }
 
       tr.innerHTML = `
       <td>${locacao.codigo}</td>
@@ -91,7 +95,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       <td>${formatarDataHora(locacao.dataHoraEntregaPrevista)}</td>
       <td>${locacao.cliente.nomeCompleto}</td>
       <td>${locacao.cliente.telefone}</td>
-      <td>${botaoSelecionar}</td>
+      <td>${button}</td>
     `;
       container.appendChild(tr);
     }
@@ -117,7 +121,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     this.atualizarValoresTotais({
       horasContratadas: devolucao.locacao.horasContratadas,
       desconto: devolucao.locacao.desconto,
-      valorTotal: devolucao.locacao.valorTotal,
+      valorTotal: devolucao.valorPago,
       equipamentos: devolucao.locacao.itens.map((item) => item.equipamento),
     });
   }
@@ -130,8 +134,8 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       if (btn) {
         btn.disabled = false;
         btn.textContent = "Selecionar";
-        btn.classList.remove("btn-success");
-        btn.classList.add("btn-primary");
+        btn.classList.remove("btn-outline-dark");
+        btn.classList.add("btn-dark");
       }
     }
 
@@ -150,8 +154,8 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       if (btn) {
         btn.disabled = true;
         btn.textContent = "Selecionado";
-        btn.classList.remove("btn-primary");
-        btn.classList.add("btn-success");
+        btn.classList.remove("btn-warning");
+        btn.classList.add("btn-dark");
       }
     }
   }
@@ -166,7 +170,8 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const descontoEl = document.getElementById("desconto");
     const totalEl = document.getElementById("valor-total");
     const subtotal = devolucaoData.equipamentos.reduce(
-      (acc, equipamento) => acc + equipamento.valorHora * (devolucaoData.horasContratadas ?? 0),
+      (acc, equipamento) =>
+        acc + equipamento.valorHora * (devolucaoData.horasContratadas ?? 0),
       0
     );
     if (subtotalEl)
