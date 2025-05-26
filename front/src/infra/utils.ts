@@ -16,3 +16,20 @@ export function formatarDataHora(isoString: string): string {
   const minuto = data.getMinutes().toString().padStart(2, "0");
   return `${dia}/${mes}/${ano} - ${hora}:${minuto}`;
 }
+
+export function calcularHorasUtilizadas(
+  dataHoraLocacao: string,
+  dataHoraDevolucao: string
+): { horasTotais: number; horas: number; minutos: number } {
+  const inicio = new Date(dataHoraLocacao);
+  const fim = new Date(dataHoraDevolucao);
+
+  const diferencaMs = fim.getTime() - inicio.getTime();
+  const totalMinutos = Math.floor(diferencaMs / 60000);
+
+  const horas = Math.floor(totalMinutos / 60);
+  const minutos = totalMinutos % 60;
+  const horasTotais = +(totalMinutos / 60).toFixed(2);
+
+  return { horasTotais, horas, minutos };
+}

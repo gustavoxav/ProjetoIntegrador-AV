@@ -5,7 +5,7 @@ import type {
   RespostaLocacao,
   RespostaSimulacaoDevolucao,
 } from "../types/types.js";
-import { formatarDataHora } from "../infra/utils.js";
+import { formatarDataHora, calcularHorasUtilizadas } from "../infra/utils.js";
 
 export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   private devolucaoData: RespostaSimulacaoDevolucao | null = null;
@@ -79,7 +79,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     for (const locacao of locacoes) {
       const tr = document.createElement("tr");
 
-      let button;
+      let button: string;
       if (locacao.devolvida) {
         button = `<button class="btn btn-sm btn-success" style="pointer-events: none; cursor: default;width: 92.63px" disable type="button">Devolvida</button>`;
       } else if (locacoes.length === 1) {
@@ -106,7 +106,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
 
     if (locacoes.length > 1) {
       for (const btn of document.querySelectorAll(".btn-selecionar")) {
-        btn.addEventListener("click", (e) => {
+        (btn as HTMLButtonElement).addEventListener("click", (e) => {
           const target = e.currentTarget as HTMLButtonElement;
           const id = Number(target.dataset.id);
           const loc = locacoes.find((l) => l.codigo === id);
@@ -124,6 +124,31 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       valorTotal: devolucao.valorPago,
       equipamentos: devolucao.locacao.itens.map((item) => item.equipamento),
     });
+    
+    const dataLocacaoEl = document.getElementById("data-locacao");
+    if (dataLocacaoEl) {
+      dataLocacaoEl.textContent = formatarDataHora(devolucao.dataHoraDevolucao);
+    }
+    
+    const horasUtilizadas = calcularHorasUtilizadas(
+      devolucao.locacao.dataHoraLocacao,
+      devolucao.dataHoraDevolucao
+    );
+    
+    const horasUtilizadasEl = document.getElementById("horas-utilizadas");
+    if (horasUtilizadasEl) {
+      const horaTexto = horasUtilizadas.horas === 1 ? "hora" : "horas";
+      horasUtilizadasEl.textContent = `${horasUtilizadas.horas} ${horaTexto} e ${horasUtilizadas.minutos} minutos`;
+    }
+    
+    const avisoEl = document.getElementById("aviso-valor-minimo");
+    if (avisoEl) {
+      if (horasUtilizadas.horasTotais < devolucao.locacao.horasContratadas) {
+        avisoEl.classList.remove("d-none");
+      } else {
+        avisoEl.classList.add("d-none");
+      }
+    }
   }
 
   selecionarLocacao(locacao: RespostaLocacao) {

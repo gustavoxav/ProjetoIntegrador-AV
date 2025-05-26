@@ -391,7 +391,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   private criarLinhaEquipamento(
     equipamento: Equipamento,
     horas: number,
-    somenteVisualizacao: boolean = false
+    somenteVisualizacao = false
   ): HTMLTableRowElement {
 
     const temDesconto = horas > 2;
@@ -434,7 +434,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   }
 
   private formatarValor(valor: number | undefined | null): string {
-    if (typeof valor !== "number" || isNaN(valor)) {
+    if (typeof valor !== "number" || Number.isNaN(valor)) {
       return "R$ 0,00";
     }
 
