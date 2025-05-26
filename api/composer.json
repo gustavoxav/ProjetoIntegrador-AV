@@ -2,7 +2,8 @@
   "name": "g9/api",
   "scripts": {
     "start": "composer dump-autoload && php -S localhost:8000",
-    "test": "kahlan",
+    "test": "kahlan && phpstan analyse",
+    "kahlan": "kahlan",
     "phpstan": "phpstan analyse",
     "db-prepare": "php db/connection.php < db/criacao_banco.sql && php db/connection.php < db/class_insert.sql",
     "db-create": "php db/connection.php < db/criacao_banco.sql",
