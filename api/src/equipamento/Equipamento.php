@@ -10,7 +10,7 @@ class Equipamento
     public float $valorHora = 0,
     public string $avarias = '',
     public bool $disponivel = true,
-    public ?int $numeroSeguro = null
+    public ?string $numeroSeguro = null
   ) {
   }
 

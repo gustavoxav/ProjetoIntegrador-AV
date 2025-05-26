@@ -135,6 +135,7 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
                     'descricao' => $item['descricao'],
                     'valorHora' => $item['valor_hora'],
                     'avarias' => $item['avarias'],
+                    'numeroSeguro' => $item['numero_seguro'],
                     'disponivel' => (bool)$item['disponivel']
                 ];
 
@@ -221,6 +222,7 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
                 'descricao' => $item['descricao'],
                 'valorHora' => $item['valor_hora'],
                 'avarias' => $item['avarias'],
+                'numeroSeguro' => $item['numero_seguro'],
                 'disponivel' => (bool)$item['disponivel']
             ];
 

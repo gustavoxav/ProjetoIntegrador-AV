@@ -26,7 +26,7 @@ class RepositorioEquipamentoEmBDR implements RepositorioEquipamento
           valorHora: $dados['valor_hora'],
           avarias: $dados['avarias'],
           disponivel: $dados['disponivel'],
-          numeroSeguro: is_numeric($dados['numero_seguro']) ? (int) $dados['numero_seguro'] : null
+          numeroSeguro: !empty($dados['numero_seguro']) ? (string) $dados['numero_seguro'] : null
         );
       }
 
@@ -62,7 +62,7 @@ class RepositorioEquipamentoEmBDR implements RepositorioEquipamento
         valorHora: (float) $dados['valor_hora'],
         avarias: (string) $dados['avarias'] === "" ? "Nenhuma avaria" : $dados['avarias'],
         disponivel: (bool) $dados['disponivel'],
-        numeroSeguro: (int) $dados['numero_seguro']
+        numeroSeguro: !empty($dados['numero_seguro']) ? (string) $dados['numero_seguro'] : null
 
       );
     } catch (PDOException $ex) {

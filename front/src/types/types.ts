@@ -22,7 +22,7 @@ export type Equipamento = {
   valorHora: number; // TODO: arrumar no back -> em algumas rotas vem como string e em outras como number
   avarias: string;
   disponivel: boolean;
-  numeroSeguro: number; // TODO: arrumar no back - era pra ser string
+  numeroSeguro: string;
 };
 
 export type RespostaLocacao = {
