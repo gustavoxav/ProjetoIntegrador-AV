@@ -41,7 +41,17 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
 
     document
       .getElementById("hora")
-      ?.addEventListener("change", () => this.atualizarSubtotal());
+      ?.addEventListener("change", () => {
+        this.atualizarSubtotal();
+        this.atualizarDatas();
+      });
+
+    document
+      .getElementById("hora")
+      ?.addEventListener("input", () => {
+        this.atualizarSubtotal();
+        this.atualizarDatas();
+      });
 
     document.getElementById("cancelar")?.addEventListener("click", () => {
       window.history.back();
