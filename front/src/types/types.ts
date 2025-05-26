@@ -9,27 +9,20 @@ export type Cliente = {
   foto: string;
 };
 
-export type Equipamento = {
-  codigo: number;
-  modelo: string;
-  fabricante: string;
-  descricao: string;
-  valorHora: number; // TODO: arrumar no back -> tá dando erro no visao-devolucao-html
-  avarias: string;
-  disponivel: boolean;
-  seguro: number; // TODO: arrumar no back - era pra ser string
-};
-
 export type Funcionario = {
   codigo: number;
   nome: string;
 };
 
-type EquipamentoResumo = { // TODO: acho que não precisa
+export type Equipamento = {
   codigo: number;
+  modelo: string;
+  fabricante: string;
   descricao: string;
-  valorHora: number;
+  valorHora: number; // TODO: arrumar no back -> em algumas rotas vem como string e em outras como number
+  avarias: string;
   disponivel: boolean;
+  numeroSeguro: number; // TODO: arrumar no back - era pra ser string
 };
 
 export type RespostaLocacao = {
@@ -45,15 +38,12 @@ export type RespostaLocacao = {
     nomeCompleto: string;
     telefone: string;
   };
-  registradoPor: { // TODO: arrumar
-    codigo: number;
-    nome: string;
-  };
+  registradoPor: Funcionario;
   itens: Array<{
     codigo: number;
     tempoContratado: number;
     subtotal: number;
-    equipamento: EquipamentoResumo; // TODO: arrumar
+    equipamento: Equipamento;
   }>;
 };
 
@@ -66,16 +56,13 @@ export type DadosLocacao = {
   };
   horasContratadas: number;
   itens: Array<{
-    equipamento: EquipamentoResumo;
+    equipamento: Equipamento;
   }>;
 };
 
 export type DadosDevolucao = {
   locacaoId: number;
-  registradoPor: {
-    codigo: number;
-    nome: string;
-  };
+  registradoPor: Funcionario;
   dataHoraDevolucao: string;
   valorPago: number;
 };
@@ -83,7 +70,7 @@ export type DadosDevolucao = {
 export type RespostaDevolucao = {
   codigo: number;
   dataHoraDevolucao: string;
-  valorPago: string;
+  valorPago: string; // TODO: tá vindo como string
   locacao: {
     codigo: number;
     dataHoraLocacao: string;
@@ -95,10 +82,7 @@ export type RespostaDevolucao = {
       cpf: string;
     };
   };
-  registradoPor: {
-    codigo: number;
-    nome: string;
-  };
+  registradoPor: Funcionario;
 };
 
 export type RespostaSimulacaoDevolucao = {
@@ -114,10 +98,7 @@ export type RespostaSimulacaoDevolucao = {
       nomeCompleto: string;
       telefone: string;
     };
-    registradoPor: {
-      codigo: number;
-      nome: string;
-    };
+    registradoPor: Funcionario;
     itens: {
       codigo: number;
       tempoContratado: number;

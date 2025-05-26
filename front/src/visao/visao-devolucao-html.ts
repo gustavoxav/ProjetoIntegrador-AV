@@ -259,7 +259,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     tr.appendChild(
       this.criarCelula(`${equipamento.codigo} - ${equipamento.descricao}`)
     );
-    tr.appendChild(this.criarCelula(formatarValorComSimbolo(Number.parseFloat(equipamento.valorHora)))); // TODO: arrumar
+    tr.appendChild(this.criarCelula(formatarValorComSimbolo(equipamento.valorHora)));
     tr.appendChild(this.criarCelula(formatarValorComSimbolo(valorTotal)));
 
     const tdDesconto = this.criarCelula(formatarValorComSimbolo(desconto));
