@@ -5,7 +5,8 @@ import type {
   RespostaLocacao,
   RespostaSimulacaoDevolucao,
 } from "../types/types.js";
-import { formatarDataHora, calcularHorasUtilizadas } from "../infra/utils.js";
+import { formatarDataHora, calcularHorasUtilizadas, calcularHorasCobranca } from "../infra/utils.js";
+import { calcularValores, calcularValorIndividual, formatarValorComSimbolo } from "../infra/calculadora-valores.js";
 
 export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   private devolucaoData: RespostaSimulacaoDevolucao | null = null;
@@ -48,7 +49,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         devolucao.locacao.cliente.nomeCompleto
       }</td>
       <td class="text-start align-middle">${devolucao.registradoPor.nome}</td>
-      <td class="text-start align-middle">R$ ${devolucao.valorPago}</td>
+      <td class="text-start align-middle">${formatarValorComSimbolo(Number.parseFloat(devolucao.valorPago))}</td>
     `;
 
       tbody.appendChild(row);
@@ -118,32 +119,42 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
 
   public preencherDevolucao(devolucao: RespostaSimulacaoDevolucao) {
     this.devolucaoData = devolucao;
-    this.atualizarValoresTotais({
-      horasContratadas: devolucao.locacao.horasContratadas,
-      desconto: devolucao.locacao.desconto,
-      valorTotal: devolucao.valorPago,
-      equipamentos: devolucao.locacao.itens.map((item) => item.equipamento),
-    });
+    
+    const horasUtilizadas = calcularHorasUtilizadas(
+      devolucao.locacao.dataHoraLocacao,
+      devolucao.dataHoraDevolucao
+    );
+
+    const horasCobranca = calcularHorasCobranca(
+      devolucao.locacao.dataHoraLocacao,
+      devolucao.dataHoraDevolucao
+    );
+
+    const horasParaCalculo = Math.max(horasCobranca, devolucao.locacao.horasContratadas);
+    
+    const equipamentos = devolucao.locacao.itens.map((item) => item.equipamento);
+    
+    this.atualizarValoresTotais(equipamentos, horasParaCalculo, devolucao.valorPago);
+    
+    this.atualizarTabelaEquipamentos(equipamentos, horasParaCalculo);
+    
+    this.atualizarHorasNaTela(devolucao.locacao.horasContratadas);
     
     const dataLocacaoEl = document.getElementById("data-locacao");
     if (dataLocacaoEl) {
       dataLocacaoEl.textContent = formatarDataHora(devolucao.dataHoraDevolucao);
     }
     
-    const horasUtilizadas = calcularHorasUtilizadas(
-      devolucao.locacao.dataHoraLocacao,
-      devolucao.dataHoraDevolucao
-    );
-    
     const horasUtilizadasEl = document.getElementById("horas-utilizadas");
     if (horasUtilizadasEl) {
       const horaTexto = horasUtilizadas.horas === 1 ? "hora" : "horas";
-      horasUtilizadasEl.textContent = `${horasUtilizadas.horas} ${horaTexto} e ${horasUtilizadas.minutos} minutos`;
+      const minutoTexto = horasUtilizadas.minutos === 1 ? "minuto" : "minutos";
+      horasUtilizadasEl.textContent = `${horasUtilizadas.horas} ${horaTexto} e ${horasUtilizadas.minutos} ${minutoTexto}`;
     }
     
     const avisoEl = document.getElementById("aviso-valor-minimo");
     if (avisoEl) {
-      if (horasUtilizadas.horasTotais < devolucao.locacao.horasContratadas) {
+      if (horasCobranca < devolucao.locacao.horasContratadas) {
         avisoEl.classList.remove("d-none");
       } else {
         avisoEl.classList.add("d-none");
@@ -185,30 +196,84 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     }
   }
 
-  private atualizarValoresTotais(devolucaoData: {
-    desconto: number;
-    valorTotal: number;
-    horasContratadas: number;
-    equipamentos: Equipamento[];
-  }): void {
+  private atualizarValoresTotais(
+    equipamentos: Equipamento[],
+    horas: number,
+    valorTotalSimulacao?: number
+  ): void {
+    const resultado = calcularValores(equipamentos, horas);
+
     const subtotalEl = document.getElementById("subtotal-itens");
     const descontoEl = document.getElementById("desconto");
     const totalEl = document.getElementById("valor-total");
-    const subtotal = devolucaoData.equipamentos.reduce(
-      (acc, equipamento) =>
-        acc + equipamento.valorHora * (devolucaoData.horasContratadas ?? 0),
-      0
-    );
+
     if (subtotalEl)
-      subtotalEl.textContent = subtotal.toFixed(2).replace(".", ",");
+      subtotalEl.textContent = resultado.subtotal.toFixed(2).replace(".", ",");
     if (descontoEl)
-      descontoEl.textContent = devolucaoData.desconto
-        .toFixed(2)
-        .replace(".", ",");
-    if (totalEl)
-      totalEl.textContent = devolucaoData.valorTotal
-        .toFixed(2)
-        .replace(".", ",");
+      descontoEl.textContent = resultado.desconto.toFixed(2).replace(".", ",");
+    if (totalEl) {
+      const valorTotal = valorTotalSimulacao ?? resultado.valorTotal;
+      totalEl.textContent = valorTotal.toFixed(2).replace(".", ",");
+    }
+  }
+
+  private atualizarHorasNaTela(horas: number): void {
+    const horasContratadasEl = document.getElementById("horas-contratadas");
+    if (horasContratadasEl) horasContratadasEl.textContent = horas.toString();
+
+    const horasTextoEl = document.getElementById("horas-texto");
+    if (horasTextoEl) horasTextoEl.textContent = horas === 1 ? "hora" : "horas";
+  }
+
+  private atualizarTabelaEquipamentos(
+    equipamentos: Equipamento[],
+    horas: number
+  ): void {
+    const tabelaEquipamentos = document.getElementById("tabela-equipamentos");
+    if (!tabelaEquipamentos) return;
+
+    if (equipamentos.length === 0) {
+      tabelaEquipamentos.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-center text-muted">Nenhum equipamento foi encontrado</td>
+      </tr>
+    `;
+      return;
+    }
+
+    tabelaEquipamentos.innerHTML = "";
+    for (const equipamento of equipamentos) {
+      const tr = this.criarLinhaEquipamento(equipamento, horas);
+      tabelaEquipamentos.appendChild(tr);
+    }
+  }
+
+  private criarLinhaEquipamento(
+    equipamento: Equipamento,
+    horas: number
+  ): HTMLTableRowElement {
+    const { valorTotal, desconto, temDesconto } = calcularValorIndividual(equipamento, horas);
+
+    const tr = document.createElement("tr");
+    tr.setAttribute("equip-codigo", equipamento.codigo.toString());
+    tr.appendChild(
+      this.criarCelula(`${equipamento.codigo} - ${equipamento.descricao}`)
+    );
+    tr.appendChild(this.criarCelula(formatarValorComSimbolo(Number.parseFloat(equipamento.valorHora)))); // TODO: arrumar
+    tr.appendChild(this.criarCelula(formatarValorComSimbolo(valorTotal)));
+
+    const tdDesconto = this.criarCelula(formatarValorComSimbolo(desconto));
+    if (temDesconto) tdDesconto.className = "text-success";
+    tr.appendChild(tdDesconto);
+
+    tr.appendChild(document.createElement("td"));
+    return tr;
+  }
+
+  private criarCelula(texto: string): HTMLTableCellElement {
+    const td = document.createElement("td");
+    td.textContent = texto;
+    return td;
   }
 
   exibirMensagemSucesso(x: string): void {

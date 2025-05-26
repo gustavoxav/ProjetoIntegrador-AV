@@ -2,6 +2,7 @@ import type { Equipamento } from "../types/types.js";
 import { ControladoraEquipamento } from "../controladora/controladora-equipamento.js";
 import type { VisaoEquipamento } from "./visao-equipamento.js";
 import { formatarDataHora } from "../infra/utils.js";
+import { calcularValores, calcularValorIndividual, formatarValorComSimbolo } from "../infra/calculadora-valores.js";
 
 export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   private controladora: ControladoraEquipamento;
@@ -348,24 +349,17 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     equipamentos: Equipamento[],
     horasLocacao: number
   ): void {
-    let subtotal = 0;
-    for (const equipamento of equipamentos) {
-      subtotal += equipamento.valorHora * horasLocacao;
-    }
-
-    const temDesconto = horasLocacao > 2;
-    const valorDesconto = temDesconto ? subtotal * 0.1 : 0;
-    const valorTotal = subtotal - valorDesconto;
+    const resultado = calcularValores(equipamentos, horasLocacao);
 
     const subtotalEl = document.getElementById("subtotal-itens");
     const descontoEl = document.getElementById("desconto");
     const totalEl = document.getElementById("valor-total");
 
     if (subtotalEl)
-      subtotalEl.textContent = subtotal.toFixed(2).replace(".", ",");
+      subtotalEl.textContent = resultado.subtotal.toFixed(2).replace(".", ",");
     if (descontoEl)
-      descontoEl.textContent = valorDesconto.toFixed(2).replace(".", ",");
-    if (totalEl) totalEl.textContent = valorTotal.toFixed(2).replace(".", ",");
+      descontoEl.textContent = resultado.desconto.toFixed(2).replace(".", ",");
+    if (totalEl) totalEl.textContent = resultado.valorTotal.toFixed(2).replace(".", ",");
   }
 
   private atualizarTabelaEquipamentos(
@@ -404,19 +398,17 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     somenteVisualizacao = false
   ): HTMLTableRowElement {
 
-    const temDesconto = horas > 2;
-    const valorTotal = equipamento.valorHora * horas;
-    const desconto = temDesconto ? valorTotal * 0.1 : 0;
+    const { valorTotal, desconto, temDesconto } = calcularValorIndividual(equipamento, horas);
 
     const tr = document.createElement("tr");
     tr.setAttribute("equip-codigo", equipamento.codigo.toString());
     tr.appendChild(
       this.criarCelula(`${equipamento.codigo} - ${equipamento.descricao}`)
     );
-    tr.appendChild(this.criarCelula(this.formatarValor(equipamento.valorHora)));
-    tr.appendChild(this.criarCelula(this.formatarValor(valorTotal)));
+    tr.appendChild(this.criarCelula(formatarValorComSimbolo(equipamento.valorHora)));
+    tr.appendChild(this.criarCelula(formatarValorComSimbolo(valorTotal)));
 
-    const tdDesconto = this.criarCelula(this.formatarValor(desconto));
+    const tdDesconto = this.criarCelula(formatarValorComSimbolo(desconto));
     if (temDesconto) tdDesconto.className = "text-success";
     tr.appendChild(tdDesconto);
 
@@ -441,15 +433,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     btn.textContent = "Remover";
     btn.addEventListener("click", () => this.removerEquipamento(codigo));
     return btn;
-  }
-
-  private formatarValor(valor: number | undefined | null): string {
-    if (typeof valor !== "number" || Number.isNaN(valor)) {
-      return "R$ 0,00";
-    }
-
-    const valorFormatado = valor.toFixed(2).replace(".", ",");
-    return `R$ ${valorFormatado}`;
   }
 
   private atualizarCabecalhoTabela(somenteVisualizacao: boolean): void {

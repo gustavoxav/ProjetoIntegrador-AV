@@ -33,3 +33,19 @@ export function calcularHorasUtilizadas(
 
   return { horasTotais, horas, minutos };
 }
+
+export function calcularHorasCobranca(
+  dataHoraLocacao: string,
+  dataHoraDevolucao: string
+): number {
+  const inicio = new Date(dataHoraLocacao);
+  const fim = new Date(dataHoraDevolucao);
+
+  const diferencaMs = fim.getTime() - inicio.getTime();
+  const totalMinutos = Math.floor(diferencaMs / 60000);
+
+  const horasCompletas = Math.floor(totalMinutos / 60);
+  const minutosExcedentes = totalMinutos % 60;
+  
+  return minutosExcedentes > 0 ? horasCompletas + 1 : horasCompletas;
+}

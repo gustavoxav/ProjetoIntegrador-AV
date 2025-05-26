@@ -14,10 +14,10 @@ export type Equipamento = {
   modelo: string;
   fabricante: string;
   descricao: string;
-  valorHora: number;
+  valorHora: number; // TODO: arrumar no back -> tá dando erro no visao-devolucao-html
   avarias: string;
   disponivel: boolean;
-  seguro: number;
+  seguro: number; // TODO: arrumar no back - era pra ser string
 };
 
 export type Funcionario = {
@@ -25,7 +25,7 @@ export type Funcionario = {
   nome: string;
 };
 
-type EquipamentoResumo = {
+type EquipamentoResumo = { // TODO: acho que não precisa
   codigo: number;
   descricao: string;
   valorHora: number;
@@ -45,7 +45,7 @@ export type RespostaLocacao = {
     nomeCompleto: string;
     telefone: string;
   };
-  registradoPor: {
+  registradoPor: { // TODO: arrumar
     codigo: number;
     nome: string;
   };
@@ -53,7 +53,7 @@ export type RespostaLocacao = {
     codigo: number;
     tempoContratado: number;
     subtotal: number;
-    equipamento: EquipamentoResumo;
+    equipamento: EquipamentoResumo; // TODO: arrumar
   }>;
 };
 
