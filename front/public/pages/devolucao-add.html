@@ -1,4 +1,5 @@
-<div class="container">
+<link rel="stylesheet" href="/styles/tables.css">
+<div class="container devolucao-page">
   <h1 class="mb-4">Devolução de Locação</h1>
 
   <form action="/api/devolucao" method="POST">
@@ -84,12 +85,11 @@
               <th>Valor por hora</th>
               <th>Valor Subtotal</th>
               <th>Desconto</th>
-              <th id="acoes-coluna">Ações</th>
             </tr>
           </thead>
           <tbody id="tabela-equipamentos">
             <tr>
-              <td colspan="5" class="text-center text-muted">
+              <td colspan="4" class="text-center text-muted">
                 Nenhum equipamento foi encontrado
               </td>
             </tr>

@@ -235,7 +235,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     if (equipamentos.length === 0) {
       tabelaEquipamentos.innerHTML = `
       <tr>
-        <td colspan="5" class="text-center text-muted">Nenhum equipamento foi encontrado</td>
+        <td colspan="4" class="text-center text-muted">Nenhum equipamento foi encontrado</td>
       </tr>
     `;
       return;
@@ -266,7 +266,6 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     if (temDesconto) tdDesconto.className = "text-success";
     tr.appendChild(tdDesconto);
 
-    tr.appendChild(document.createElement("td"));
     return tr;
   }
 

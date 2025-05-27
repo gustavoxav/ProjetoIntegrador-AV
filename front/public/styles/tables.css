@@ -1,0 +1,187 @@
+#tabela-equipamentos {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#tabela-equipamentos th:nth-child(1),
+#tabela-equipamentos td:nth-child(1) {
+  width: 40%;
+}
+
+#tabela-equipamentos th:nth-child(2),
+#tabela-equipamentos td:nth-child(2) {
+  width: 15%;
+}
+
+#tabela-equipamentos th:nth-child(3),
+#tabela-equipamentos td:nth-child(3) {
+  width: 15%;
+}
+
+#tabela-equipamentos th:nth-child(4),
+#tabela-equipamentos td:nth-child(4) {
+  width: 15%;
+}
+
+#tabela-equipamentos th:nth-child(5),
+#tabela-equipamentos td:nth-child(5) {
+  width: 15%;
+}
+
+.devolucao-page #tabela-equipamentos th:nth-child(1),
+.devolucao-page #tabela-equipamentos td:nth-child(1) {
+  width: 40%;
+}
+
+.devolucao-page #tabela-equipamentos th:nth-child(2),
+.devolucao-page #tabela-equipamentos td:nth-child(2) {
+  width: 20%;
+}
+
+.devolucao-page #tabela-equipamentos th:nth-child(3),
+.devolucao-page #tabela-equipamentos td:nth-child(3) {
+  width: 20%;
+}
+
+.devolucao-page #tabela-equipamentos th:nth-child(4),
+.devolucao-page #tabela-equipamentos td:nth-child(4) {
+  width: 20%;
+}
+
+#tabela-locacoes-list {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#tabela-locacoes-list th:nth-child(1),
+#tabela-locacoes-list td:nth-child(1) {
+  width: 8%;
+}
+
+#tabela-locacoes-list th:nth-child(2),
+#tabela-locacoes-list td:nth-child(2) {
+  width: 18%;
+}
+
+#tabela-locacoes-list th:nth-child(3),
+#tabela-locacoes-list td:nth-child(3) {
+  width: 15%;
+}
+
+#tabela-locacoes-list th:nth-child(4),
+#tabela-locacoes-list td:nth-child(4) {
+  width: 18%;
+}
+
+#tabela-locacoes-list th:nth-child(5),
+#tabela-locacoes-list td:nth-child(5) {
+  width: 25%;
+}
+
+#tabela-locacoes-list th:nth-child(6),
+#tabela-locacoes-list td:nth-child(6) {
+  width: 16%;
+}
+
+#tabela-equipamentos td,
+#tabela-locacoes-list td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#tabela-locacoes {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#tabela-locacoes th:nth-child(1),
+#tabela-locacoes td:nth-child(1) {
+  width: 8%;
+}
+
+#tabela-locacoes th:nth-child(2),
+#tabela-locacoes td:nth-child(2) {
+  width: 18%;
+}
+
+#tabela-locacoes th:nth-child(3),
+#tabela-locacoes td:nth-child(3) {
+  width: 15%;
+}
+
+#tabela-locacoes th:nth-child(4),
+#tabela-locacoes td:nth-child(4) {
+  width: 18%;
+}
+
+#tabela-locacoes th:nth-child(5),
+#tabela-locacoes td:nth-child(5) {
+  width: 25%;
+}
+
+#tabela-locacoes th:nth-child(6),
+#tabela-locacoes td:nth-child(6) {
+  width: 16%;
+}
+
+#tabela-equipamentos td,
+#tabela-locacoes-list td,
+#tabela-locacoes td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#tabela-devolucao {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#tabela-devolucao th:nth-child(1),
+#tabela-devolucao td:nth-child(1) {
+  width: 8%;
+}
+
+#tabela-devolucao th:nth-child(2),
+#tabela-devolucao td:nth-child(2) {
+  width: 20%;
+}
+
+#tabela-devolucao th:nth-child(3),
+#tabela-devolucao td:nth-child(3) {
+  width: 12%;
+}
+
+#tabela-devolucao th:nth-child(4),
+#tabela-devolucao td:nth-child(4) {
+  width: 25%;
+}
+
+#tabela-devolucao th:nth-child(5),
+#tabela-devolucao td:nth-child(5) {
+  width: 20%;
+}
+
+#tabela-devolucao th:nth-child(6),
+#tabela-devolucao td:nth-child(6) {
+  width: 15%;
+}
+
+#tabela-equipamentos td,
+#tabela-locacoes-list td,
+#tabela-locacoes td,
+#tabela-devolucao td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#tabela-equipamentos td:nth-child(1),
+#tabela-locacoes-list td:nth-child(5),
+#tabela-locacoes td:nth-child(5),
+#tabela-devolucao td:nth-child(4),
+#tabela-devolucao td:nth-child(5) {
+  white-space: normal;
+  word-wrap: break-word;
+} 
