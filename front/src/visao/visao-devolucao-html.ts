@@ -49,7 +49,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         devolucao.locacao.cliente.nomeCompleto
       }</td>
       <td class="text-start align-middle">${devolucao.registradoPor.nome}</td>
-      <td class="text-start align-middle">${formatarValorComSimbolo(Number.parseFloat(devolucao.valorPago))}</td>
+      <td class="text-start align-middle">${formatarValorComSimbolo(devolucao.valorPago)}</td>
     `;
 
       tbody.appendChild(row);
@@ -92,7 +92,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       tr.innerHTML = `
       <td>${locacao.codigo}</td>
       <td>${formatarDataHora(locacao.dataHoraLocacao)}</td>
-      <td>${locacao.horasContratadas} Horas</td>
+      <td>${locacao.horasContratadas} ${locacao.horasContratadas === 1 ? 'hora' : 'horas'}</td>
       <td>${formatarDataHora(locacao.dataHoraEntregaPrevista)}</td>
       <td>${locacao.cliente.nomeCompleto}</td>
       <td>${locacao.cliente.telefone}</td>

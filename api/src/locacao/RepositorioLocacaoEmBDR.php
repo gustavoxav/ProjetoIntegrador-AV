@@ -70,15 +70,16 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
 
     /**
      * Obtém uma locação pelo código
-     * @param int $filtro O código da locação ou CPF do cliente
+     * @param int|string $filtro O código da locação ou CPF do cliente
      * @return array<int,array<string,mixed>> A locação encontrada ou array vazio se não existir
      * @throws Exception erro
      */
     public function obterPorFiltro($filtro)
     {
-        $where = (strlen((string)$filtro) === 11)
-            ? 'WHERE c.cpf = ? ORDER BY l.data_hora_locacao DESC'
-            : 'WHERE l.id = ?';
+        if (strlen((string)$filtro) !== 11) {
+            $locacao = $this->obterPorId((int)$filtro);
+            return $locacao ? [$locacao] : [];
+        }
 
         $query = '
         SELECT l.*, 
@@ -90,7 +91,7 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
         INNER JOIN cliente c ON l.cliente_id = c.id
         INNER JOIN funcionario f ON l.funcionario_id = f.id
         LEFT JOIN devolucao d ON l.id = d.locacao_id
-        ' . $where;
+        WHERE c.cpf = ? ORDER BY l.data_hora_locacao DESC';
 
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([$filtro]);
@@ -133,7 +134,7 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
                     'modelo' => $item['modelo'],
                     'fabricante' => $item['fabricante'],
                     'descricao' => $item['descricao'],
-                    'valorHora' => $item['valor_hora'],
+                    'valorHora' => (float)$item['valor_hora'],
                     'avarias' => $item['avarias'],
                     'numeroSeguro' => $item['numero_seguro'],
                     'disponivel' => (bool)$item['disponivel']
@@ -220,7 +221,7 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
                 'modelo' => $item['modelo'],
                 'fabricante' => $item['fabricante'],
                 'descricao' => $item['descricao'],
-                'valorHora' => $item['valor_hora'],
+                'valorHora' => (float)$item['valor_hora'],
                 'avarias' => $item['avarias'],
                 'numeroSeguro' => $item['numero_seguro'],
                 'disponivel' => (bool)$item['disponivel']
@@ -249,12 +250,16 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
 
     /**
      * Obtém todas as locações ou filtra por cliente ou funcionário
-     * @param string|null $filtro Filtro opcional por código do cliente ou funcionário
+     * @param int|string|null $filtro Filtro opcional por código do cliente ou funcionário
      * @return array<int,array<string,mixed>> Lista de locações
      * @throws Exception erro
      */
     public function obterTodos($filtro = null)
     {
+        if ($filtro) {
+            return $this->obterPorFiltro($filtro);
+        }
+
         $sql = '
             SELECT l.*, 
             c.id as cliente_id, c.nome_completo as cliente_nome, c.telefone as cliente_telefone,
@@ -264,19 +269,11 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
             INNER JOIN cliente c ON l.cliente_id = c.id
             INNER JOIN funcionario f ON l.funcionario_id = f.id
             LEFT JOIN devolucao d ON l.id = d.locacao_id
+            ORDER BY l.id DESC
         ';
 
-        $params = [];
-
-        if ($filtro) {
-            $sql .= ' WHERE c.id = ? OR f.id = ?';
-            $params = [$filtro, $filtro];
-        }
-
-        $sql .= ' ORDER BY l.id DESC';
-
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
+        $stmt->execute();
         $locacoesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $locacoes = [];

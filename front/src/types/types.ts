@@ -19,7 +19,7 @@ export type Equipamento = {
   modelo: string;
   fabricante: string;
   descricao: string;
-  valorHora: number; // TODO: arrumar no back -> em algumas rotas vem como string e em outras como number
+  valorHora: number;
   avarias: string;
   disponivel: boolean;
   numeroSeguro: string;
@@ -70,7 +70,7 @@ export type DadosDevolucao = {
 export type RespostaDevolucao = {
   codigo: number;
   dataHoraDevolucao: string;
-  valorPago: string; // TODO: tá vindo como string
+  valorPago: number;
   locacao: {
     codigo: number;
     dataHoraLocacao: string;

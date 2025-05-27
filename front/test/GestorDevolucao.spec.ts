@@ -25,7 +25,7 @@ describe("Teste da classe Gestor Devolucao", () => {
   const mockRespostaDevolucao: RespostaDevolucao = {
     codigo: 1,
     dataHoraDevolucao: "2025-05-20T17:55:14Z",
-    valorPago: "4,00",
+    valorPago: 4.00,
     registradoPor: {
       codigo: 201,
       nome: "Funcionário",
