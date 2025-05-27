@@ -8,153 +8,155 @@ Thiago Rocha Duarte
 
 ## Objetivo
 
+Este projeto desenvolve um sistema web para gestão de locação de equipamentos de uma loja de bicicletas. O sistema permite controlar o processo completo de locação e devolução.
 
 ## Tecnologias Utilizadas
 
+### Backend
+- **PHP** - Linguagem de programação principal
+- **MySQL** - Sistema de gerenciamento de banco de dados
+- **Composer** - Gerenciador de dependências PHP
+- **phputil/router** - Roteamento de requisições HTTP
+- **phputil/cors** - Configuração de CORS
+- **vlucas/phpdotenv** - Gerenciamento de variáveis de ambiente
+
+### Frontend
+- **TypeScript** - Linguagem de programação principal
+- **Vite** - Build tool e servidor de desenvolvimento
+- **Page.js** - Roteamento client-side
+- **D3.js** - Biblioteca para visualização de dados
+- **Bootstrap 5.3.6** - Framework CSS para estilização e componentes
+- **Bootstrap Icons** - Ícones utilizados na interface
+
+### Testes
+- **Vitest** - Framework de testes unitários
+- **Playwright** - Framework de testes end-to-end (e2e)
+- **Kahlan** - Framework de testes para PHP
+- **PHPStan** - Análise estática de código PHP
 
 ## Funcionalidades
 
+- **Sistema de Locação**: Criação de locações com cálculo automático de valores e descontos
+- **Sistema de Devolução**: Processamento de devoluções com cálculo de valores
 
-## Como baixar o projeto
-1. Clone o repositório:
-   ```bash
-   git clone https://gitlab.com/cefet-nf/pis-2025-1/g9.git
+## Como baixar e executar o projeto
 
-2. Acesse a pasta do projeto:
-   ```bash
-   cd g9
+### Pré-requisitos
+- **Node.js** (versão 18+)
+- **PHP** (versão 8.0+)
+- **MySQL/MariaDB** (versão 8.0+)
+- **Composer**
+- **pnpm** (recomendado)
 
+### 1. Clone o repositório:
+```bash
+git clone https://gitlab.com/cefet-nf/pis-2025-1/g9.git
+cd g9
+```
 
-## ENDPOINTS DE DEVOLUÇÃO
+### 2. Configuração do Backend (API)
+```bash
+# Acesse a pasta da API
+cd api
 
-Todos os exemplos abaixo são da mesma locação/devolução, para facilitar a comparação e para onde vai cada coisa.
+# Instale as dependências
+composer install
 
-1. **GET /api/devolucoes/simulacao/:locacaoId**
-   - Simula o valor a ser pago na devolução, mas não registra no banco
-   - Parâmetro: ID da locação (na URL - :locacaoId)
-   - Retorna: Valor calculado para pagamento da devolução
-   
-   **Exemplo de resposta:**
-   ```json
-   {
-      "locacao": {
-         "codigo": 2,
-         "dataHoraLocacao": "2025-05-22 04:41:40",
-         "horasContratadas": 1,
-         "dataHoraEntregaPrevista": "2025-05-22 05:41:40",
-         "desconto": 0,
-         "valorTotal": 1,
-         "cliente": {
-            "codigo": 5,
-            "nomeCompleto": "Mariano Costa",
-            "telefone": "(11) 92345-6789"
-         },
-         "registradoPor": {
-            "codigo": 1,
-            "nome": "Patrícia Oliveira"
-         },
-         "itens": [
-            {
-               "codigo": 8,
-               "tempoContratado": 1,
-               "subtotal": 1,
-               "equipamento": {
-                  "codigo": 8,
-                  "modelo": "Squeeze 600ml",
-                  "fabricante": "Nike",
-                  "descricao": "Squeeze térmico",
-                  "valorHora": "1.00",
-                  "avarias": "",
-                  "disponivel": false
-               }
-            }
-         ]
-      },
-      "dataHoraDevolucao": "2025-05-22 04:57:16",
-      "valorPago": 1
-   }
-   ```
+# Configure as variáveis de ambiente
+cp .env.example .env
+# Edite o arquivo .env com suas configurações de banco de dados
 
-2. **POST /api/devolucoes**
-   - Registra uma nova devolução no sistema
-   - Corpo da requisição: Dados da devolução. "locacaoId", "registradoPor" e "valorPago" são obrigatórios. "dataHoraDevolucao" é opcional, se não informado usará a data/hora atual.
-   - **IMPORTANTE**: O "valorPago" deve ser exatamente o valor retornado pela simulação. Se o valor informado for diferente do calculado pelo sistema, será retornado um erro solicitando para tentar novamente.
-   - **Segurança**: O valor gravado no banco será sempre o calculado pelo sistema, não o valor informado na requisição. O valor informado serve apenas para validação.
-   - Retorna: Dados da devolução registrada
-   
-   **Exemplo de corpo da requisição:**
-   ```json
-   {
-   "locacaoId": 2,
-      "registradoPor": {
-         "codigo": 5,
-         "nome": "Aline Fernandes"
-      },
-      "valorPago": 1,
-      "dataHoraDevolucao": "2025-05-22 05:03:05"
-   }
-   ```
-   
-   **Exemplo de resposta (sucesso):**
-   ```json
-   {
-      "codigo": 1,
-      "dataHoraDevolucao": "2025-05-22 05:03:05",
-      "valorPago": "1.00",
-      "locacao": {
-         "codigo": 2,
-         "dataHoraLocacao": "2025-05-22 04:41:40",
-         "horasContratadas": 1,
-         "dataHoraEntregaPrevista": "2025-05-22 05:41:40",
-         "cliente": {
-            "codigo": 5,
-            "nomeCompleto": "Mariano Costa",
-            "cpf": "65432198700"
-         }
-      },
-      "registradoPor": {
-         "codigo": 5,
-         "nome": "Aline Fernandes"
-      }
-   }
-   ```
-   
-   **Exemplo de resposta (erro de valor):**
-   ```json
-   {
-      "erro": "O valor informado não está correto. Valor esperado: R$ 1,50. Tente novamente."
-   }
-   ```
+# Crie o banco de dados e execute as migrações
+composer db-prepare
 
-3. **GET /api/devolucoes**
-   - Lista todas as devoluções cadastradas no sistema
-   - Não precisa de parâmetro nenhum, que nem as outras rotas de GET ALL
-   - Retorna: Array com todas as devoluções
-   
-   **Exemplo de resposta:**
-   ```json
-   [
-      {
-         "codigo": 1,
-         "dataHoraDevolucao": "2025-05-22 05:03:05",
-         "valorPago": "1.00",
-         "locacao": {
-            "codigo": 2,
-            "dataHoraLocacao": "2025-05-22 04:41:40",
-            "horasContratadas": 1,
-            "dataHoraEntregaPrevista": "2025-05-22 05:41:40",
-            "cliente": {
-               "codigo": 5,
-               "nomeCompleto": "Mariano Costa",
-               "cpf": "65432198700"
-            }
-         },
-         "registradoPor": {
-            "codigo": 5,
-            "nome": "Aline Fernandes"
-         }
-      }
-   ]
-   ```
+# Inicie o servidor da API
+composer start
+```
+
+### 3. Configuração do Frontend
+```bash
+# Acesse a pasta do frontend (abra um novo terminal)
+cd front
+
+# Instale as dependências
+pnpm install
+
+# Configure as variáveis de ambiente
+cp .env.example .env
+# Edite o arquivo .env com a URL da API
+
+# Inicie o servidor de desenvolvimento
+pnpm dev
+```
+
+### 4. Executar Testes
+
+#### Testes do Backend:
+```bash
+cd api
+composer test        # Executa todos os testes
+composer kahlan      # Apenas testes unitários
+composer phpstan     # Apenas análise estática
+```
+
+#### Testes do Frontend:
+```bash
+cd front
+pnpm test               # Testes unitários
+pnpm e2e                # Testes end-to-end
+```
+
+## Estrutura do Projeto
+
+```
+g9/
+├── api/                   # Backend PHP
+│   ├── src/               # Código fonte
+│   ├── db/                # Scripts de banco de dados
+│   ├── spec/              # Testes
+│   └── composer.json      # Dependências PHP
+├── front/                 # Frontend TypeScript
+│   ├── src/               # Código fonte
+│   ├── public/            # Arquivos estáticos
+│   ├── e2e/               # Testes end-to-end
+│   ├── test/              # Testes unitários
+│   └── package.json       # Dependências Node.js
+└── README.md
+└── apresentacao.pdf       # Slides de apresentação
+```
+
+## Referências Bibliográficas
+
+### Frameworks e Bibliotecas
+- **Bootstrap 5.3.6**. Disponível em: <https://getbootstrap.com/docs/5.3/components>. Acesso em: 27 mai. 2025.
+- **D3.js - Data-Driven Documents**. Disponível em: <https://d3js.org/>. Acesso em: 27 mai. 2025.
+- **Page.js - Client-side routing**. Disponível em: <https://github.com/visionmedia/page.js>. Acesso em: 27 mai. 2025.
+- **Vite - Build Tool**. Disponível em: <https://vitejs.dev/guide/>. Acesso em: 27 mai. 2025.
+
+### Testes
+- **Playwright Testing Framework**. Disponível em: <https://playwright.dev/docs/writing-tests>. Acesso em: 27 mai. 2025.
+- **Vitest - Unit Testing Framework**. Disponível em: <https://vitest.dev/>. Acesso em: 27 mai. 2025.
+- **Kahlan - PHP Testing Framework**. Disponível em: <https://kahlan.github.io/docs/>. Acesso em: 27 mai. 2025.
+- **PHPStan - Static Analysis**. Disponível em: <https://phpstan.org/user-guide/rule-levels>. Acesso em: 27 mai. 2025.
+
+### Gerenciamento de Dependências
+- **Composer - PHP Dependency Manager**. Disponível em: <https://getcomposer.org/doc/>. Acesso em: 27 mai. 2025.
+- **pnpm - Package Manager**. Disponível em: <https://pnpm.io/>. Acesso em: 27 mai. 2025.
+
+### Templates e Recursos Visuais
+- **404 Page Template - Bootstrap 5 Example**. Disponível em: <https://bootstrapexamples.com/@valeria/404-page-template-2>. Acesso em: 27 mai. 2025.
+- **Bootstrap Icons**. Disponível em: <https://icons.getbootstrap.com/>. Acesso em: 27 mai. 2025.
+- **Imagem**. Disponível em: <https://super.abril.com.br/wp-content/uploads/2018/05/humanidade-causa-cc3a2ncer-em-animais-selvagens.png?w=720&h=440&crop=1>. Acesso em: 27 maio. 2025.
+- **Imagem**. Disponível em: <https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2023/10/26/1095416860-20144148136268.jpg>. Acessoem: 27 maio. 2025.
+- **Imagem**. Disponível em: <https://vegazeta.com.br/wp-content/uploads/2021/03/Arthurs-Acres-Animal-Sanctuary-2.jpg>. Acesso em: 27 maio.2025.
+- **Imagem**. Disponível em: <https://static.mundoeducacao.uol.com.br/mundoeducacao/2021/03/1-animal.jpg>. Acesso em: 27 maio. 2025.
+- **Imagem**. Disponível em: <https://portaledicase.com/wp-content/uploads/2025/02/Hipopotamo-1024x683.jpg>. Acesso em: 27 maio. 2025. 
+- **Imagem**. Disponível em: <https://jpimg.com.br/uploads/2025/03/7-animais-mais-fofos-do-mundo.jpg>. Acesso em: 27 maio. 2025.
+- **Imagem**. Disponível em: <https://jpimg.com.br/uploads/2025/02/8-animais-mais-fortes-do-mundo.jpg>. Acesso em: 27 maio. 2025.
+- **Imagem**. Disponível em: <https://rizzoimobiliaria.com.br/images/media/dfe779831f7a3f38504a77dbfa883a341673881279.jpg>. Acesso em: 27maio. 2025.
+- **Imagem**. Disponível em: <https://cdn.gazetasp.com.br/img/c/825/500/dn_arquivo/2025/01/lobo-guara.jpg>. Acesso em: 27 maio. 2025.
+- **Imagem**. Disponível em: <https://ogimg.infoglobo.com.br/in/14638550-9ee-f9a/FT1086A/20141123-125719.jpg>. Acesso em: 27 maio. 2025.
+- **Imagem**. Disponível em: <https://ufape.com.br/wp-content/uploads/2024/06/Ufape-Hospital-Veterinario-filhote-de-cachorro-brincando-na-grama-GS2-MKT-Freepik.jpg>. Acesso em: 27 maio. 2025.
+
 
 ## CEFET-RJ, Sistemas de Informação
