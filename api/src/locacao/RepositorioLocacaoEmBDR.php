@@ -177,10 +177,12 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
         SELECT l.*, 
             c.id as cliente_id, c.nome_completo as cliente_nome, 
             c.telefone as cliente_telefone,
-            f.id as funcionario_id, f.nome as funcionario_nome
+            f.id as funcionario_id, f.nome as funcionario_nome,
+            d.id as devolucao_id
         FROM locacao l
         INNER JOIN cliente c ON l.cliente_id = c.id
         INNER JOIN funcionario f ON l.funcionario_id = f.id
+        LEFT JOIN devolucao d ON l.id = d.locacao_id
         WHERE l.id = ?';
 
         $stmt = $this->pdo->prepare($query);
@@ -245,7 +247,9 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
             $itensObj
         );
 
-        return $locacao->toArray();
+        $locacaoArray = $locacao->toArray();
+        $locacaoArray['devolvida'] = !is_null($locacaoData['devolucao_id']);
+        return $locacaoArray;
     }
 
     /**
