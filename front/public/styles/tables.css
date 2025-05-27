@@ -184,4 +184,31 @@
 #tabela-devolucao td:nth-child(5) {
   white-space: normal;
   word-wrap: break-word;
-} 
+}
+
+#tabela-locacoes th,
+#tabela-locacoes td,
+#tabela-locacoes-list th,
+#tabela-locacoes-list td,
+#tabela-devolucao th,
+#tabela-devolucao td {
+  padding: 0.75rem 1rem;
+}
+
+#tabela-locacoes th:nth-child(1),
+#tabela-locacoes td:nth-child(1),
+#tabela-locacoes-list th:nth-child(1),
+#tabela-locacoes-list td:nth-child(1),
+#tabela-devolucao th:nth-child(1),
+#tabela-devolucao td:nth-child(1) {
+  padding-left: 1.5rem;
+}
+
+#tabela-locacoes th:last-child,
+#tabela-locacoes td:last-child,
+#tabela-locacoes-list th:last-child,
+#tabela-locacoes-list td:last-child,
+#tabela-devolucao th:last-child,
+#tabela-devolucao td:last-child {
+  padding-right: 1.5rem;
+}
