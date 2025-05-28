@@ -17,7 +17,7 @@ $app->use(cors([
 $pdo = conectarPDO();
 
 // GET /api/clientes: Retorna todos os clientes cadastrados no sistema
-$app->get(API_PREFIX . "/clientes", function ($req, $res) use ($pdo) {
+$app->get("/clientes", function ($req, $res) use ($pdo) {
 
   try {
     $gestor = new GestorCliente(
@@ -31,7 +31,7 @@ $app->get(API_PREFIX . "/clientes", function ($req, $res) use ($pdo) {
 });
 
 // GET /api/clientes/:filtro: Busca clientes por CPF ou código específico
-$app->get(API_PREFIX . "/clientes/:filtro", function ($req, $res) use ($pdo) {
+$app->get("/clientes/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
 
@@ -47,7 +47,7 @@ $app->get(API_PREFIX . "/clientes/:filtro", function ($req, $res) use ($pdo) {
 });
 
 // GET /api/funcionarios: Retorna todos os funcionários cadastrados no sistema
-$app->get(API_PREFIX . "/funcionarios", function ($req, $res) use ($pdo) {
+$app->get("/funcionarios", function ($req, $res) use ($pdo) {
   try {
     $gestor = new GestorFuncionario(
       new RepositorioFuncionarioEmBDR($pdo)
@@ -60,7 +60,7 @@ $app->get(API_PREFIX . "/funcionarios", function ($req, $res) use ($pdo) {
 });
 
 // GET /api/funcionarios/:filtro: Busca funcionários por código ou nome específico
-$app->get(API_PREFIX . "/funcionarios/:filtro", function ($req, $res) use ($pdo) {
+$app->get("/funcionarios/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
 
@@ -76,7 +76,7 @@ $app->get(API_PREFIX . "/funcionarios/:filtro", function ($req, $res) use ($pdo)
 });
 
 // GET /api/equipamentos: Retorna todos os equipamentos
-$app->get(API_PREFIX . "/equipamentos", function ($req, $res) use ($pdo) {
+$app->get("/equipamentos", function ($req, $res) use ($pdo) {
   try {
     $gestor = new GestorEquipamento(
       new RepositorioEquipamentoEmBDR($pdo)
@@ -89,7 +89,7 @@ $app->get(API_PREFIX . "/equipamentos", function ($req, $res) use ($pdo) {
 });
 
 // GET /api/equipamentos/:filtro: Busca equipamentos por critério específico
-$app->get(API_PREFIX . "/equipamentos/:filtro", function ($req, $res) use ($pdo) {
+$app->get("/equipamentos/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
 
@@ -105,7 +105,7 @@ $app->get(API_PREFIX . "/equipamentos/:filtro", function ($req, $res) use ($pdo)
 });
 
 // POST /api/locacoes: Registra uma nova locação
-$app->post(API_PREFIX . "/locacoes", function ($req, $res) use ($pdo) {
+$app->post("/locacoes", function ($req, $res) use ($pdo) {
   $dadosLocacao = (array) $req->body();
 
   try {
@@ -120,7 +120,7 @@ $app->post(API_PREFIX . "/locacoes", function ($req, $res) use ($pdo) {
 });
 
 // GET /api/locacoes: Retorna todas as locações cadastradas no sistema
-$app->get(API_PREFIX . "/locacoes", function ($req, $res) use ($pdo) {
+$app->get("/locacoes", function ($req, $res) use ($pdo) {
   try {
     $gestor = new GestorLocacao(
       new RepositorioLocacaoEmBDR($pdo)
@@ -133,7 +133,7 @@ $app->get(API_PREFIX . "/locacoes", function ($req, $res) use ($pdo) {
 });
 
 // GET /api/locacoes/:filtro: Busca uma locação pelo código ou por filtro
-$app->get(API_PREFIX . "/locacoes/:filtro", function ($req, $res) use ($pdo) {
+$app->get("/locacoes/:filtro", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $filtro = $params['filtro'] ?? null;
 
@@ -155,7 +155,7 @@ $app->get(API_PREFIX . "/locacoes/:filtro", function ($req, $res) use ($pdo) {
 });
 
 // GET /api/devolucoes/simulacao/:locacaoId - Simula o valor a ser pago na devolução (sem gravar no banco)
-$app->get(API_PREFIX . "/devolucoes/simulacao/:locacaoId", function ($req, $res) use ($pdo) {
+$app->get("/devolucoes/simulacao/:locacaoId", function ($req, $res) use ($pdo) {
   $params = $req->params();
   $locacaoId = $params['locacaoId'] ?? null;
 
@@ -200,7 +200,7 @@ $app->get(API_PREFIX . "/devolucoes/simulacao/:locacaoId", function ($req, $res)
 });
 
 // POST /api/devolucoes - Registra uma devolução
-$app->post(API_PREFIX . "/devolucoes", function ($req, $res) use ($pdo) {
+$app->post("/devolucoes", function ($req, $res) use ($pdo) {
   $dadosDevolucao = (array) $req->body();
 
   try {
@@ -223,7 +223,7 @@ $app->post(API_PREFIX . "/devolucoes", function ($req, $res) use ($pdo) {
 });
 
 // GET /api/devolucoes - Retorna todas as devoluções cadastradas no sistema
-$app->get(API_PREFIX . "/devolucoes", function ($req, $res) use ($pdo) {
+$app->get("/devolucoes", function ($req, $res) use ($pdo) {
   try {
     $gestor = new GestorDevolucao(
       new RepositorioDevolucaoEmBDR($pdo),
@@ -236,4 +236,4 @@ $app->get(API_PREFIX . "/devolucoes", function ($req, $res) use ($pdo) {
   }
 });
 
-$app->listen();
+$app->listen(['rootURL' => API_PREFIX]);
