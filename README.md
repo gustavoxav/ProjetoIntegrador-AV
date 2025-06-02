@@ -117,7 +117,7 @@ g9/
 │   └── composer.json      # Dependências PHP
 ├── front/                 # Frontend TypeScript
 │   ├── src/               # Código fonte
-│   ├── public/            # Arquivos estáticos
+│   ├── public/            # Arquivos estáticos(componentes)
 │   ├── e2e/               # Testes end-to-end
 │   ├── test/              # Testes unitários
 │   └── package.json       # Dependências Node.js

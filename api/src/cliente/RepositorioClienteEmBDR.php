@@ -84,4 +84,41 @@ class RepositorioClienteEmBDR implements RepositorioCliente
       );
     }
   }
+
+  /**
+   * Salva um novo cliente no banco de dados.
+   * 
+   * @param Cliente $cliente O cliente a ser salvo
+   * @return array<string, mixed> Os dados do cliente salvo (inclusive com ID)
+   * @throws RepositorioException Em caso de erro de persistência
+   */
+  public function salvar(Cliente $cliente): Cliente
+  {
+    try {
+      $sql = "INSERT INTO cliente (nome_completo, cpf, telefone, data_nascimento, email, endereco, foto)
+            VALUES (:nome, :cpf, :telefone, :data_nascimento, :email, :endereco, :foto)";
+
+      $ps = $this->pdo->prepare($sql);
+
+      $ps->execute([
+        ':nome' => $cliente->getNomeCompleto(),
+        ':cpf' => $cliente->getCpf(),
+        ':telefone' => $cliente->getTelefone() ?? '',
+        ':data_nascimento' => $cliente->getDataNascimento() ?? null,
+        ':email' => $cliente->getEmail() ?? '',
+        ':endereco' => $cliente->getEndereco() ?? '',
+        ':foto' => $cliente->getFoto() ?? '',
+      ]);
+
+      $id = (int) $this->pdo->lastInsertId();
+
+      return $this->buscarClienteFiltro((int)$id);
+    } catch (PDOException $ex) {
+      throw new RepositorioException(
+        'Erro ao salvar cliente. Verifique os dados e tente novamente.',
+        (int) $ex->getCode(),
+        $ex
+      );
+    }
+  }
 }
