@@ -1,5 +1,5 @@
 import type { Funcionario } from "../types/types.js";
-import { ControladoraFuncionario } from "../controladora/controladora-funcionario.js";
+import { ControladoraFuncionario } from "./controladora-funcionario.js";
 import type { VisaoFuncionario } from "./visao-funcionario.js";
 
 export class VisaoFuncionarioEmHTML implements VisaoFuncionario {

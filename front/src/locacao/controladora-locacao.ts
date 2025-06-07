@@ -1,10 +1,10 @@
 import { ErroDominio } from "../infra/ErroDominio.js";
-import { GestorLocacao } from "../gestor/gestor-locacao.js";
-import type { VisaoLocacao } from "../visao/visao-locacao.js";
-import { VisaoCliente } from "../visao/visao-clientes.js";
-import { VisaoFuncionario } from "../visao/visao-funcionario.js";
-import { VisaoEquipamento } from "../visao/visao-equipamento.js";
-import { Equipamento } from "../models/Equipamento.js";
+import { GestorLocacao } from "./gestor-locacao.js";
+import type { VisaoLocacao } from "./visao-locacao.js";
+import { VisaoCliente } from "../cliente/visao-clientes.js";
+import { VisaoFuncionario } from "../funcionario/visao-funcionario.js";
+import { VisaoEquipamento } from "../equipamento/visao-equipamento.js";
+import { Equipamento } from "../equipamento/Equipamento.js";
 
 export class ControladoraLocacao {
   private readonly gestor: GestorLocacao;
@@ -85,28 +85,13 @@ export class ControladoraLocacao {
             descricao: eq.descricao,
             valorHora: eq.valorHora,
             disponivel: true,
-          },
+            modelo: eq.modelo ?? "",
+            fabricante: eq.fabricante ?? "",
+            avarias: eq.avarias ?? "",
+            numeroSeguro: eq.numeroSeguro ?? "",
+          } as Equipamento,
         })),
       };
-
-      // console.log(
-      //   "Enviando para API:",
-      //   JSON.stringify(
-      //     {
-      //       cliente: dadosFormatados.cliente,
-      //       registradoPor: dadosFormatados.registradoPor,
-      //       horasContratadas: dadosFormatados.horasContratadas,
-      //       itens: dadosFormatados.itens.map((i) => ({
-      //         equipamento: {
-      //           codigo: i.equipamento.codigo,
-      //           descricao: i.equipamento.descricao,
-      //         },
-      //       })),
-      //     },
-      //     null,
-      //     2
-      //   )
-      // );
 
       try {
         await this.gestor.registrarLocacao(dadosFormatados);

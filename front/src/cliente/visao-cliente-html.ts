@@ -1,5 +1,5 @@
 import type { Cliente } from "../types/types.js";
-import { ControladoraCliente } from "../controladora/controladora-cliente.js";
+import { ControladoraCliente } from "./controladora-cliente.js";
 import type { VisaoCliente } from "./visao-clientes.js";
 
 export class VisaoClienteEmHTML implements VisaoCliente {

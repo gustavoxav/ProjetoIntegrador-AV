@@ -1,6 +1,6 @@
-import { Cliente } from "./Cliente";
-import { Funcionario } from "./Funcionario";
-import type { ItemLocado } from "./ItemLocado";
+import { Cliente } from "../cliente/Cliente";
+import { Funcionario } from "../funcionario/Funcionario";
+import type { ItemLocado } from "../equipamento/ItemLocado";
 
 export class Locacao {
   constructor(

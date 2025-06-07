@@ -1,5 +1,5 @@
-import { Equipamento } from "./Equipamento";
-import { Locacao } from "./Locacao";
+import { Equipamento } from "../equipamento/Equipamento";
+import { Locacao } from "../locacao/Locacao";
 
 export class ItemLocado {
   constructor(

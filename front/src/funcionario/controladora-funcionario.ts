@@ -1,6 +1,6 @@
 import { ErroDominio } from "../infra/ErroDominio.js";
-import { GestorFuncionario } from "../gestor/gestor-funcionario.js";
-import type { VisaoFuncionario } from "../visao/visao-funcionario.js";
+import { GestorFuncionario } from "./gestor-funcionario.js";
+import type { VisaoFuncionario } from "./visao-funcionario.js";
 
 export class ControladoraFuncionario {
   constructor(private visao: VisaoFuncionario) {

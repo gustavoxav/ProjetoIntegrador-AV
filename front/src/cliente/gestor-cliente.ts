@@ -7,12 +7,12 @@ declare global {
     readonly env: {
       readonly VITE_API_URL?: string;
       [key: string]: string | undefined;
-    }
+    };
   }
 }
 
 export class GestorCliente {
- private readonly urlApi: string = import.meta.env.VITE_API_URL ?? "";
+  private readonly urlApi: string = import.meta.env.VITE_API_URL ?? "";
 
   async obterClientes(id: number): Promise<Cliente> {
     const options: RequestInit = {
@@ -25,6 +25,32 @@ export class GestorCliente {
     };
 
     const response = await fetch(`${this.urlApi}/clientes/${id}`, options);
+
+    if (!response.ok) {
+      throw ErroDominio.comProblemas([
+        `Erro ao buscar cliente. Status: ${response.status}`,
+      ]);
+    }
+
+    const data = await response.json();
+    return data;
+  }
+
+  async salvarCliente(cliente: Cliente): Promise<Cliente> {
+    const options: RequestInit = {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(cliente),
+      credentials: "include",
+    };
+
+    const response = await fetch(
+      `${this.urlApi}/clientes/${cliente.codigo}`,
+      options
+    );
 
     if (!response.ok) {
       throw ErroDominio.comProblemas([

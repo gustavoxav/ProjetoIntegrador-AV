@@ -1,5 +1,5 @@
-import { ControladoraLocacao } from "../controladora/controladora-locacao";
-import { VisaoLocacaoEmHTML } from "../visao/visao-locacao-html";
+import { ControladoraLocacao } from "../locacao/controladora-locacao";
+import { VisaoLocacaoEmHTML } from "../locacao/visao-locacao-html";
 
 export function initLocacaoList() {
   const addButton = document.getElementById("addButton");

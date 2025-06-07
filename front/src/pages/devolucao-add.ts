@@ -1,7 +1,7 @@
-import { ControladoraDevolucao } from "../controladora/controladora-devolucao";
-import { VisaoDevolucaoEmHTML } from "../visao/visao-devolucao-html";
-import { VisaoEquipamentoEmHTML } from "../visao/visao-equipamento-html";
-import { VisaoFuncionarioEmHTML } from "../visao/visao-funcionario-html";
+import { ControladoraDevolucao } from "../devolucao/controladora-devolucao";
+import { VisaoDevolucaoEmHTML } from "../devolucao/visao-devolucao-html";
+import { VisaoEquipamentoEmHTML } from "../equipamento/visao-equipamento-html";
+import { VisaoFuncionarioEmHTML } from "../funcionario/visao-funcionario-html";
 
 export function initDevolucaoAdd() {
   const controladora = new ControladoraDevolucao(

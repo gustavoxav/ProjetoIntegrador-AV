@@ -1,9 +1,9 @@
 import { ErroDominio } from "../infra/ErroDominio.js";
-import { GestorDevolucao } from "../gestor/gestor-devolucao.js";
-import type { VisaoDevolucao } from "../visao/visao-devolucao.js";
-import { GestorLocacao } from "../gestor/gestor-locacao.js";
-import { VisaoEquipamento } from "../visao/visao-equipamento.js";
-import { VisaoFuncionario } from "../visao/visao-funcionario.js";
+import { GestorDevolucao } from "./gestor-devolucao.js";
+import type { VisaoDevolucao } from "./visao-devolucao.js";
+import { GestorLocacao } from "../locacao/gestor-locacao.js";
+import { VisaoEquipamento } from "../equipamento/visao-equipamento.js";
+import { VisaoFuncionario } from "../funcionario/visao-funcionario.js";
 
 export class ControladoraDevolucao {
   private readonly gestor: GestorDevolucao;

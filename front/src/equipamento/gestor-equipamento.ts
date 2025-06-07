@@ -1,5 +1,5 @@
 import { ErroDominio } from "../infra/ErroDominio";
-import type { Equipamento } from "../models/Equipamento";
+import type { Equipamento } from "./Equipamento";
 
 export class GestorEquipamento {
  private readonly urlApi: string = import.meta.env.VITE_API_URL ?? "";

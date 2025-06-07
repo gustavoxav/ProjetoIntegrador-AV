@@ -1,5 +1,5 @@
 import type { Equipamento } from "../types/types.js";
-import { ControladoraEquipamento } from "../controladora/controladora-equipamento.js";
+import { ControladoraEquipamento } from "./controladora-equipamento.js";
 import type { VisaoEquipamento } from "./visao-equipamento.js";
 import { formatarDataHora } from "../infra/utils.js";
 import { calcularValores, calcularValorIndividual, formatarValorComSimbolo } from "../infra/calculadora-valores.js";

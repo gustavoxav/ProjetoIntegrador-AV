@@ -1,5 +1,5 @@
-import { ControladoraDevolucao } from "../controladora/controladora-devolucao";
-import { VisaoDevolucaoEmHTML } from "../visao/visao-devolucao-html";
+import { ControladoraDevolucao } from "../devolucao/controladora-devolucao";
+import { VisaoDevolucaoEmHTML } from "../devolucao/visao-devolucao-html";
 
 export function initDevolucaoList() {
   const addButton = document.getElementById("addButton");

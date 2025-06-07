@@ -1,8 +1,8 @@
-import { ControladoraLocacao } from "../controladora/controladora-locacao.js";
-import { VisaoClienteEmHTML } from "../visao/visao-cliente-html.js";
-import { VisaoEquipamentoEmHTML } from "../visao/visao-equipamento-html.js";
-import { VisaoFuncionarioEmHTML } from "../visao/visao-funcionario-html.js";
-import { VisaoLocacaoEmHTML } from "../visao/visao-locacao-html.js";
+import { ControladoraLocacao } from "../locacao/controladora-locacao.js";
+import { VisaoClienteEmHTML } from "../cliente/visao-cliente-html.js";
+import { VisaoEquipamentoEmHTML } from "../equipamento/visao-equipamento-html.js";
+import { VisaoFuncionarioEmHTML } from "../funcionario/visao-funcionario-html.js";
+import { VisaoLocacaoEmHTML } from "../locacao/visao-locacao-html.js";
 
 export function initLocacaoAdd() {
 
