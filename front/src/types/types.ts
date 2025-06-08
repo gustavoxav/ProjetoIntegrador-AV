@@ -109,3 +109,8 @@ export type RespostaSimulacaoDevolucao = {
   dataHoraDevolucao: string;
   valorPago: number;
 };
+
+export type DadosLogin = {
+  cpf: string;
+  senha: string;
+};

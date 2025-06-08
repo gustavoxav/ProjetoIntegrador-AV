@@ -1,11 +1,21 @@
-import type { Funcionario } from "../types/types.js";
-import { ControladoraFuncionario } from "./controladora-funcionario.js";
+import type { DadosLogin, Funcionario } from "../types/types.js";
 import type { VisaoFuncionario } from "./visao-funcionario.js";
 
 export class VisaoFuncionarioEmHTML implements VisaoFuncionario {
   private funcionarioSelecionado: Funcionario | null = null;
-  constructor() {
-    new ControladoraFuncionario(this);
+
+  obterDadosLogin(): DadosLogin | null {
+    const cpfInput = document.getElementById("cpf") as HTMLInputElement;
+    const senhaInput = document.getElementById("senha") as HTMLInputElement;
+    if (!cpfInput || !senhaInput) {
+      return null;
+    }
+    const cpf = cpfInput.value.trim();
+    const senha = senhaInput.value.trim();
+    if (cpf === "" || senha === "") {
+      return null;
+    }
+    return { cpf, senha };
   }
 
   filtroFuncionario(): { filtro: string } {
@@ -62,6 +72,22 @@ export class VisaoFuncionarioEmHTML implements VisaoFuncionario {
     const output = document.querySelector("output");
     if (output) {
       output.innerText = mensagens.join("\n");
+    }
+  }
+
+  exibirMensagemSucesso(x: string): void {
+    const output = document.querySelector("output");
+    if (output) {
+      output.className = "alert alert-success mt-3 d-block";
+      output.textContent = x;
+    }
+  }
+
+  exibirMensagemErro(x: string): void {
+    const output = document.querySelector("output");
+    if (output) {
+      output.className = "alert alert-danger mt-3 d-block";
+      output.textContent = x;
     }
   }
 }

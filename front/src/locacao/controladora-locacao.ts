@@ -5,6 +5,7 @@ import { VisaoCliente } from "../cliente/visao-clientes.js";
 import { VisaoFuncionario } from "../funcionario/visao-funcionario.js";
 import { VisaoEquipamento } from "../equipamento/visao-equipamento.js";
 import { Equipamento } from "../equipamento/Equipamento.js";
+import { ControladoraFuncionario } from "../funcionario/controladora-funcionario.js";
 
 export class ControladoraLocacao {
   private readonly gestor: GestorLocacao;
@@ -16,6 +17,9 @@ export class ControladoraLocacao {
     private readonly visaoEquipamento?: VisaoEquipamento
   ) {
     this.gestor = new GestorLocacao();
+    if (this.visaoFuncionario) {
+      new ControladoraFuncionario(this.visaoFuncionario).iniciarFiltro();
+    }
   }
 
   public iniciarAdd(): void {

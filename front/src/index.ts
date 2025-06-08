@@ -6,6 +6,7 @@ import { VisaoDevolucaoEmHTML } from "./devolucao/visao-devolucao-html";
 import { VisaoClienteEmHTML } from "./cliente/visao-cliente-html";
 import { VisaoFuncionarioEmHTML } from "./funcionario/visao-funcionario-html";
 import { VisaoEquipamentoEmHTML } from "./equipamento/visao-equipamento-html";
+import { ControladoraFuncionario } from "./funcionario/controladora-funcionario";
 
 function carregadorElemento(section: HTMLElement | null, url: string) {
   if (!section) return;
@@ -38,8 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   page("/", () =>
-    carregarRota("/pages/locacao-list.html", () => {
-      new ControladoraLocacao(new VisaoLocacaoEmHTML()).iniciarList();
+    carregarRota("/pages/login.html", () => {
+      new ControladoraFuncionario(new VisaoFuncionarioEmHTML()).iniciarLogin();
     })
   );
   page("/locacao-list", () =>
@@ -71,7 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
       ).iniciarAdd();
     })
   );
-  page("/login", () => carregarRota("/pages/login.html", () => {}));
+  page("/login", () =>
+    carregarRota("/pages/login.html", () => {
+      new ControladoraFuncionario(new VisaoFuncionarioEmHTML()).iniciarLogin();
+    })
+  );
   page("*", () => carregarRota("/pages/not-found.html", () => {}));
 
   page();

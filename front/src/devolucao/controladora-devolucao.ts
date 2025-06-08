@@ -4,6 +4,7 @@ import type { VisaoDevolucao } from "./visao-devolucao.js";
 import { GestorLocacao } from "../locacao/gestor-locacao.js";
 import { VisaoEquipamento } from "../equipamento/visao-equipamento.js";
 import { VisaoFuncionario } from "../funcionario/visao-funcionario.js";
+import { ControladoraFuncionario } from "../funcionario/controladora-funcionario.js";
 
 export class ControladoraDevolucao {
   private readonly gestor: GestorDevolucao;
@@ -14,6 +15,9 @@ export class ControladoraDevolucao {
     private readonly visaoEquipamento: VisaoEquipamento | null = null
   ) {
     this.gestor = new GestorDevolucao();
+    if (this.visaoFuncionario) {
+      new ControladoraFuncionario(this.visaoFuncionario).iniciarFiltro();
+    }
   }
 
   public iniciarAdd(): void {

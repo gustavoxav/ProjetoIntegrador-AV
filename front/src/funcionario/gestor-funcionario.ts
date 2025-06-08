@@ -2,7 +2,7 @@ import { ErroDominio } from "../infra/ErroDominio";
 import type { Funcionario } from "../types/types.js";
 
 export class GestorFuncionario {
- private readonly urlApi: string = import.meta.env.VITE_API_URL ?? "";
+  private readonly urlApi: string = import.meta.env.VITE_API_URL ?? "";
 
   async obterTodosFuncionarios(): Promise<Funcionario[]> {
     const options: RequestInit = {
@@ -24,5 +24,32 @@ export class GestorFuncionario {
 
     const data = await response.json();
     return data;
+  }
+
+  async loginFuncionario(cpf: string, senha: string): Promise<Funcionario> {
+    const options: RequestInit = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ cpf, senha }),
+    };
+
+    const response = await fetch(`${this.urlApi}/login`, options);
+
+    if (!response.ok) {
+      let mensagem = `Erro ao realizar login. Status: ${response.status}`;
+      try {
+        const erro = await response.json();
+        if (erro?.mensagem) mensagem = erro.mensagem;
+      } catch (_) {}
+
+      throw ErroDominio.comProblemas([mensagem]);
+    }
+
+    const funcionario = await response.json();
+    return funcionario;
   }
 }
