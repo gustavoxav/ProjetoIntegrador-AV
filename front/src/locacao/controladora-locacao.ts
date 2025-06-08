@@ -16,7 +16,57 @@ export class ControladoraLocacao {
     private readonly visaoEquipamento?: VisaoEquipamento
   ) {
     this.gestor = new GestorLocacao();
+  }
+
+  public iniciarAdd(): void {
+    const output = document.querySelector("output");
+    if (output) output.innerHTML = "";
+    const form = document.querySelector("form");
+    if (form) {
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        return false;
+      };
+    }
+
+    const salvarButton = document.getElementById("salvar");
+    if (salvarButton) {
+      const newButton = salvarButton.cloneNode(true);
+      salvarButton.parentNode?.replaceChild(newButton, salvarButton);
+
+      newButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.registrarLocacao();
+        return false;
+      });
+    }
+
+    document.getElementById("equipamento")?.addEventListener("change", (e) => {
+      const input = e.target as HTMLInputElement;
+      if (input.value) {
+        const equipamentoId = input.value;
+        const tabela = document.getElementById("tabela-equipamentos");
+        if (tabela) {
+          tabela.setAttribute("data-ultimo-equipamento", equipamentoId);
+        }
+      }
+    });
+  }
+
+  public iniciarList(): void {
     this.buscarLocacoes();
+
+    const addButton = document.getElementById("addButton");
+    if (addButton) {
+      addButton.addEventListener("click", () => {
+        window.history.pushState({}, "", "/locacao-add");
+        window.dispatchEvent(
+          new CustomEvent("routeChange", {
+            detail: { path: "/locacao-add" },
+          })
+        );
+      });
+    }
   }
 
   public async registrarLocacao(): Promise<void> {

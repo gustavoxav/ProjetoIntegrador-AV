@@ -14,16 +14,59 @@ export class ControladoraDevolucao {
     private readonly visaoEquipamento: VisaoEquipamento | null = null
   ) {
     this.gestor = new GestorDevolucao();
+  }
+
+  public iniciarAdd(): void {
+    const salvarButton = document.getElementById("salvar-devolucao");
+    if (salvarButton) {
+      const newButton = salvarButton.cloneNode(true);
+      salvarButton.parentNode?.replaceChild(newButton, salvarButton);
+
+      newButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.registrarDevolucao();
+        return false;
+      });
+    }
+
+    document
+      .getElementById("btn-buscar-locacoes")
+      ?.addEventListener("click", () => this.buscarLocacoes());
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const codigo = urlParams.get("codigo");
+
+    if (codigo) {
+      const input = document.getElementById(
+        "input-buscar-locacao"
+      ) as HTMLElement;
+      input.setAttribute("value", codigo);
+    }
+  }
+
+  public iniciarList(): void {
     this.buscarDevolucoes();
     this.visao.aoSelecionarLocacao((locacao) => {
       this.obterSimulacao(locacao.codigo);
     });
+
+    const addButton = document.getElementById("addButton");
+    if (addButton) {
+      addButton.addEventListener("click", () => {
+        window.history.pushState({}, "", "/devolucao-add");
+        window.dispatchEvent(
+          new CustomEvent("routeChange", {
+            detail: { path: "/devolucao-add" },
+          })
+        );
+      });
+    }
   }
 
   public async registrarDevolucao(): Promise<void> {
     try {
       const dadosSimulacao = this.visao.obterDadosDevolucao();
-      const dadosFuncionario = this.visaoFuncionario?.obterDadosFuncionario()
+      const dadosFuncionario = this.visaoFuncionario?.obterDadosFuncionario();
       if (!dadosSimulacao?.locacao.codigo) {
         this.visao.exibirMensagemErro("Selecione uma locação existente");
         return;
