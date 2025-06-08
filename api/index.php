@@ -16,6 +16,25 @@ $app->use(cors([
 
 $pdo = conectarPDO();
 
+// POST /api/login: Realiza o login no sistema
+$app->post("/login", function ($req, $res) use ($pdo) {
+  try {
+    $dados = (array) $req->body();
+    $cpf = $dados['cpf'] ?? '';
+    $senha = $dados['senha'] ?? '';
+
+    $gestor = new GestorFuncionario(new RepositorioFuncionarioEmBDR($pdo));
+    $funcionario = $gestor->login($cpf, $senha);
+
+    $res->json([
+      'mensagem' => 'Login realizado com sucesso!',
+      'funcionario' => $funcionario
+    ]);
+  } catch (Exception $e) {
+    $res->status(401)->json(['erro' => $e->getMessage()]);
+  }
+});
+
 // GET /api/clientes: Retorna todos os clientes cadastrados no sistema
 $app->get("/clientes", function ($req, $res) use ($pdo) {
 
@@ -142,12 +161,12 @@ $app->get("/locacoes/:filtro", function ($req, $res) use ($pdo) {
       new RepositorioLocacaoEmBDR($pdo)
     );
     $saida = $gestor->obterLocacaoPorFiltro($filtro);
-    
+
     if (!$saida) {
       $res->status(404)->json(["erro" => "Locação não encontrada"]);
       return;
     }
-    
+
     $res->json($saida);
   } catch (Exception $e) {
     $res->status(500)->json(["erro" => $e->getMessage()]);
@@ -168,8 +187,8 @@ $app->get("/devolucoes/simulacao/:locacaoId", function ($req, $res) use ($pdo) {
     $gestorLocacao = new GestorLocacao(
       new RepositorioLocacaoEmBDR($pdo)
     );
-    $locacao = $gestorLocacao->obterPorId($locacaoId); 
-    
+    $locacao = $gestorLocacao->obterPorId($locacaoId);
+
     if (!$locacao) {
       $res->status(404)->json(["erro" => "Locação não encontrada"]);
       return;
@@ -179,22 +198,22 @@ $app->get("/devolucoes/simulacao/:locacaoId", function ($req, $res) use ($pdo) {
       new RepositorioDevolucaoEmBDR($pdo),
       new RepositorioLocacaoEmBDR($pdo)
     );
-    
+
     $dadosDevolucao = [
       'locacaoId' => $locacaoId,
       'dataHoraDevolucao' => date('Y-m-d H:i:s')
     ];
-    
+
     $saida = $gestor->calcularValorPagamento($dadosDevolucao);
     $res->json($saida);
   } catch (Exception $e) {
     $mensagem = $e->getMessage();
     $status = 400;
-    
+
     if (strpos($mensagem, "já foi devolvida") !== false) {
       $status = 409; // Conflict
     }
-    
+
     $res->status($status)->json(["erro" => $mensagem]);
   }
 });
@@ -213,11 +232,11 @@ $app->post("/devolucoes", function ($req, $res) use ($pdo) {
   } catch (Exception $e) {
     $mensagem = $e->getMessage();
     $status = 400;
-    
+
     if (strpos($mensagem, "já foi devolvida") !== false) {
       $status = 409;
     }
-    
+
     $res->status($status)->json(["erro" => $mensagem]);
   }
 });

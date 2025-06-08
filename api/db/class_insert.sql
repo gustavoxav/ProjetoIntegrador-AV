@@ -14,13 +14,13 @@ insert into cliente (nome_completo, foto, data_nascimento, cpf, telefone, email,
 ('Elisa Martins', 'https://ogimg.infoglobo.com.br/in/14638550-9ee-f9a/FT1086A/20141123-125719.jpg', '1990-07-28', '56789012305', '(51) 96543-2109', 'elisa.martins@yahoo.com', 'Rua dos Lírios, 98'),
 ('Felipe Gomes', 'https://ufape.com.br/wp-content/uploads/2024/06/Ufape-Hospital-Veterinario-filhote-de-cachorro-brincando-na-grama-GS2-MKT-Freepik.jpg', '1995-03-05', '67890123406', '(61) 95432-1098', 'felipe.gomes@outlook.com', 'Alameda Central, 250');
 
--- Funcionario
-insert into funcionario (nome) values
-('Patrícia Oliveira'),
-('Renato Silva'),
-('Juliana Castro'),
-('Marcelo Teixeira'),
-('Aline Fernandes');
+-- Funcionario - Pimenta: "projetoI123456" - Senha:"123456"
+INSERT INTO funcionario (nome, cpf, senha_hash, salt, cargo) values
+('Patrícia Oliveira', '11111111111', '23d530fd3334a36f90ca3171e870e30ab0f7fd417d3251a640b75507bb6e2d76a629cf82786eb1ec2307ba0adb345f689df93df8d1709f3eb66d49e2457e7aac', '210b326aa961fccb048f7a22a262a3f9', 'Gerente'),
+('Renato Silva', '22222222222', 'd8e2c8d3cf2607478f048689a13cdeeacdd28fe57525ce33f909e5bf0416ddb915d9b25226adcd336233bd60fa81a7c415306afd90c055e5466ae1067c8a521d', 'b90628876a1520c2fce6a30ef078bf93', 'Atendente'),
+('Juliana Castro', '33333333333', '2a66b958b826a52eefb9168840f477fd3e4413b2ee820aaa4163f62653624db63d257b5c17067cacdcb3b4732ad05bbfea3013719d431460c100e85f8d7f42fb', '5dc1bae9ad253ca0751e78a2320c93c7', 'Mecanico'),
+('Marcelo Teixeira', '44444444444', '3beae5a16d56d4bbb18c951c526a78202032af3514fed8eb7339c070b9de38f556ad391b95b753b0f740b3cbc687e45450c27dfdb3b3d0cef15eef71254dcebc', 'f60ee44a56eb2667329bfb4c3b0f6e1c', 'Atendente'),
+('Aline Fernandes', '55555555555', 'e80a16456cc5a613c4707ff3b2618e79ea85ba3e20d15e480d20b3da88ae46a498d80103a9663977043d0ee758edaa46e80b1ca72ebeb5a3045ecc3503b604bb', '218df1d9295a4009dbdba69eb70aafa9', 'Gerente');
 
 -- Bicicleta
 insert into equipamento (tipo, modelo, fabricante, descricao, valor_hora, avarias, numero_seguro, disponivel) values

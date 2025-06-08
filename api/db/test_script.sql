@@ -19,7 +19,11 @@ create table cliente (
 -- Criação Funcionário
 create table funcionario (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  nome VARCHAR(255)
+  nome VARCHAR(255) NOT NULL,
+  cpf VARCHAR(11) UNIQUE NOT NULL,
+  senha_hash CHAR(128) NOT NULL,
+  sal CHAR(32) NOT NULL,
+  cargo ENUM('Gerente', 'Atendente', 'Mecanico') NOT NULL
 );
 
 -- Criando a tabela de equipamento
@@ -93,13 +97,21 @@ insert into cliente (nome_completo, foto, data_nascimento, cpf, telefone, email,
 ('Elisa Martins', 'https://ogimg.infoglobo.com.br/in/14638550-9ee-f9a/FT1086A/20141123-125719.jpg', '1990-07-28', '56789012305', '(51) 96543-2109', 'elisa.martins@yahoo.com', 'Rua dos Lírios, 98'),
 ('Felipe Gomes', 'https://ufape.com.br/wp-content/uploads/2024/06/Ufape-Hospital-Veterinario-filhote-de-cachorro-brincando-na-grama-GS2-MKT-Freepik.jpg', '1995-03-05', '67890123406', '(61) 95432-1098', 'felipe.gomes@outlook.com', 'Alameda Central, 250');
 
--- Funcionario
-insert into funcionario (nome) values
-('Patrícia Oliveira'),
-('Renato Silva'),
-('Juliana Castro'),
-('Marcelo Teixeira'),
-('Aline Fernandes');
+-- Funcionario - Pimenta: "projetoI123456" - Senha:"123456"
+INSERT INTO funcionario (nome, cpf, senha_hash, salt, cargo) VALUES
+('Patrícia Oliveira', '11111111111', '857666c91a59f6d355fb856ef300dd84ba6ab056cfaad15eb309ee5e039d5c6e8001dea6c999b37af29cf380b4abd05d97e20a11958bd34900efa0f553f1f3a9', '210b326aa961fccb048f7a22a262a3f9', 'Gerente');
+
+INSERT INTO funcionario (nome, cpf, senha_hash, salt, cargo) VALUES
+('Renato Silva', '22222222222', 'd8e2c8d3cf2607478f048689a13cdeeacdd28fe57525ce33f909e5bf0416ddb915d9b25226adcd336233bd60fa81a7c415306afd90c055e5466ae1067c8a521d', 'b90628876a1520c2fce6a30ef078bf93', 'Atendente');
+
+INSERT INTO funcionario (nome, cpf, senha_hash, salt, cargo) VALUES
+('Juliana Castro', '33333333333', '2a66b958b826a52eefb9168840f477fd3e4413b2ee820aaa4163f62653624db63d257b5c17067cacdcb3b4732ad05bbfea3013719d431460c100e85f8d7f42fb', '5dc1bae9ad253ca0751e78a2320c93c7', 'Mecanico');
+
+INSERT INTO funcionario (nome, cpf, senha_hash, salt, cargo) VALUES
+('Marcelo Teixeira', '44444444444', '3beae5a16d56d4bbb18c951c526a78202032af3514fed8eb7339c070b9de38f556ad391b95b753b0f740b3cbc687e45450c27dfdb3b3d0cef15eef71254dcebc', 'f60ee44a56eb2667329bfb4c3b0f6e1c', 'Atendente');
+
+INSERT INTO funcionario (nome, cpf, senha_hash, salt, cargo) VALUES
+('Aline Fernandes', '55555555555', 'e80a16456cc5a613c4707ff3b2618e79ea85ba3e20d15e480d20b3da88ae46a498d80103a9663977043d0ee758edaa46e80b1ca72ebeb5a3045ecc3503b604bb', '218df1d9295a4009dbdba69eb70aafa9', 'Gerente');
 
 -- Bicicleta
 insert into equipamento (tipo, modelo, fabricante, descricao, valor_hora, avarias, numero_seguro, disponivel) values

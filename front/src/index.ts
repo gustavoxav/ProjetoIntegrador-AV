@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ).iniciarAdd();
     })
   );
+  page("/login", () => carregarRota("/pages/login.html", () => {}));
   page("*", () => carregarRota("/pages/not-found.html", () => {}));
 
   page();

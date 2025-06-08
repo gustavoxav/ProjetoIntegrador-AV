@@ -40,10 +40,10 @@ class RepositorioFuncionarioEmBDR implements RepositorioFuncionario
     try {
       $query = ltrim((string) $query, '/');
 
-      if (is_numeric($query)) {
-        $sql = "SELECT * FROM funcionario WHERE id = :param LIMIT 1";
+      if (strlen($query) === 11) {
+        $sql = "SELECT * FROM funcionario WHERE cpf = :param LIMIT 1";
       } else {
-        $sql = "SELECT * FROM funcionario WHERE nome = :param LIMIT 1";
+        $sql = "SELECT * FROM funcionario WHERE id = :param LIMIT 1";
       }
 
       $ps = $this->pdo->prepare($sql);

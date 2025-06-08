@@ -19,7 +19,11 @@ create table cliente (
 -- Criação Funcionário
 create table funcionario (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  nome VARCHAR(255)
+  nome VARCHAR(255) NOT NULL,
+  cpf VARCHAR(11) UNIQUE NOT NULL,
+  senha_hash CHAR(128) NOT NULL,
+  salt CHAR(32) NOT NULL,
+  cargo ENUM('Gerente', 'Atendente', 'Mecanico') NOT NULL
 );
 
 -- Criando a tabela de equipamento

@@ -24,4 +24,45 @@ class GestorFuncionario
             throw $error;
         }
     }
+
+    /**
+     * Realiza o login de um funcionário com base no CPF e senha.
+     *
+     * @param string $cpf
+     * @param string $senha
+     * @return array<string, mixed> Dados do funcionário autenticado
+     * @throws \Throwable Em caso de erro ao buscar o funcionário
+     */
+    public function login(string $cpf, string $senha)
+    {
+        try {
+            if (is_null($cpf) || is_null($senha)) {
+                throw new \InvalidArgumentException("CPF e senha são obrigatórios para o login.");
+            }
+            if (strlen($cpf) !== 11) {
+                throw new \InvalidArgumentException("CPF inválido. Deve conter 11 dígitos.");
+            }
+
+            $funcionario = $this->repositorioFuncionario->buscarFuncionarioFiltro($cpf);
+
+            if (!$funcionario) {
+                throw new Exception("CPF ou senha inválidos 1");
+            }
+
+            if (!AuthHelper::verificarSenha($senha, $funcionario->salt, $funcionario->senha_hash)) {
+                throw new Exception("CPF ou senha inválidos 2");
+            }
+
+            $funcionario = [
+                'codigo' => $funcionario->codigo,
+                'nome' => $funcionario->nome,
+                'cpf' => $funcionario->cpf,
+                'cargo' => $funcionario->cargo
+            ];
+
+            return $funcionario;
+        } catch (\Throwable $error) {
+            throw $error;
+        }
+    }
 }
