@@ -18,4 +18,14 @@ interface RepositorioEquipamento
      * @return Equipamento[]|null
      */
     public function buscarEquipamentos(): array|null;
+
+
+    /**
+     * Buscar todos os equipamentos. Retorna null caso não encontre
+     * @param int $equipamentoId Código do equipamento
+     * @param string $avarias Descrição das avarias
+     * @throws \RepositorioException
+     * @return void
+     */
+    public function adicionarAvarias(int $equipamentoId, string $avarias): void;
 }

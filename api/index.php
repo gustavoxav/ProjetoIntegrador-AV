@@ -256,3 +256,29 @@ $app->get("/devolucoes", function ($req, $res) use ($pdo) {
 });
 
 $app->listen(['rootURL' => API_PREFIX]);
+
+
+// POST /api/registrarAvaria/:id: Adiciona uma avaria ao equipamento
+$app->post("/registrarAvaria/:id", function ($req, $res) use ($pdo) {
+  $params = $req->params();
+  $id = (int) ($params['id'] ?? 0);
+
+  $body = $req->body();
+  $novaAvaria = $body['avaria'] ?? '';
+
+  try {
+    $gestor = new GestorEquipamento(
+      new RepositorioEquipamentoEmBDR($pdo)
+    );
+
+    $gestor->registrarAvaria($id, $novaAvaria);
+
+    return $res->json(["mensagem" => "Avaria registrada com sucesso."]);
+  } catch (InvalidArgumentException $e) {
+    return $res->status(400)->json(["erro" => $e->getMessage()]);
+  } catch (ErroAtualizacaoEquipamentoException $e) {
+    return $res->status(500)->json(["erro" => "Erro ao atualizar o equipamento."]);
+  } catch (Exception $e) {
+    return $res->status(500)->json(["erro" => "Erro não esperado ao atualizar equipamento: " . $e->getMessage()]);
+  }
+});

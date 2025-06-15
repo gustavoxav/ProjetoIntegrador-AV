@@ -6,7 +6,8 @@ class RepositorioEquipamentoEmBDR implements RepositorioEquipamento
     private PDO $pdo
   ) {}
 
-  public function buscarEquipamentos(): array|null {
+  public function buscarEquipamentos(): array|null
+  {
     try {
       $sql = "SELECT * FROM equipamento";
       $ps = $this->pdo->prepare($sql);
@@ -70,6 +71,24 @@ class RepositorioEquipamentoEmBDR implements RepositorioEquipamento
         'Ocorreu um erro ao buscar Equipamento por código. Tente novamente.',
         (int) $ex->getCode(),
         $ex
+      );
+    }
+  }
+
+  public function adicionarAvarias(int $equipamentoId, string $avarias): void
+  {
+    try {
+      $sql = "UPDATE equipamento SET avarias = :avarias WHERE id = :id";
+      $ps = $this->pdo->prepare($sql);
+      $ps->execute([
+        ':avarias' => $avarias,
+        ':id' => $equipamentoId,
+      ]);
+    } catch (PDOException $e) {
+      throw new RepositorioException(
+        'Erro ao adicionar avarias do equipamento.',
+        (int) $e->getCode(),
+        $e
       );
     }
   }
