@@ -7,6 +7,7 @@ import { VisaoClienteEmHTML } from "./cliente/visao-cliente-html";
 import { VisaoFuncionarioEmHTML } from "./funcionario/visao-funcionario-html";
 import { VisaoEquipamentoEmHTML } from "./equipamento/visao-equipamento-html";
 import { ControladoraFuncionario } from "./funcionario/controladora-funcionario";
+import { ControladoraEquipamento } from "./equipamento/controladora-equipamento";
 
 function carregadorElemento(section: HTMLElement | null, url: string) {
   if (!section) return;
@@ -70,6 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
         new VisaoFuncionarioEmHTML(),
         new VisaoEquipamentoEmHTML()
       ).iniciarAdd();
+    })
+  );
+  page("/avaria-add", () =>
+    carregarRota("/pages/avarias-add.html", () => {
+      new ControladoraEquipamento(new VisaoEquipamentoEmHTML()).iniciarAdd();
     })
   );
   page("/login", () =>

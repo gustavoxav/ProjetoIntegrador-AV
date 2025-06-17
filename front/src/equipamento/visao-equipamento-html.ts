@@ -1,11 +1,15 @@
-import type { Equipamento } from "../types/types.js";
+import type { Equipamento, Funcionario } from "../types/types.js";
 import { ControladoraEquipamento } from "./controladora-equipamento.js";
 import type { VisaoEquipamento } from "./visao-equipamento.js";
 import { formatarDataHora } from "../infra/utils.js";
-import { calcularValores, calcularValorIndividual, formatarValorComSimbolo } from "../infra/calculadora-valores.js";
+import {
+  calcularValores,
+  calcularValorIndividual,
+  formatarValorComSimbolo,
+} from "../infra/calculadora-valores.js";
 
 export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
-  private controladora: ControladoraEquipamento;
+  private readonly controladora: ControladoraEquipamento;
   private equipamentosSelecionados: Equipamento[] = [];
   private todosEquipamentos: Equipamento[] = [];
 
@@ -40,25 +44,42 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       }
     });
 
-    document
-      .getElementById("hora")
-      ?.addEventListener("change", () => {
-        this.atualizarSubtotal();
-        this.atualizarDatas();
-      });
+    document.getElementById("hora")?.addEventListener("change", () => {
+      this.atualizarSubtotal();
+      this.atualizarDatas();
+    });
 
-    document
-      .getElementById("hora")
-      ?.addEventListener("input", () => {
-        this.atualizarSubtotal();
-        this.atualizarDatas();
-      });
+    document.getElementById("hora")?.addEventListener("input", () => {
+      this.atualizarSubtotal();
+      this.atualizarDatas();
+    });
 
     document.getElementById("cancelar")?.addEventListener("click", () => {
       window.history.back();
     });
 
     this.atualizarDatas();
+  }
+
+  registrarAvaria(equipamento: Equipamento): void {
+    // this.controladora.registrarAvaria(equipamento);
+  }
+
+  retornarDadosAvaria(): {
+    codigo: number;
+    descricao: string;
+  } {
+    const codigoInput = document.getElementById(
+      "codigo-equipamento"
+    ) as HTMLInputElement;
+    const descricaoInput = document.getElementById(
+      "descricao-avaria"
+    ) as HTMLInputElement;
+
+    return {
+      codigo: Number(codigoInput.value),
+      descricao: descricaoInput.value.trim(),
+    };
   }
 
   exibirEquipamentosDevolucao(equipamento: Equipamento[], horas: number): void {
@@ -359,7 +380,8 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       subtotalEl.textContent = resultado.subtotal.toFixed(2).replace(".", ",");
     if (descontoEl)
       descontoEl.textContent = resultado.desconto.toFixed(2).replace(".", ",");
-    if (totalEl) totalEl.textContent = resultado.valorTotal.toFixed(2).replace(".", ",");
+    if (totalEl)
+      totalEl.textContent = resultado.valorTotal.toFixed(2).replace(".", ",");
   }
 
   private atualizarTabelaEquipamentos(
@@ -382,7 +404,6 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
 
     tabelaEquipamentos.innerHTML = "";
     for (const equipamento of equipamentos) {
-
       const tr = this.criarLinhaEquipamento(
         equipamento,
         horas,
@@ -397,15 +418,19 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     horas: number,
     somenteVisualizacao = false
   ): HTMLTableRowElement {
-
-    const { valorTotal, desconto, temDesconto } = calcularValorIndividual(equipamento, horas);
+    const { valorTotal, desconto, temDesconto } = calcularValorIndividual(
+      equipamento,
+      horas
+    );
 
     const tr = document.createElement("tr");
     tr.setAttribute("equip-codigo", equipamento.codigo.toString());
     tr.appendChild(
       this.criarCelula(`${equipamento.codigo} - ${equipamento.descricao}`)
     );
-    tr.appendChild(this.criarCelula(formatarValorComSimbolo(equipamento.valorHora)));
+    tr.appendChild(
+      this.criarCelula(formatarValorComSimbolo(equipamento.valorHora))
+    );
     tr.appendChild(this.criarCelula(formatarValorComSimbolo(valorTotal)));
 
     const tdDesconto = this.criarCelula(formatarValorComSimbolo(desconto));

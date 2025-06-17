@@ -114,3 +114,9 @@ export type DadosLogin = {
   cpf: string;
   senha: string;
 };
+
+export type DadosResgitroAvaria = {
+  codigo: number;
+  descricao: string;
+  registradoPor: Funcionario;
+};

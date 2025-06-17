@@ -7,4 +7,6 @@ export interface VisaoEquipamento {
   retornarEquipamento(equipamento: Equipamento): void;
   retornarTodosEquipamentos(equipamentos: Equipamento[]): void;
   obterEquipamentosSelecionados(): Equipamento[];
+  registrarAvaria(equipamento: Equipamento): void;
+  retornarDadosAvaria(): { codigo: number; descricao: string };
 }

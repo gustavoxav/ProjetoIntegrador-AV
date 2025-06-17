@@ -1,0 +1,64 @@
+<link rel="stylesheet" href="/styles/tables.css" />
+<div class="container">
+  <h1 class="mb-4">Cadastro de Avarias</h1>
+
+  <form method="POST">
+    <label for="equipamento" class="form-label"
+      >Código ou nome do Equipamento</label
+    >
+    <div class="mb-3 input-group">
+      <input
+        type="text"
+        id="equipamento"
+        class="form-control"
+        min="1"
+        name="equipamento"
+        placeholder="Digite o código ou nome do equipamento"
+        autocomplete="off" />
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        id="btn-buscar-equipamento">
+        Buscar
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-search"
+          viewBox="0 0 16 16">
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+        </svg>
+      </button>
+    </div>
+    <ul
+      id="mostrar-equipamento"
+      class="list-group w-100"
+      style="z-index: 1000"></ul>
+
+    <div id="item-selecionado" class="border rounded p-3 mb-3 d-none">
+      <h5>Item Selecionado</h5>
+      <p><strong>Descrição:</strong> <span id="desc"></span></p>
+      <p><strong>Valor:</strong> R$ <span id="valor"></span></p>
+      <p><strong>Avarias:</strong> <span id="avarias"></span></p>
+      <p><strong>Disponibilidade:</strong> <span id="disponivel"></span></p>
+    </div>
+
+    <button
+      id="cancelar"
+      type="button"
+      class="btn btn-light"
+      style="width: 200px; margin-right: 20px">
+      Cancelar
+    </button>
+    <button
+      id="salvar"
+      type="button"
+      class="btn btn-secondary w-22"
+      style="width: 200px">
+      Adicionar
+    </button>
+    <output class="mt-3 d-block"></output>
+  </form>
+</div>
