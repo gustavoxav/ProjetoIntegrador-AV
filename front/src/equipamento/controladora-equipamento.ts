@@ -6,9 +6,7 @@ import type { VisaoEquipamento } from "./visao-equipamento.js";
 export class ControladoraEquipamento {
   private readonly visaoFuncionario = new VisaoFuncionarioEmHTML();
 
-  constructor(private visao: VisaoEquipamento) {}
-
-  public iniciarAdd() {}
+  constructor(private readonly visao: VisaoEquipamento) {}
 
   public async buscarEquipamento() {
     const visaoFilter = this.visao.filtroEquipamento();

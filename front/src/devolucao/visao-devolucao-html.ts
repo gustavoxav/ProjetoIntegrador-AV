@@ -5,12 +5,79 @@ import type {
   RespostaLocacao,
   RespostaSimulacaoDevolucao,
 } from "../types/types.js";
-import { formatarDataHora, calcularHorasUtilizadas, calcularHorasCobranca } from "../infra/utils.js";
-import { calcularValores, calcularValorIndividual, formatarValorComSimbolo } from "../infra/calculadora-valores.js";
+import {
+  formatarDataHora,
+  calcularHorasUtilizadas,
+  calcularHorasCobranca,
+} from "../infra/utils.js";
+import {
+  calcularValores,
+  calcularValorIndividual,
+  formatarValorComSimbolo,
+} from "../infra/calculadora-valores.js";
+import { ControladoraDevolucao } from "./controladora-devolucao.js";
+import { VisaoFuncionarioEmHTML } from "../funcionario/visao-funcionario-html.js";
+import { VisaoEquipamentoEmHTML } from "../equipamento/visao-equipamento-html.js";
 
 export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   private devolucaoData: RespostaSimulacaoDevolucao | null = null;
   private callbackSelecionarLocacao?: (locacao: RespostaLocacao) => void;
+
+  private controladoraDevolucao: ControladoraDevolucao | null = null;
+
+  public iniciarAdd(): void {
+    this.controladoraDevolucao = new ControladoraDevolucao(
+      this,
+      new VisaoFuncionarioEmHTML(),
+      new VisaoEquipamentoEmHTML()
+    );
+    const salvarButton = document.getElementById("salvar-devolucao");
+    if (salvarButton) {
+      const newButton = salvarButton.cloneNode(true);
+      salvarButton.parentNode?.replaceChild(newButton, salvarButton);
+
+      newButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.controladoraDevolucao?.registrarDevolucao();
+        return false;
+      });
+    }
+
+    document
+      .getElementById("btn-buscar-locacoes")
+      ?.addEventListener("click", () =>
+        this.controladoraDevolucao?.buscarLocacoes()
+      );
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const codigo = urlParams.get("codigo");
+
+    if (codigo) {
+      const input = document.getElementById(
+        "input-buscar-locacao"
+      ) as HTMLElement;
+      input.setAttribute("value", codigo);
+    }
+  }
+
+  public iniciarList(): void {
+    this.controladoraDevolucao?.buscarDevolucoes();
+    this.aoSelecionarLocacao((locacao) => {
+      this.controladoraDevolucao?.obterSimulacao(locacao.codigo);
+    });
+
+    const addButton = document.getElementById("addButton");
+    if (addButton) {
+      addButton.addEventListener("click", () => {
+        window.history.pushState({}, "", "/devolucao-add");
+        window.dispatchEvent(
+          new CustomEvent("routeChange", {
+            detail: { path: "/devolucao-add" },
+          })
+        );
+      });
+    }
+  }
 
   obterDadosDevolucao() {
     return this.devolucaoData;
@@ -49,7 +116,9 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         devolucao.locacao.cliente.nomeCompleto
       }</td>
       <td class="text-start align-middle">${devolucao.registradoPor.nome}</td>
-      <td class="text-start align-middle">${formatarValorComSimbolo(devolucao.valorPago)}</td>
+      <td class="text-start align-middle">${formatarValorComSimbolo(
+        devolucao.valorPago
+      )}</td>
     `;
 
       tbody.appendChild(row);
@@ -92,7 +161,9 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       tr.innerHTML = `
       <td>${locacao.codigo}</td>
       <td>${formatarDataHora(locacao.dataHoraLocacao)}</td>
-      <td>${locacao.horasContratadas} ${locacao.horasContratadas === 1 ? 'hora' : 'horas'}</td>
+      <td>${locacao.horasContratadas} ${
+        locacao.horasContratadas === 1 ? "hora" : "horas"
+      }</td>
       <td>${formatarDataHora(locacao.dataHoraEntregaPrevista)}</td>
       <td>${locacao.cliente.nomeCompleto}</td>
       <td>${locacao.cliente.telefone}</td>
@@ -119,7 +190,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
 
   public preencherDevolucao(devolucao: RespostaSimulacaoDevolucao) {
     this.devolucaoData = devolucao;
-    
+
     const horasUtilizadas = calcularHorasUtilizadas(
       devolucao.locacao.dataHoraLocacao,
       devolucao.dataHoraDevolucao
@@ -130,28 +201,37 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       devolucao.dataHoraDevolucao
     );
 
-    const horasParaCalculo = Math.max(horasCobranca, devolucao.locacao.horasContratadas);
-    
-    const equipamentos = devolucao.locacao.itens.map((item) => item.equipamento);
-    
-    this.atualizarValoresTotais(equipamentos, horasParaCalculo, devolucao.valorPago);
-    
+    const horasParaCalculo = Math.max(
+      horasCobranca,
+      devolucao.locacao.horasContratadas
+    );
+
+    const equipamentos = devolucao.locacao.itens.map(
+      (item) => item.equipamento
+    );
+
+    this.atualizarValoresTotais(
+      equipamentos,
+      horasParaCalculo,
+      devolucao.valorPago
+    );
+
     this.atualizarTabelaEquipamentos(equipamentos, horasParaCalculo);
-    
+
     this.atualizarHorasNaTela(devolucao.locacao.horasContratadas);
-    
+
     const dataLocacaoEl = document.getElementById("data-locacao");
     if (dataLocacaoEl) {
       dataLocacaoEl.textContent = formatarDataHora(devolucao.dataHoraDevolucao);
     }
-    
+
     const horasUtilizadasEl = document.getElementById("horas-utilizadas");
     if (horasUtilizadasEl) {
       const horaTexto = horasUtilizadas.horas === 1 ? "hora" : "horas";
       const minutoTexto = horasUtilizadas.minutos === 1 ? "minuto" : "minutos";
       horasUtilizadasEl.textContent = `${horasUtilizadas.horas} ${horaTexto} e ${horasUtilizadas.minutos} ${minutoTexto}`;
     }
-    
+
     const avisoEl = document.getElementById("aviso-valor-minimo");
     if (avisoEl) {
       if (horasCobranca < devolucao.locacao.horasContratadas) {
@@ -252,14 +332,19 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     equipamento: Equipamento,
     horas: number
   ): HTMLTableRowElement {
-    const { valorTotal, desconto, temDesconto } = calcularValorIndividual(equipamento, horas);
+    const { valorTotal, desconto, temDesconto } = calcularValorIndividual(
+      equipamento,
+      horas
+    );
 
     const tr = document.createElement("tr");
     tr.setAttribute("equip-codigo", equipamento.codigo.toString());
     tr.appendChild(
       this.criarCelula(`${equipamento.codigo} - ${equipamento.descricao}`)
     );
-    tr.appendChild(this.criarCelula(formatarValorComSimbolo(equipamento.valorHora)));
+    tr.appendChild(
+      this.criarCelula(formatarValorComSimbolo(equipamento.valorHora))
+    );
     tr.appendChild(this.criarCelula(formatarValorComSimbolo(valorTotal)));
 
     const tdDesconto = this.criarCelula(formatarValorComSimbolo(desconto));

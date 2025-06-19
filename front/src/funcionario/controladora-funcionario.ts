@@ -10,29 +10,6 @@ export class ControladoraFuncionario {
     this.buscarTodosFuncionarios();
   }
 
-  public iniciarLogin() {
-    const navbarElement = document.getElementById("navbar-container");
-    if (navbarElement) {
-      navbarElement.style.display = "none";
-    }
-    const footerElement = document.getElementById("footer-container");
-    if (footerElement) {
-      footerElement.style.display = "none";
-    }
-
-    const loginButton = document.getElementById("realizar-login");
-    if (loginButton) {
-      const newButton = loginButton.cloneNode(true);
-      loginButton.parentNode?.replaceChild(newButton, loginButton);
-
-      newButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        this.login();
-        return false;
-      });
-    }
-  }
-
   public async buscarTodosFuncionarios() {
     try {
       const response = await this.gestor.obterTodosFuncionarios();

@@ -1,13 +1,8 @@
 import page from "page";
-import { ControladoraLocacao } from "./locacao/controladora-locacao";
 import { VisaoLocacaoEmHTML } from "./locacao/visao-locacao-html";
-import { ControladoraDevolucao } from "./devolucao/controladora-devolucao";
 import { VisaoDevolucaoEmHTML } from "./devolucao/visao-devolucao-html";
-import { VisaoClienteEmHTML } from "./cliente/visao-cliente-html";
 import { VisaoFuncionarioEmHTML } from "./funcionario/visao-funcionario-html";
 import { VisaoEquipamentoEmHTML } from "./equipamento/visao-equipamento-html";
-import { ControladoraFuncionario } from "./funcionario/controladora-funcionario";
-import { ControladoraEquipamento } from "./equipamento/controladora-equipamento";
 
 function carregadorElemento(section: HTMLElement | null, url: string) {
   if (!section) return;
@@ -41,46 +36,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
   page("/", () =>
     carregarRota("/pages/login.html", () => {
-      new ControladoraFuncionario(new VisaoFuncionarioEmHTML()).iniciarLogin();
+      new VisaoFuncionarioEmHTML().iniciarLogin();
     })
   );
   page("/locacao-list", () =>
     carregarRota("/pages/locacao-list.html", () => {
-      new ControladoraLocacao(new VisaoLocacaoEmHTML()).iniciarList();
+      new VisaoLocacaoEmHTML().iniciarList();
     })
   );
   page("/locacao-add", () =>
     carregarRota("/pages/locacao-add.html", () => {
-      new ControladoraLocacao(
-        new VisaoLocacaoEmHTML(),
-        new VisaoClienteEmHTML(),
-        new VisaoFuncionarioEmHTML(),
-        new VisaoEquipamentoEmHTML()
-      ).iniciarAdd();
+      new VisaoLocacaoEmHTML().iniciarAdd();
     })
   );
   page("/devolucao-list", () =>
     carregarRota("/pages/devolucao-list.html", () => {
-      new ControladoraDevolucao(new VisaoDevolucaoEmHTML()).iniciarList();
+      new VisaoDevolucaoEmHTML().iniciarList();
     })
   );
   page("/devolucao-add", () =>
     carregarRota("/pages/devolucao-add.html", () => {
-      new ControladoraDevolucao(
-        new VisaoDevolucaoEmHTML(),
-        new VisaoFuncionarioEmHTML(),
-        new VisaoEquipamentoEmHTML()
-      ).iniciarAdd();
+      new VisaoDevolucaoEmHTML().iniciarAdd();
     })
   );
   page("/avaria-add", () =>
     carregarRota("/pages/avarias-add.html", () => {
-      new ControladoraEquipamento(new VisaoEquipamentoEmHTML()).iniciarAdd();
+      new VisaoEquipamentoEmHTML().iniciarAdd();
     })
   );
   page("/login", () =>
     carregarRota("/pages/login.html", () => {
-      new ControladoraFuncionario(new VisaoFuncionarioEmHTML()).iniciarLogin();
+      new VisaoFuncionarioEmHTML().iniciarLogin();
     })
   );
   page("*", () => carregarRota("/pages/not-found.html", () => {}));

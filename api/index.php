@@ -25,13 +25,10 @@ $app->post("/login", function ($req, $res) use ($pdo) {
 
     $gestor = new GestorFuncionario(new RepositorioFuncionarioEmBDR($pdo));
     $funcionario = $gestor->login($cpf, $senha);
-
-    $res->json([
-      'mensagem' => 'Login realizado com sucesso!',
-      'funcionario' => $funcionario
-    ]);
+    
+    return $res->status(200)->json($funcionario);
   } catch (Exception $e) {
-    $res->status(401)->json(['erro' => $e->getMessage()]);
+    return $res->status(401)->json(['erro' => $e->getMessage()]);
   }
 });
 

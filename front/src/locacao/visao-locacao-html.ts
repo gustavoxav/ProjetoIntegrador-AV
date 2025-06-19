@@ -1,8 +1,69 @@
 import type { VisaoLocacao } from "./visao-locacao.js";
 import type { RespostaLocacao } from "../types/types.js";
 import { formatarDataHora } from "../infra/utils.js";
+import { ControladoraLocacao } from "./controladora-locacao.js";
+import { VisaoClienteEmHTML } from "../cliente/visao-cliente-html.js";
+import { VisaoEquipamentoEmHTML } from "../equipamento/visao-equipamento-html.js";
+import { VisaoFuncionarioEmHTML } from "../funcionario/visao-funcionario-html.js";
 
 export class VisaoLocacaoEmHTML implements VisaoLocacao {
+  public iniciarAdd(): void {
+    const controladoraLocacao = new ControladoraLocacao(
+      new VisaoLocacaoEmHTML(),
+      new VisaoClienteEmHTML(),
+      new VisaoFuncionarioEmHTML(),
+      new VisaoEquipamentoEmHTML()
+    );
+    const output = document.querySelector("output");
+    if (output) output.innerHTML = "";
+    const form = document.querySelector("form");
+    if (form) {
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        return false;
+      };
+    }
+
+    const salvarButton = document.getElementById("salvar");
+    if (salvarButton) {
+      const newButton = salvarButton.cloneNode(true);
+      salvarButton.parentNode?.replaceChild(newButton, salvarButton);
+
+      newButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        controladoraLocacao?.registrarLocacao();
+        return false;
+      });
+    }
+
+    document.getElementById("equipamento")?.addEventListener("change", (e) => {
+      const input = e.target as HTMLInputElement;
+      if (input.value) {
+        const equipamentoId = input.value;
+        const tabela = document.getElementById("tabela-equipamentos");
+        if (tabela) {
+          tabela.setAttribute("data-ultimo-equipamento", equipamentoId);
+        }
+      }
+    });
+  }
+
+  public iniciarList(): void {
+    const controladoraLocacao = new ControladoraLocacao(this);
+    controladoraLocacao.buscarLocacoes();
+
+    const addButton = document.getElementById("addButton");
+    if (addButton) {
+      addButton.addEventListener("click", () => {
+        window.history.pushState({}, "", "/locacao-add");
+        window.dispatchEvent(
+          new CustomEvent("routeChange", {
+            detail: { path: "/locacao-add" },
+          })
+        );
+      });
+    }
+  }
 
   obterDadosLocacao() {
     const horas =
@@ -36,7 +97,7 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
     for (const locacao of locacoes) {
       const row = document.createElement("tr");
 
-      const acaoColuna = locacao.devolvida 
+      const acaoColuna = locacao.devolvida
         ? `<span class="btn btn-sm btn-success" style="pointer-events: none; cursor: default; width: 92.63px">Devolvida</span>`
         : `<a 
             href="/devolucao-add?codigo=${locacao.codigo}" 
@@ -52,7 +113,9 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
       <td class="text-start align-middle">${formatarDataHora(
         locacao.dataHoraLocacao
       )}</td>
-      <td class="text-start align-middle">${locacao.horasContratadas} ${locacao.horasContratadas === 1 ? 'hora' : 'horas'}</td>
+      <td class="text-start align-middle">${locacao.horasContratadas} ${
+        locacao.horasContratadas === 1 ? "hora" : "horas"
+      }</td>
       <td class="text-start align-middle">${formatarDataHora(
         locacao.dataHoraEntregaPrevista
       )}</td>

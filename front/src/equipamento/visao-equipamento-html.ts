@@ -1,4 +1,4 @@
-import type { Equipamento, Funcionario } from "../types/types.js";
+import type { Equipamento } from "../types/types.js";
 import { ControladoraEquipamento } from "./controladora-equipamento.js";
 import type { VisaoEquipamento } from "./visao-equipamento.js";
 import { formatarDataHora } from "../infra/utils.js";
@@ -60,6 +60,8 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
 
     this.atualizarDatas();
   }
+
+  public iniciarAdd() {}
 
   registrarAvaria(equipamento: Equipamento): void {
     // this.controladora.registrarAvaria(equipamento);

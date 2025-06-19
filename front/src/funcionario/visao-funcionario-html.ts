@@ -1,8 +1,36 @@
 import type { DadosLogin, Funcionario } from "../types/types.js";
+import { ControladoraFuncionario } from "./controladora-funcionario.js";
 import type { VisaoFuncionario } from "./visao-funcionario.js";
 
 export class VisaoFuncionarioEmHTML implements VisaoFuncionario {
   private funcionarioSelecionado: Funcionario | null = null;
+
+  private controladoraFuncionario: ControladoraFuncionario | null = null;
+
+  public iniciarLogin() {
+    this.controladoraFuncionario = new ControladoraFuncionario(this);
+
+    const navbarElement = document.getElementById("navbar-container");
+    if (navbarElement) {
+      navbarElement.style.display = "none";
+    }
+    const footerElement = document.getElementById("footer-container");
+    if (footerElement) {
+      footerElement.style.display = "none";
+    }
+
+    const loginButton = document.getElementById("realizar-login");
+    if (loginButton) {
+      const newButton = loginButton.cloneNode(true);
+      loginButton.parentNode?.replaceChild(newButton, loginButton);
+
+      newButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.controladoraFuncionario?.login();
+        return false;
+      });
+    }
+  }
 
   obterDadosLogin(): DadosLogin | null {
     const cpfInput = document.getElementById("cpf") as HTMLInputElement;
