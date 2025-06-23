@@ -3,6 +3,7 @@ import { VisaoLocacaoEmHTML } from "./locacao/visao-locacao-html";
 import { VisaoDevolucaoEmHTML } from "./devolucao/visao-devolucao-html";
 import { VisaoFuncionarioEmHTML } from "./funcionario/visao-funcionario-html";
 import { VisaoEquipamentoEmHTML } from "./equipamento/visao-equipamento-html";
+import { AuthMiddleware } from "./infra/AuthMiddleware";
 
 function carregadorElemento(section: HTMLElement | null, url: string) {
   if (!section) return;
@@ -34,37 +35,42 @@ document.addEventListener("DOMContentLoaded", () => {
     "/components/footer.html"
   );
 
-  page("/", () =>
+  // Rota de login - se tem cookie vai para /locacao-list, se não fica no login
+  page("/", AuthMiddleware.controleLogin, () =>
     carregarRota("/pages/login.html", () => {
       new VisaoFuncionarioEmHTML().iniciarLogin();
     })
   );
-  page("/locacao-list", () =>
+  
+  // Rotas protegidas - se não tem cookie vai para /
+  page("/locacao-list", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/locacao-list.html", () => {
       new VisaoLocacaoEmHTML().iniciarList();
     })
   );
-  page("/locacao-add", () =>
+  page("/locacao-add", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/locacao-add.html", () => {
       new VisaoLocacaoEmHTML().iniciarAdd();
     })
   );
-  page("/devolucao-list", () =>
+  page("/devolucao-list", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/devolucao-list.html", () => {
       new VisaoDevolucaoEmHTML().iniciarList();
     })
   );
-  page("/devolucao-add", () =>
+  page("/devolucao-add", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/devolucao-add.html", () => {
       new VisaoDevolucaoEmHTML().iniciarAdd();
     })
   );
-  page("/avaria-add", () =>
+  page("/avaria-add", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/avarias-add.html", () => {
       new VisaoEquipamentoEmHTML().iniciarAdd();
     })
   );
-  page("/login", () =>
+  
+  // Rota alternativa de login
+  page("/login", AuthMiddleware.controleLogin, () =>
     carregarRota("/pages/login.html", () => {
       new VisaoFuncionarioEmHTML().iniciarLogin();
     })
