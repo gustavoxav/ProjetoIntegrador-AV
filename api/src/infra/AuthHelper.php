@@ -1,7 +1,13 @@
 <?php
 class AuthHelper {
-    private const PIMENTA = 'projetoI123456';
     private const TIMEOUT_SESSAO = 600; // 10 minutos
+
+    /**
+     * Obtém o PEPPER do arquivo .env
+     */
+    private static function obterPepper(): string {
+        return $_ENV['PEPPER'] ?? 'projetoI123456';
+    }
 
     /**
      * Verifica se a senha fornecida corresponde ao hash armazenado
@@ -104,6 +110,6 @@ class AuthHelper {
      * Gera um hash SHA-512 para uma senha com sal e pimenta
      */
     public static function gerarHashSenha(string $senha, string $salt): string {
-        return hash('sha512', $salt . $senha . self::PIMENTA);
+        return hash('sha512', $salt . $senha . self::obterPepper());
     }
 }
