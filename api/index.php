@@ -26,9 +26,62 @@ $app->post("/login", function ($req, $res) use ($pdo) {
     $gestor = new GestorFuncionario(new RepositorioFuncionarioEmBDR($pdo));
     $funcionario = $gestor->login($cpf, $senha);
     
-    return $res->status(200)->json($funcionario);
+    return $res->status(200)->json([
+      'sucesso' => true,
+      'funcionario' => $funcionario,
+      'mensagem' => 'Login realizado com sucesso.'
+    ]);
   } catch (Exception $e) {
-    return $res->status(401)->json(['erro' => $e->getMessage()]);
+    return $res->status(401)->json([
+      'sucesso' => false,
+      'erro' => $e->getMessage()
+    ]);
+  }
+});
+
+// POST /api/logout: Realiza o logout do sistema
+$app->post("/logout", function ($req, $res) use ($pdo) {
+  try {
+    $gestor = new GestorFuncionario(new RepositorioFuncionarioEmBDR($pdo));
+    $resultado = $gestor->logout();
+    
+    return $res->status(200)->json([
+      'sucesso' => true,
+      'mensagem' => $resultado['mensagem']
+    ]);
+  } catch (Exception $e) {
+    return $res->status(500)->json([
+      'sucesso' => false,
+      'erro' => $e->getMessage()
+    ]);
+  }
+});
+
+// GET /api/auth/me: Verifica se o usuário está autenticado
+$app->get("/auth/me", function ($req, $res) use ($pdo) {
+  try {
+    $gestor = new GestorFuncionario(new RepositorioFuncionarioEmBDR($pdo));
+    $funcionario = $gestor->verificarAutenticacao();
+    
+    if (!$funcionario) {
+      return $res->status(401)->json([
+        'sucesso' => false,
+        'autenticado' => false,
+        'erro' => 'Usuário não autenticado ou sessão expirada.'
+      ]);
+    }
+    
+    return $res->status(200)->json([
+      'sucesso' => true,
+      'autenticado' => true,
+      'funcionario' => $funcionario
+    ]);
+  } catch (Exception $e) {
+    return $res->status(500)->json([
+      'sucesso' => false,
+      'autenticado' => false,
+      'erro' => $e->getMessage()
+    ]);
   }
 });
 
@@ -252,9 +305,6 @@ $app->get("/devolucoes", function ($req, $res) use ($pdo) {
   }
 });
 
-$app->listen(['rootURL' => API_PREFIX]);
-
-
 // POST /api/registrarAvaria/:id: Adiciona uma avaria ao equipamento
 $app->post("/registrarAvaria/:id", function ($req, $res) use ($pdo) {
   $params = $req->params();
@@ -279,3 +329,5 @@ $app->post("/registrarAvaria/:id", function ($req, $res) use ($pdo) {
     return $res->status(500)->json(["erro" => "Erro não esperado ao atualizar equipamento: " . $e->getMessage()]);
   }
 });
+
+$app->listen(['rootURL' => API_PREFIX]);

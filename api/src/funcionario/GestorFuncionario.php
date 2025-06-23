@@ -33,10 +33,9 @@ class GestorFuncionario
      * @return array<string, mixed> Dados do funcionário autenticado
      * @throws \Throwable Em caso de erro ao buscar o funcionário
      */
-    public function login(string $cpf, string $senha)
-    {
+    public function login(string $cpf, string $senha): array {
         try {
-            if (is_null($cpf) || is_null($senha)) {
+            if (empty($cpf) || empty($senha)) {
                 throw new \CredenciaisInvalidasException("CPF e senha são obrigatórios para o login.");
             }
             if (strlen($cpf) !== 11) {
@@ -53,16 +52,63 @@ class GestorFuncionario
                 throw new CredenciaisInvalidasException("CPF ou senha inválidos");
             }
 
-            $funcionario = [
+            $dadosFuncionario = [
                 'codigo' => $funcionario->codigo,
                 'nome' => $funcionario->nome,
                 'cpf' => $funcionario->cpf,
                 'cargo' => $funcionario->cargo
             ];
 
-            return $funcionario;
+            AuthHelper::iniciarSessao($dadosFuncionario);
+
+            return $dadosFuncionario;
         } catch (\Throwable $error) {
-            throw new ErroLoginException($error);
+            throw new ErroLoginException($error->getMessage());
+        }
+    }
+
+    /**
+     * Realiza logout do funcionário autenticado
+     *
+     * @return array<string, string> Mensagem de sucesso
+     */
+    public function logout(): array {
+        try {
+            AuthHelper::destruirSessao();
+            return ['mensagem' => 'Logout realizado com sucesso.'];
+        } catch (\Throwable $error) {
+            throw new \DominioException("Erro ao realizar logout: " . $error->getMessage());
+        }
+    }
+
+    /**
+     * Verifica se o funcionário está autenticado e retorna seus dados
+     *
+     * @return array<string, mixed>|null Dados do funcionário autenticado ou null
+     */
+    public function verificarAutenticacao(): array|null {
+        try {
+            if (!AuthHelper::estaAutenticado()) {
+                return null;
+            }
+
+            return AuthHelper::obterFuncionarioLogado();
+        } catch (\Throwable $error) {
+            throw new \DominioException("Erro ao verificar autenticação: " . $error->getMessage());
+        }
+    }
+
+    /**
+     * Verifica se o funcionário logado tem permissão para determinado cargo
+     *
+     * @param string $cargoRequerido
+     * @return bool
+     */
+    public function temPermissao(string $cargoRequerido): bool {
+        try {
+            return AuthHelper::temPermissao($cargoRequerido);
+        } catch (\Throwable $error) {
+            return false;
         }
     }
 }
