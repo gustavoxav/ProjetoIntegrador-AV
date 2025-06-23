@@ -173,19 +173,23 @@ $app->get("/equipamentos/:filtro", function ($req, $res) use ($pdo) {
   }
 });
 
-// POST /api/locacoes: Registra uma nova locação
+// POST /api/locacoes: Registra uma nova locação (apenas Atendente ou Gerente)
 $app->post("/locacoes", function ($req, $res) use ($pdo) {
-  $dadosLocacao = (array) $req->body();
+  $middlewareResponse = AuthMiddleware::verificarAtendente($req, $res, function($req, $res) use ($pdo) {
+    $dadosLocacao = (array) $req->body();
 
-  try {
-    $gestor = new GestorLocacao(
-      new RepositorioLocacaoEmBDR($pdo)
-    );
-    $saida = $gestor->registrarLocacao($dadosLocacao);
-    $res->status(201)->json($saida);
-  } catch (Exception $e) {
-    $res->status(400)->json(["erro" => $e->getMessage()]);
-  }
+    try {
+      $gestor = new GestorLocacao(
+        new RepositorioLocacaoEmBDR($pdo)
+      );
+      $saida = $gestor->registrarLocacao($dadosLocacao);
+      return $res->status(201)->json($saida);
+    } catch (Exception $e) {
+      return $res->status(400)->json(["erro" => $e->getMessage()]);
+    }
+  });
+  
+  return $middlewareResponse;
 });
 
 // GET /api/locacoes: Retorna todas as locações cadastradas no sistema
@@ -268,27 +272,31 @@ $app->get("/devolucoes/simulacao/:locacaoId", function ($req, $res) use ($pdo) {
   }
 });
 
-// POST /api/devolucoes - Registra uma devolução
+// POST /api/devolucoes - Registra uma devolução (apenas Atendente ou Gerente)
 $app->post("/devolucoes", function ($req, $res) use ($pdo) {
-  $dadosDevolucao = (array) $req->body();
+  $middlewareResponse = AuthMiddleware::verificarAtendente($req, $res, function($req, $res) use ($pdo) {
+    $dadosDevolucao = (array) $req->body();
 
-  try {
-    $gestor = new GestorDevolucao(
-      new RepositorioDevolucaoEmBDR($pdo),
-      new RepositorioLocacaoEmBDR($pdo)
-    );
-    $saida = $gestor->registrarDevolucao($dadosDevolucao);
-    $res->status(201)->json($saida);
-  } catch (Exception $e) {
-    $mensagem = $e->getMessage();
-    $status = 400;
+    try {
+      $gestor = new GestorDevolucao(
+        new RepositorioDevolucaoEmBDR($pdo),
+        new RepositorioLocacaoEmBDR($pdo)
+      );
+      $saida = $gestor->registrarDevolucao($dadosDevolucao);
+      return $res->status(201)->json($saida);
+    } catch (Exception $e) {
+      $mensagem = $e->getMessage();
+      $status = 400;
 
-    if (strpos($mensagem, "já foi devolvida") !== false) {
-      $status = 409;
+      if (strpos($mensagem, "já foi devolvida") !== false) {
+        $status = 409;
+      }
+
+      return $res->status($status)->json(["erro" => $mensagem]);
     }
-
-    $res->status($status)->json(["erro" => $mensagem]);
-  }
+  });
+  
+  return $middlewareResponse;
 });
 
 // GET /api/devolucoes - Retorna todas as devoluções cadastradas no sistema

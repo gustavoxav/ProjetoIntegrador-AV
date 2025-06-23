@@ -94,10 +94,44 @@
 2. **Atendente** - Nível intermediário (inclui permissões de Mecânico)
 3. **Gerente** - Nível máximo (inclui todas as permissões)
 
-## Rotas Protegidas
+## Rotas Protegidas e Controles de Acesso
 
-...
+### Regras de Acesso por Cargo:
 
+#### **Mecânico** - Acesso Limitado
+- NÃO pode fazer locações (`POST /api/locacoes`)
+- NÃO pode fazer devoluções (`POST /api/devolucoes`)
+
+#### **Atendente** - Acesso Intermediário
+- Pode fazer locações (`POST /api/locacoes`)
+- Pode fazer devoluções (`POST /api/devolucoes`)
+
+#### **Gerente** - Acesso Total
+- Pode acessar todas as funcionalidades
+
+### Rotas com Controle de Acesso:
+- `POST /api/locacoes` - **Apenas Atendente ou Gerente**
+- `POST /api/devolucoes` - **Apenas Atendente ou Gerente**
+
+### Respostas de Erro de Acesso:
+
+**Usuário não autenticado (401):**
+```json
+{
+  "sucesso": false,
+  "erro": "Acesso negado. Faça login para continuar.",
+  "codigo": "NAO_AUTENTICADO"
+}
+```
+
+**Permissão insuficiente (403):**
+```json
+{
+  "sucesso": false,
+  "erro": "Acesso negado. Você não tem permissão para acessar este recurso.",
+  "codigo": "SEM_PERMISSAO"
+}
+```
 
 ## Códigos de Erro
 
