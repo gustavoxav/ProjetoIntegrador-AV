@@ -1,7 +1,6 @@
 <?php
 
-class Cliente
-{
+class Cliente implements JsonSerializable {
   public function __construct(
     private int $codigo = 0,
     private string $nomeCompleto = '',
@@ -13,6 +12,21 @@ class Cliente
     private string $foto = '',
   ) {}
 
+  /**
+   * qnd a gnt implementa o jsonSerialize, o json_encode vai usar o retorno desse metodo para serializar o objeto
+   */
+  public function jsonSerialize(): array {
+    return [
+      'codigo' => $this->codigo,
+      'nomeCompleto' => $this->nomeCompleto,
+      'dataNascimento' => $this->dataNascimento,
+      'cpf' => $this->cpf,
+      'telefone' => $this->telefone,
+      'email' => $this->email,
+      'endereco' => $this->endereco,
+      'foto' => $this->foto,
+    ];
+  }
 
   public function validar(): array
   {

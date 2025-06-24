@@ -1,17 +1,28 @@
 <?php
 
-class Equipamento
-{
+class Equipamento implements JsonSerializable {
   public function __construct(
-    public int $codigo = 0,
-    public string $modelo = '',
-    public string $fabricante = '',
-    public string $descricao = '',
-    public float $valorHora = 0,
-    public string $avarias = '',
-    public bool $disponivel = true,
-    public ?string $numeroSeguro = null
-  ) {
+    private int $codigo = 0,
+    private string $modelo = '',
+    private string $fabricante = '',
+    private string $descricao = '',
+    private float $valorHora = 0,
+    private string $avarias = '',
+    private bool $disponivel = true,
+    private ?string $numeroSeguro = null
+  ) {}
+
+  public function jsonSerialize(): array {
+    return [
+      'codigo' => $this->codigo,
+      'modelo' => $this->modelo,
+      'fabricante' => $this->fabricante,
+      'descricao' => $this->descricao,
+      'valorHora' => $this->valorHora,
+      'avarias' => $this->avarias,
+      'disponivel' => $this->disponivel,
+      'numeroSeguro' => $this->numeroSeguro,
+    ];
   }
 
   public function verificarDisponibilidade(): bool
