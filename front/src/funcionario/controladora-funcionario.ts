@@ -48,6 +48,16 @@ export class ControladoraFuncionario {
     }
   }
 
+  public async obterNomeFuncionarioLogado(): Promise<string> {
+    try {
+      const funcionario = await this.gestor.obterFuncionarioLogado();
+      return `Olá, ${funcionario.nome}!`;
+    } catch (error: unknown) {
+      console.error("Erro ao carregar dados do usuário:", error);
+      return "";
+    }
+  }
+
   public async logout(): Promise<void> {
     try {
       await this.gestor.logoutFuncionario();

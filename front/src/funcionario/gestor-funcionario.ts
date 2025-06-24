@@ -53,6 +53,33 @@ export class GestorFuncionario {
     return funcionario;
   }
 
+  async obterFuncionarioLogado(): Promise<Funcionario> {
+    const options: RequestInit = {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    };
+
+    const response = await fetch(`${this.urlApi}/auth/me`, options);
+
+    if (!response.ok) {
+      let mensagem = `Erro ao buscar dados do usuário. Status: ${response.status}`;
+      try {
+        const erro = await response.json();
+        if (erro?.erro) mensagem = erro.erro;
+      } catch (_) {}
+
+      throw ErroDominio.comProblemas([mensagem]);
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data.funcionario;
+  }
+
   async logoutFuncionario(): Promise<void> {
     const options: RequestInit = {
       method: "POST",

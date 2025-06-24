@@ -39,6 +39,18 @@ function configurarEventosNavbar() {
   }, 100);
 }
 
+async function carregarNomeUsuario() {
+  setTimeout(async () => {
+    const usuarioLogadoElement = document.getElementById("usuario-logado");
+    
+    if (usuarioLogadoElement) {
+      const controladora = new ControladoraFuncionario(new VisaoFuncionarioEmHTML());
+      const nomeFormatado = await controladora.obterNomeFuncionarioLogado();
+      usuarioLogadoElement.textContent = nomeFormatado;
+    }
+  }, 100);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   carregadorElemento(
     document.getElementById("navbar-container"),
@@ -62,26 +74,31 @@ document.addEventListener("DOMContentLoaded", () => {
   page("/locacao-list", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/locacao-list.html", () => {
       new VisaoLocacaoEmHTML().iniciarList();
+      carregarNomeUsuario();
     })
   );
   page("/locacao-add", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/locacao-add.html", () => {
       new VisaoLocacaoEmHTML().iniciarAdd();
+      carregarNomeUsuario();
     })
   );
   page("/devolucao-list", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/devolucao-list.html", () => {
       new VisaoDevolucaoEmHTML().iniciarList();
+      carregarNomeUsuario();
     })
   );
   page("/devolucao-add", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/devolucao-add.html", () => {
       new VisaoDevolucaoEmHTML().iniciarAdd();
+      carregarNomeUsuario();
     })
   );
   page("/avaria-add", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/avarias-add.html", () => {
       new VisaoEquipamentoEmHTML().iniciarAdd();
+      carregarNomeUsuario();
     })
   );
   
