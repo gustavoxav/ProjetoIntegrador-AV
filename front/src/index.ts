@@ -3,7 +3,7 @@ import { VisaoLocacaoEmHTML } from "./locacao/visao-locacao-html";
 import { VisaoDevolucaoEmHTML } from "./devolucao/visao-devolucao-html";
 import { VisaoFuncionarioEmHTML } from "./funcionario/visao-funcionario-html";
 import { VisaoEquipamentoEmHTML } from "./equipamento/visao-equipamento-html";
-import { AuthMiddleware } from "./infra/AuthMiddleware";
+import { AuthMiddleware, FuncionarioLogado } from "./infra/AuthMiddleware";
 import { ControladoraFuncionario } from "./funcionario/controladora-funcionario";
 
 function carregadorElemento(section: HTMLElement | null, url: string) {
@@ -39,13 +39,13 @@ function configurarEventosNavbar() {
   }, 100);
 }
 
-async function carregarNomeUsuario() {
-  setTimeout(async () => {
+function carregarNomeUsuario() {
+  setTimeout(() => {
     const usuarioLogadoElement = document.getElementById("usuario-logado");
     
     if (usuarioLogadoElement) {
       const controladora = new ControladoraFuncionario(new VisaoFuncionarioEmHTML());
-      const nomeFormatado = await controladora.obterNomeFuncionarioLogado();
+      const nomeFormatado = controladora.obterNomeFuncionarioLogado();
       usuarioLogadoElement.textContent = nomeFormatado;
     }
   }, 100);

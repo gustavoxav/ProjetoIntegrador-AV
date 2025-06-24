@@ -12,6 +12,8 @@ export type Cliente = {
 export type Funcionario = {
   codigo: number;
   nome: string;
+  cpf?: string;
+  cargo?: string;
 };
 
 export type Equipamento = {

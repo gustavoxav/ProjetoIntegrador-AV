@@ -1,5 +1,6 @@
 import { ErroDominio } from "../infra/ErroDominio.js";
 import { GestorFuncionario } from "./gestor-funcionario.js";
+import { FuncionarioLogado } from "../infra/AuthMiddleware.js";
 import type { VisaoFuncionario } from "./visao-funcionario.js";
 
 export class ControladoraFuncionario {
@@ -35,7 +36,10 @@ export class ControladoraFuncionario {
         return;
       }
       await this.gestor.loginFuncionario(dadosLogin.cpf, dadosLogin.senha);
-      this.visao.exibirMensagemSucesso("Devolução registrada com sucesso!");
+      
+      await this.carregarDadosFuncionario();
+      
+      this.visao.exibirMensagemSucesso("Login realizado com sucesso!");
       window.location.href = "/locacao-list";
     } catch (error: unknown) {
       if (error instanceof ErroDominio) {
@@ -48,19 +52,23 @@ export class ControladoraFuncionario {
     }
   }
 
-  public async obterNomeFuncionarioLogado(): Promise<string> {
+  public async carregarDadosFuncionario(): Promise<void> {
     try {
       const funcionario = await this.gestor.obterFuncionarioLogado();
-      return `Olá, ${funcionario.nome}!`;
+      FuncionarioLogado.definir(funcionario);
     } catch (error: unknown) {
-      console.error("Erro ao carregar dados do usuário:", error);
-      return "";
+      console.error("Erro ao carregar dados do funcionário:", error);
     }
+  }
+
+  public obterNomeFuncionarioLogado(): string {
+    return FuncionarioLogado.obterNome();
   }
 
   public async logout(): Promise<void> {
     try {
       await this.gestor.logoutFuncionario();
+      FuncionarioLogado.limpar();
       window.location.href = "/";
     } catch (error: unknown) {
       if (error instanceof ErroDominio) {
@@ -70,6 +78,7 @@ export class ControladoraFuncionario {
           error instanceof Error ? error.message : "Erro ao realizar logout";
         this.visao.exibirMensagemErro(errorMessage);
       }
+      FuncionarioLogado.limpar();
       window.location.href = "/";
     }
   }
