@@ -48,15 +48,15 @@ class GestorFuncionario
                 throw new CredenciaisInvalidasException("CPF ou senha inválidos");
             }
 
-            if (!AuthHelper::verificarSenha($senha, $funcionario->salt, $funcionario->senha_hash)) {
+            if (!AuthHelper::verificarSenha($senha, $funcionario->getSalt(), $funcionario->getSenhaHash())) {
                 throw new CredenciaisInvalidasException("CPF ou senha inválidos");
             }
 
             $dadosFuncionario = [
-                'codigo' => $funcionario->codigo,
-                'nome' => $funcionario->nome,
-                'cpf' => $funcionario->cpf,
-                'cargo' => $funcionario->cargo
+                'codigo' => $funcionario->getCodigo(),
+                'nome' => $funcionario->getNome(),
+                'cpf' => $funcionario->getCpf(),
+                'cargo' => $funcionario->getCargo()
             ];
 
             AuthHelper::iniciarSessao($dadosFuncionario);

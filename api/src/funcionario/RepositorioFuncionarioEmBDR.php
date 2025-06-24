@@ -56,10 +56,11 @@ class RepositorioFuncionarioEmBDR implements RepositorioFuncionario
       return new Funcionario(
         codigo: (int) $dados['id'],
         nome: $dados['nome'],
-        cpf: $dados['cpf'] ?? null,
-        senha_hash: $dados['senha_hash'] ?? null,
-        salt: $dados['salt'] ?? null,
-        cargo: $dados['cargo'] ?? null
+        cpf: $dados['cpf'] ?? '',
+        cargo: $dados['cargo'] ?? '',
+        salt: $dados['salt'] ?? '',
+        senha: '',
+        senha_hash: $dados['senha_hash'] ?? ''
       );
     } catch (PDOException $ex) {
       throw new RepositorioException(
