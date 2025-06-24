@@ -23,25 +23,25 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   private devolucaoData: RespostaSimulacaoDevolucao | null = null;
   private callbackSelecionarLocacao?: (locacao: RespostaLocacao) => void;
 
-  private controladoraDevolucao: ControladoraDevolucao | null = null;
-
-  public iniciarAdd(): void {
-    this.controladoraDevolucao = new ControladoraDevolucao(
+  private readonly controladoraDevolucao: ControladoraDevolucao | null =
+    new ControladoraDevolucao(
       this,
       new VisaoFuncionarioEmHTML(),
       new VisaoEquipamentoEmHTML()
     );
-    const salvarButton = document.getElementById("salvar-devolucao");
-    if (salvarButton) {
-      const newButton = salvarButton.cloneNode(true);
-      salvarButton.parentNode?.replaceChild(newButton, salvarButton);
 
-      newButton.addEventListener("click", (e) => {
+  public iniciarAdd(): void {
+    document
+      .getElementById("salvar-devolucao")
+      ?.addEventListener("click", (e) => {
         e.preventDefault();
         this.controladoraDevolucao?.registrarDevolucao();
         return false;
       });
-    }
+
+    this.aoSelecionarLocacao((locacao) => {
+      this.controladoraDevolucao?.obterSimulacao(locacao.codigo);
+    });
 
     document
       .getElementById("btn-buscar-locacoes")
@@ -62,10 +62,6 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
 
   public iniciarList(): void {
     this.controladoraDevolucao?.buscarDevolucoes();
-    this.aoSelecionarLocacao((locacao) => {
-      this.controladoraDevolucao?.obterSimulacao(locacao.codigo);
-    });
-
     const addButton = document.getElementById("addButton");
     if (addButton) {
       addButton.addEventListener("click", () => {
