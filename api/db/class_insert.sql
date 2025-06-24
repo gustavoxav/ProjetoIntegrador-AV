@@ -12,7 +12,18 @@ insert into cliente (nome_completo, foto, data_nascimento, cpf, telefone, email,
 ('Carolina Mello', 'https://rizzoimobiliaria.com.br/images/media/dfe779831f7a3f38504a77dbfa883a341673881279.jpg', '1994-12-03', '34567890103', '(31) 98765-4321', 'carol.mello@gmail.com', 'Rua das Palmeiras, 321'),
 ('Diego Nunes', 'https://cdn.gazetasp.com.br/img/c/825/500/dn_arquivo/2025/01/lobo-guara.jpg', '1992-01-10', '45678901204', '(41) 97654-3210', 'diego.nunes@hotmail.com', 'Travessa do Sol, 12'),
 ('Elisa Martins', 'https://ogimg.infoglobo.com.br/in/14638550-9ee-f9a/FT1086A/20141123-125719.jpg', '1990-07-28', '56789012305', '(51) 96543-2109', 'elisa.martins@yahoo.com', 'Rua dos Lírios, 98'),
-('Felipe Gomes', 'https://ufape.com.br/wp-content/uploads/2024/06/Ufape-Hospital-Veterinario-filhote-de-cachorro-brincando-na-grama-GS2-MKT-Freepik.jpg', '1995-03-05', '67890123406', '(61) 95432-1098', 'felipe.gomes@outlook.com', 'Alameda Central, 250');
+('Felipe Gomes', 'https://ufape.com.br/wp-content/uploads/2024/06/Ufape-Hospital-Veterinario-filhote-de-cachorro-brincando-na-grama-GS2-MKT-Freepik.jpg', '1995-03-05', '67890123406', '(61) 95432-1098', 'felipe.gomes@outlook.com', 'Alameda Central, 250'),
+('Eduarda Lima', 'https://super.abril.com.br/wp-content/uploads/2018/05/humanidade-causa-cc3a2ncer-em-animais-selvagens.png?w=720&h=440&crop=1', '2000-01-10', '98712345600', '(21) 91234-5678', 'eduarda.lima@email.com', 'Rua Aurora, 87'),
+('Ricardo Silveira', 'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2023/10/26/1095416860-20144148136268.jpg', '1983-04-15', '32145678901', '(11) 99911-2233', 'ricardo.silveira@email.com', 'Av. Paulista, 1001'),
+('Juliana Freitas', 'https://vegazeta.com.br/wp-content/uploads/2021/03/Arthurs-Acres-Animal-Sanctuary-2.jpg', '1988-09-22', '74185296300', '(31) 98777-1122', 'juliana.freitas@gmail.com', 'Rua dos Cravos, 45'),
+('Henrique Bastos', 'https://static.mundoeducacao.uol.com.br/mundoeducacao/2021/03/1-animal.jpg', '1993-06-30', '96325874100', '(41) 99881-3344', 'henrique.bastos@gmail.com', 'Av. Paraná, 200'),
+('Vanessa Rocha', 'https://jpimg.com.br/uploads/2025/03/7-animais-mais-fofos-do-mundo.jpg', '1991-11-19', '11223344556', '(61) 93456-1122', 'vanessa.rocha@gmail.com', 'Rua do Campo, 600'),
+('Leonardo Brito', 'https://jpimg.com.br/uploads/2025/02/8-animais-mais-fortes-do-mundo.jpg', '1997-02-28', '99887766554', '(11) 98712-4563', 'leonardo.brito@gmail.com', 'Rua Acácia, 72'),
+('Priscila Andrade', 'https://portaledicase.com/wp-content/uploads/2025/02/Hipopotamo-1024x683.jpg', '1990-12-15', '55667788990', '(71) 98321-7788', 'priscila.andrade@email.com', 'Av. Salvador, 300'),
+('Eduardo Menezes', 'https://rizzoimobiliaria.com.br/images/media/dfe779831f7a3f38504a77dbfa883a341673881279.jpg', '1986-08-05', '66778899001', '(51) 98811-2211', 'eduardo.menezes@gmail.com', 'Rua Araguaia, 111'),
+('Nathalia Santos', 'https://cdn.gazetasp.com.br/img/c/825/500/dn_arquivo/2025/01/lobo-guara.jpg', '1993-10-02', '77889900112', '(81) 99223-3344', 'nathalia.santos@hotmail.com', 'Rua Ipê Roxo, 55'),
+('Bruno Tavares', 'https://ogimg.infoglobo.com.br/in/14638550-9ee-f9a/FT1086A/20141123-125719.jpg', '1989-05-08', '88990011223', '(91) 98765-7788', 'bruno.tavares@yahoo.com', 'Travessa das Rosas, 14'),
+('Isabela Correia', 'https://ufape.com.br/wp-content/uploads/2024/06/Ufape-Hospital-Veterinario-filhote-de-cachorro-brincando-na-grama-GS2-MKT-Freepik.jpg', '1996-07-14', '99001122334', '(62) 99874-1122', 'isabela.correia@outlook.com', 'Alameda do Vale, 789');
 
 -- Funcionario - Pimenta: "projetoI123456" - Senha:"123456"
 INSERT INTO funcionario (nome, cpf, senha_hash, salt, cargo) values
@@ -53,3 +64,212 @@ insert into equipamento (tipo, modelo, fabricante, descricao, valor_hora, avaria
 ('refletor_selim', 'Reflex Red', 'Giro', 'Refletor traseiro com LED', 1.20, '', NULL, TRUE),
 ('acolchoamento_selim', 'GelComfort', 'Atrio', 'Selim com gel extra confortável', 2.00, '', NULL, TRUE),
 ('suporte_para_squeeze', 'Bike Holder', 'Shimano', 'Suporte ajustável para garrafa', 0.75, '', NULL, TRUE);
+
+
+-- LOCACAO 1
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) VALUES (NOW(),2,DATE_ADD(NOW(), INTERVAL 3 HOUR),0.00, 30.00, 1, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 1, 1); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 30.00, 1, 1);
+
+-- LOCACAO 2
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) VALUES (NOW(),2,DATE_ADD(NOW(), INTERVAL 2 HOUR),0.00, 30.00, 4, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 1, 2); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 4, 2); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 5, 2); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 6, 2); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 30.00, 2, 2);
+
+-- LOCACAO 3
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) VALUES (NOW(),2,DATE_ADD(NOW(), INTERVAL 7 HOUR),70.00, 700.00, 8, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 1, 3); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 4, 3); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 5, 3); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 6, 3); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 30.00, 3, 2);
+
+-- LOCACAO 4
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 3, DATE_ADD(NOW(), INTERVAL 5 HOUR), 10.00, 120.00, 5, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 40.00, 7, 4); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 40.00, 8, 4); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 50.00, 9, 4); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 120.00, 4, 4);
+
+-- LOCACAO 5
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 1, DATE_ADD(NOW(), INTERVAL 1 HOUR), 0.00, 20.00, 3, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 1, 20.00, 10, 5); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 20.00, 5, 2);
+
+-- LOCACAO 6
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 4, DATE_ADD(NOW(), INTERVAL 6 HOUR), 30.00, 270.00, 9, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 60.00, 11, 6); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 60.00, 12, 6); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 60.00, 13, 6); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 60.00, 14, 6); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 270.00, 6, 4);
+
+-- LOCACAO 7
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 5, DATE_ADD(NOW(), INTERVAL 7 HOUR), 15.00, 285.00, 7, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 55.00, 2, 7); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 60.00, 3, 7); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 65.00, 4, 7); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 285.00, 7, 2);
+
+-- LOCACAO 8
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 1, DATE_ADD(NOW(), INTERVAL 1 HOUR), 0.00, 25.00, 11, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 1, 25.00, 15, 8); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 25.00, 8, 4);
+
+-- LOCACAO 9
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 3, DATE_ADD(NOW(), INTERVAL 5 HOUR), 20.00, 180.00, 6, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 60.00, 8, 9); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 60.00, 9, 9); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 180.00, 9, 2);
+
+-- LOCACAO 10
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 2, DATE_ADD(NOW(), INTERVAL 4 HOUR), 0.00, 50.00, 12, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 25.00, 10, 10); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 25.00, 11, 10); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 50.00, 10, 2);
+
+-- -- LOCACAO 11
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 3, DATE_ADD(NOW(), INTERVAL 4 HOUR), 5.00, 85.00, 3, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 30.00, 1, 11); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 30.00, 2, 11); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 85.00, 11, 4);
+
+-- -- LOCACAO 12
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 2, DATE_ADD(NOW(), INTERVAL 2 HOUR), 0.00, 40.00, 6, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 40.00, 3, 12); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 40.00, 12, 2);
+
+-- -- LOCACAO 13
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 5, DATE_ADD(NOW(), INTERVAL 6 HOUR), 25.00, 175.00, 7, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 60.00, 4, 13); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 90.00, 5, 13); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 175.00, 13, 4);
+
+-- -- LOCACAO 14
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 1, DATE_ADD(NOW(), INTERVAL 1 HOUR), 0.00, 20.00, 10, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 1, 20.00, 6, 14); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 20.00, 14, 2);
+
+-- -- LOCACAO 15
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 4, DATE_ADD(NOW(), INTERVAL 5 HOUR), 10.00, 180.00, 12, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 60.00, 7, 15); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 60.00, 8, 15); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 60.00, 9, 15); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 180.00, 15, 4);
+
+-- -- LOCACAO 16
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 2, DATE_ADD(NOW(), INTERVAL 3 HOUR), 0.00, 50.00, 1, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 25.00, 10, 16); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 25.00, 11, 16); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 50.00, 16, 2);
+
+-- -- LOCACAO 17
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 3, DATE_ADD(NOW(), INTERVAL 4 HOUR), 15.00, 100.00, 4, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 50.00, 12, 17); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 50.00, 13, 17); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 100.00, 17, 4);
+
+-- -- LOCACAO 18
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 1, DATE_ADD(NOW(), INTERVAL 1 HOUR), 0.00, 20.00, 5, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 1, 20.00, 14, 18); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 20.00, 18, 2);
+
+-- -- LOCACAO 19
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 4, DATE_ADD(NOW(), INTERVAL 6 HOUR), 30.00, 280.00, 9, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 70.00, 15, 19); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 70.00, 1, 19); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 280.00, 19, 4);
+
+-- -- LOCACAO 20
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id) 
+VALUES (NOW(), 2, DATE_ADD(NOW(), INTERVAL 3 HOUR), 0.00, 60.00, 8, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 2, 20); 
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 3, 20); 
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 60.00, 20, 2);
+
+-- -- LOCACAO 21
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
+VALUES (NOW(), 3, DATE_ADD(NOW(), INTERVAL 5 HOUR), 10.00, 90.00, 2, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 30.00, 4, 21);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 30.00, 5, 21);
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 90.00, 21, 4);
+
+-- -- LOCACAO 22
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
+VALUES (NOW(), 1, DATE_ADD(NOW(), INTERVAL 1 HOUR), 0.00, 25.00, 7, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 1, 25.00, 6, 22);
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 25.00, 22, 2);
+
+-- -- LOCACAO 23
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
+VALUES (NOW(), 4, DATE_ADD(NOW(), INTERVAL 7 HOUR), 20.00, 240.00, 5, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 80.00, 7, 23);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 4, 80.00, 8, 23);
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 240.00, 23, 4);
+
+-- -- LOCACAO 24
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
+VALUES (NOW(), 2, DATE_ADD(NOW(), INTERVAL 3 HOUR), 5.00, 55.00, 9, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 9, 24);
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 55.00, 24, 2);
+
+-- -- LOCACAO 25
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
+VALUES (NOW(), 3, DATE_ADD(NOW(), INTERVAL 5 HOUR), 0.00, 90.00, 12, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 30.00, 10, 25);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 30.00, 11, 25);
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 90.00, 25, 4);
+
+-- -- LOCACAO 26
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
+VALUES (NOW(), 1, DATE_ADD(NOW(), INTERVAL 1 HOUR), 0.00, 20.00, 1, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 1, 20.00, 12, 26);
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 20.00, 26, 2);
+
+-- -- LOCACAO 27
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
+VALUES (NOW(), 5, DATE_ADD(NOW(), INTERVAL 8 HOUR), 50.00, 350.00, 4, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 70.00, 13, 27);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 70.00, 14, 27);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 60.00, 15, 27);
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 350.00, 27, 4);
+
+-- -- LOCACAO 28
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
+VALUES (NOW(), 2, DATE_ADD(NOW(), INTERVAL 3 HOUR), 0.00, 60.00, 10, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 1, 28);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 2, 30.00, 2, 28);
+UPDATE equipamento SET disponivel = 0 WHERE id = 1;
+UPDATE equipamento SET disponivel = 0 WHERE id = 2;
+
+-- -- LOCACAO 29
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
+VALUES (NOW(), 3, DATE_ADD(NOW(), INTERVAL 4 HOUR), 15.00, 90.00, 6, 2);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 30.00, 3, 29);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 3, 30.00, 4, 29);
+INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 90.00, 29, 4);
+
+-- -- LOCACAO 30
+INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
+VALUES (NOW(), 1, DATE_ADD(NOW(), INTERVAL 1 HOUR), 0.00, 20.00, 8, 4);
+INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 1, 20.00, 5, 30);
+UPDATE equipamento SET disponivel = 0 WHERE id = 5;
