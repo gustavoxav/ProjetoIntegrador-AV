@@ -47,4 +47,20 @@ export class ControladoraFuncionario {
       }
     }
   }
+
+  public async logout(): Promise<void> {
+    try {
+      await this.gestor.logoutFuncionario();
+      window.location.href = "/";
+    } catch (error: unknown) {
+      if (error instanceof ErroDominio) {
+        this.visao.exibirMensagemErro(error.getProblemas()[0]);
+      } else {
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro ao realizar logout";
+        this.visao.exibirMensagemErro(errorMessage);
+      }
+      window.location.href = "/";
+    }
+  }
 }

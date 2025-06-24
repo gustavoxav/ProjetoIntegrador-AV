@@ -52,4 +52,27 @@ export class GestorFuncionario {
     const funcionario = await response.json();
     return funcionario;
   }
+
+  async logoutFuncionario(): Promise<void> {
+    const options: RequestInit = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    };
+
+    const response = await fetch(`${this.urlApi}/logout`, options);
+
+    if (!response.ok) {
+      let mensagem = `Erro ao realizar logout. Status: ${response.status}`;
+      try {
+        const erro = await response.json();
+        if (erro?.mensagem) mensagem = erro.mensagem;
+      } catch (_) {}
+
+      throw ErroDominio.comProblemas([mensagem]);
+    }
+  }
 }

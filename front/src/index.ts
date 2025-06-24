@@ -4,6 +4,7 @@ import { VisaoDevolucaoEmHTML } from "./devolucao/visao-devolucao-html";
 import { VisaoFuncionarioEmHTML } from "./funcionario/visao-funcionario-html";
 import { VisaoEquipamentoEmHTML } from "./equipamento/visao-equipamento-html";
 import { AuthMiddleware } from "./infra/AuthMiddleware";
+import { ControladoraFuncionario } from "./funcionario/controladora-funcionario";
 
 function carregadorElemento(section: HTMLElement | null, url: string) {
   if (!section) return;
@@ -25,6 +26,19 @@ function carregarRota(htmlPath: string, initFn: () => void) {
   }, 50);
 }
 
+function configurarEventosNavbar() {
+  setTimeout(() => {
+    const btnLogout = document.getElementById("btn-logout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const controladora = new ControladoraFuncionario(new VisaoFuncionarioEmHTML());
+        await controladora.logout();
+      });
+    }
+  }, 100);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   carregadorElemento(
     document.getElementById("navbar-container"),
@@ -34,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("footer-container"),
     "/components/footer.html"
   );
+
+  configurarEventosNavbar();
 
   // Rota de login - se tem cookie vai para /locacao-list, se não fica no login
   page("/", AuthMiddleware.controleLogin, () =>
