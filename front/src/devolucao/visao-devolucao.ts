@@ -2,10 +2,11 @@ import type {
   RespostaDevolucao,
   RespostaLocacao,
   RespostaSimulacaoDevolucao,
+  DevolucaoComFuncionario
 } from "../types/types";
 
 export interface VisaoDevolucao {
-  obterDadosDevolucao(): RespostaSimulacaoDevolucao | null;
+  obterDadosDevolucao(): DevolucaoComFuncionario | null;
   exibirListagemDevolucao(devolucoes: RespostaDevolucao[] | undefined): void;
   selecionarLocacao(locacao: RespostaLocacao): void;
   aoSelecionarLocacao(callback: (locacao: RespostaLocacao) => void): void;

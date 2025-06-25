@@ -20,46 +20,29 @@ export class ControladoraDevolucao {
     }
   }
 
-
   public async registrarDevolucao(): Promise<void> {
     try {
       const dadosSimulacao = this.visao.obterDadosDevolucao();
-      const dadosFuncionario = this.visaoFuncionario?.obterDadosFuncionario();
       if (!dadosSimulacao?.locacao.codigo) {
         this.visao.exibirMensagemErro("Selecione uma locação existente");
         return;
       }
 
-      if (!dadosFuncionario) {
+      if (!dadosSimulacao?.registradoPor) {
         this.visao.exibirMensagemErro(
           "Selecione um funcionário responsável pela devolução"
         );
         return;
       }
-
       const dadosDevolucaoFormatado = {
         locacaoId: Number(dadosSimulacao?.locacao.codigo),
-        registradoPor: dadosFuncionario,
+        registradoPor: dadosSimulacao.registradoPor,
         dataHoraDevolucao: dadosSimulacao?.dataHoraDevolucao,
         valorPago: dadosSimulacao?.valorPago,
       };
 
-      // console.log(
-      //   "Enviando para API:",
-      //   JSON.stringify(
-      //     {
-      //       locacaoId: Number(dadosDevolucaoFormatado.locacaoId),
-      //       registradoPor: dadosDevolucaoFormatado.registradoPor,
-      //     },
-      //     null,
-      //     2
-      //   )
-      // );
-
       try {
-        const resultado = await this.gestor.registrarDevolucao(
-          dadosDevolucaoFormatado
-        );
+        await this.gestor.registrarDevolucao(dadosDevolucaoFormatado);
 
         this.visao.exibirMensagemSucesso("Devolução registrada com sucesso!");
 

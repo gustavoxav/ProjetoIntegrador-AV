@@ -2,6 +2,7 @@ import { ErroDominio } from "../infra/ErroDominio.js";
 import { GestorFuncionario } from "./gestor-funcionario.js";
 import { FuncionarioLogado } from "../infra/AuthMiddleware.js";
 import type { VisaoFuncionario } from "./visao-funcionario.js";
+import type { Funcionario } from "../types/types.js";
 
 export class ControladoraFuncionario {
   private readonly gestor: GestorFuncionario = new GestorFuncionario();
@@ -36,9 +37,9 @@ export class ControladoraFuncionario {
         return;
       }
       await this.gestor.loginFuncionario(dadosLogin.cpf, dadosLogin.senha);
-      
+
       await this.carregarDadosFuncionario();
-      
+
       this.visao.exibirMensagemSucesso("Login realizado com sucesso!");
       window.location.href = "/locacao-list";
     } catch (error: unknown) {
@@ -59,6 +60,11 @@ export class ControladoraFuncionario {
     } catch (error: unknown) {
       console.error("Erro ao carregar dados do funcionário:", error);
     }
+  }
+
+  public obterFuncionarioLogado(): Funcionario | null {
+    const func = FuncionarioLogado.obter();
+    return func;
   }
 
   public obterNomeECargoFuncionarioLogado(): string {

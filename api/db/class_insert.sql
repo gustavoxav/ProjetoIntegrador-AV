@@ -251,7 +251,9 @@ VALUES (NOW(), 5, DATE_ADD(NOW(), INTERVAL 8 HOUR), 50.00, 350.00, 4, 2);
 INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 70.00, 13, 27);
 INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 70.00, 14, 27);
 INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 5, 60.00, 15, 27);
-INSERT INTO devolucao ( data_hora_devolucao, valor_pago, locacao_id, funcionario_id ) VALUES ( NOW(), 350.00, 27, 4);
+UPDATE equipamento SET disponivel = 0 WHERE id = 13;
+UPDATE equipamento SET disponivel = 0 WHERE id = 514;
+UPDATE equipamento SET disponivel = 0 WHERE id = 15;
 
 -- -- LOCACAO 28
 INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_prevista, desconto, valor_total, cliente_id, funcionario_id)
@@ -273,3 +275,5 @@ INSERT INTO locacao ( data_hora_locacao, horas_contratadas, data_hora_entrega_pr
 VALUES (NOW(), 1, DATE_ADD(NOW(), INTERVAL 1 HOUR), 0.00, 20.00, 8, 4);
 INSERT INTO item_locado ( tempo_contratado, subtotal, equipamento_id, locacao_id ) VALUES ( 1, 20.00, 5, 30);
 UPDATE equipamento SET disponivel = 0 WHERE id = 5;
+
+

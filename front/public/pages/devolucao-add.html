@@ -1,11 +1,8 @@
-<link rel="stylesheet" href="/styles/tables.css">
+<link rel="stylesheet" href="/styles/tables.css" />
 <div class="container devolucao-page">
   <h1 class="mb-4">Devolução de Locação</h1>
 
   <form action="/api/devolucao" method="POST">
-    <label for="funcionario" class="form-label">Selecione o Funcionário</label>
-    <div class="mb-3" id="funcionarios-container"></div>
-
     <label for="buscar-locacao" class="form-label"
       >Código da Locação ou CPF do Cliente</label
     >
@@ -85,11 +82,13 @@
               <th>Valor por hora</th>
               <th>Valor Subtotal</th>
               <th>Desconto</th>
+              <th>Tx. Limpeza</th>
+              <th></th>
             </tr>
           </thead>
           <tbody id="tabela-equipamentos">
             <tr>
-              <td colspan="4" class="text-center text-muted">
+              <td colspan="6" class="text-center text-muted">
                 Nenhum equipamento foi encontrado
               </td>
             </tr>
@@ -120,7 +119,10 @@
             <strong>Horas Utilizadas:</strong>
             <span id="horas-utilizadas">-</span>
           </p>
-          <div id="aviso-valor-minimo" class="alert alert-warning d-none mt-2" role="alert">
+          <div
+            id="aviso-valor-minimo"
+            class="alert alert-warning d-none mt-2"
+            role="alert">
             ⚠️ O valor mínimo a ser cobrado é baseado nas horas contratadas.
           </div>
         </div>
@@ -142,4 +144,55 @@
       Realizar Devolução
     </button>
   </form>
+</div>
+
+<div
+  class="modal fade"
+  id="modalAvarias"
+  tabindex="-1"
+  aria-labelledby="modalAvariasLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalAvariasLabel">
+          Registrar avarias
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label for="funcionario" class="form-label"
+          >Selecione o Funcionário</label
+        >
+        <div class="mb-3" id="funcionarios-container"></div>
+        <label for="input">Descrição</label>
+        <textarea
+          class="form-control mb-3"
+          id="input-avarias"
+          rows="3"
+          placeholder="Descreva as avarias do item selecionado"></textarea>
+        <label for="add-image">Imagem</label>
+        <input
+          class="form-control mb-3"
+          type="file"
+          id="add-image"
+          accept=".jpg, .jpeg, image/jpeg" />
+        <label for="add-image">Valor</label>
+        <input
+          class="form-control mb-3"
+          type="number"
+          id="valor-avaria"/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-danger" id="btn-salvar-avarias">Salvar avarias</button>
+      </div>
+    </div>
+  </div>
 </div>

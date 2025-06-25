@@ -123,3 +123,7 @@ export type DadosResgitroAvaria = {
   descricao: string;
   registradoPor: Funcionario;
 };
+
+export type DevolucaoComFuncionario = RespostaSimulacaoDevolucao & {
+  registradoPor: Funcionario;
+};

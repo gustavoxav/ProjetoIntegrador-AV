@@ -4,8 +4,8 @@ import type { VisaoLocacao } from "./visao-locacao.js";
 import { VisaoCliente } from "../cliente/visao-clientes.js";
 import { VisaoFuncionario } from "../funcionario/visao-funcionario.js";
 import { VisaoEquipamento } from "../equipamento/visao-equipamento.js";
-import { Equipamento } from "../equipamento/Equipamento.js";
 import { ControladoraFuncionario } from "../funcionario/controladora-funcionario.js";
+import { Equipamento } from "../types/types.js";
 
 export class ControladoraLocacao {
   private readonly gestor: GestorLocacao;
@@ -27,7 +27,6 @@ export class ControladoraLocacao {
       const dadosLocacao = {
         ...this.visao.obterDadosLocacao(),
         cliente: this.visaoCliente?.obterDadosCliente(),
-        funcionario: this.visaoFuncionario?.obterDadosFuncionario(),
         equipamentos:
           this.visaoEquipamento?.obterEquipamentosSelecionados() || [],
       };
@@ -38,7 +37,7 @@ export class ControladoraLocacao {
         return;
       }
 
-      if (!dadosLocacao.funcionario) {
+      if (!dadosLocacao.registradoPor) {
         console.error("Dados do funcionário não encontrados");
         this.visao.exibirMensagemErro(
           "Selecione um funcionário responsável pela locação"
@@ -79,7 +78,7 @@ export class ControladoraLocacao {
           codigo: Number(dadosLocacao.cliente),
         },
         registradoPor: {
-          codigo: dadosLocacao.funcionario.codigo,
+          codigo: dadosLocacao.registradoPor.codigo,
         },
         horasContratadas: dadosLocacao.horas,
         itens: dadosLocacao.equipamentos.map((eq) => ({
@@ -91,7 +90,7 @@ export class ControladoraLocacao {
             modelo: eq.modelo ?? "",
             fabricante: eq.fabricante ?? "",
             avarias: eq.avarias ?? "",
-            numeroSeguro: eq.numeroSeguro ?? "",
+            numeroSeguro: eq.numeroSeguro ?? ""
           } as Equipamento,
         })),
       };

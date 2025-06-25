@@ -5,6 +5,7 @@ import { ControladoraLocacao } from "./controladora-locacao.js";
 import { VisaoClienteEmHTML } from "../cliente/visao-cliente-html.js";
 import { VisaoEquipamentoEmHTML } from "../equipamento/visao-equipamento-html.js";
 import { VisaoFuncionarioEmHTML } from "../funcionario/visao-funcionario-html.js";
+import { ControladoraFuncionario } from "../funcionario/controladora-funcionario.js";
 
 export class VisaoLocacaoEmHTML implements VisaoLocacao {
   public iniciarAdd(): void {
@@ -68,7 +69,9 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
   obterDadosLocacao() {
     const horas =
       Number((document.getElementById("hora") as HTMLInputElement)?.value) || 0;
-
+    const controladora = new ControladoraFuncionario(
+      new VisaoFuncionarioEmHTML()
+    );
     return {
       horas,
       subtotal:
@@ -78,6 +81,7 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
       dataLocacao: document.getElementById("data-locacao")?.textContent ?? "-",
       dataDevolucao:
         document.getElementById("data-devolucao")?.textContent ?? "-",
+      registradoPor: controladora.obterFuncionarioLogado(),
     };
   }
 

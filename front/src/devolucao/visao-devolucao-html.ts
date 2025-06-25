@@ -1,5 +1,6 @@
 import type { VisaoDevolucao } from "./visao-devolucao.js";
 import type {
+  DevolucaoComFuncionario,
   Equipamento,
   RespostaDevolucao,
   RespostaLocacao,
@@ -18,6 +19,7 @@ import {
 import { ControladoraDevolucao } from "./controladora-devolucao.js";
 import { VisaoFuncionarioEmHTML } from "../funcionario/visao-funcionario-html.js";
 import { VisaoEquipamentoEmHTML } from "../equipamento/visao-equipamento-html.js";
+import { ControladoraFuncionario } from "../funcionario/controladora-funcionario.js";
 
 export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   private devolucaoData: RespostaSimulacaoDevolucao | null = null;
@@ -76,7 +78,20 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   }
 
   obterDadosDevolucao() {
-    return this.devolucaoData;
+    const totalEl = document.getElementById("valor-total");
+    const texto = totalEl?.textContent?.trim() ?? "0";
+    const valorNumerico = parseFloat(
+      texto.replace("R$", "").replace(/\./g, "").replace(",", ".")
+    );
+    const controladora = new ControladoraFuncionario(
+      new VisaoFuncionarioEmHTML()
+    );
+
+    return {
+      ...this.devolucaoData,
+      valorPago: valorNumerico,
+      registradoPor: controladora.obterFuncionarioLogado(),
+    } as DevolucaoComFuncionario;
   }
 
   aoSelecionarLocacao(callback: (locacao: RespostaLocacao) => void): void {
@@ -341,11 +356,24 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     tr.appendChild(
       this.criarCelula(formatarValorComSimbolo(equipamento.valorHora))
     );
-    tr.appendChild(this.criarCelula(formatarValorComSimbolo(valorTotal)));
+    const tdValorTotal = this.criarCelula(formatarValorComSimbolo(valorTotal));
+    tr.appendChild(tdValorTotal);
 
     const tdDesconto = this.criarCelula(formatarValorComSimbolo(desconto));
     if (temDesconto) tdDesconto.className = "text-success";
     tr.appendChild(tdDesconto);
+
+    const tdAva = document.createElement("td");
+    const tdLimp = document.createElement("td");
+    const textLimp = document.createElement("span");
+    textLimp.textContent = " + 10%";
+    tdLimp.appendChild(this.checkLimpeza(valorTotal, tdValorTotal));
+    tdLimp.appendChild(textLimp);
+
+    const btnAvaria = this.criarBotaoAvaria(equipamento.codigo);
+    tdAva.appendChild(btnAvaria);
+    tr.appendChild(tdLimp);
+    tr.appendChild(tdAva);
 
     return tr;
   }
@@ -354,6 +382,68 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const td = document.createElement("td");
     td.textContent = texto;
     return td;
+  }
+
+  private checkLimpeza(
+    valorOriginal: number,
+    celulaValor: HTMLTableCellElement
+  ): HTMLInputElement {
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "form-check-input";
+
+    checkbox.addEventListener("change", () => {
+      const novoValor = checkbox.checked ? valorOriginal * 1.1 : valorOriginal;
+      celulaValor.textContent = formatarValorComSimbolo(novoValor);
+
+      const subtotalEl = document.getElementById("subtotal-itens");
+      if (subtotalEl) {
+        const texto = subtotalEl.textContent?.trim() ?? "0";
+        const valorNumerico = parseFloat(
+          texto.replace("R$", "").replace(/\./g, "").replace(",", ".")
+        );
+        const novoTotal = checkbox.checked
+          ? novoValor - valorOriginal + valorNumerico
+          : valorNumerico - valorOriginal * 0.1;
+
+        subtotalEl.textContent = novoTotal.toFixed(2).replace(".", ",");
+      }
+
+      const totalEl = document.getElementById("valor-total");
+      if (totalEl) {
+        const texto = totalEl.textContent?.trim() ?? "0";
+        const valorNumerico = parseFloat(
+          texto.replace("R$", "").replace(/\./g, "").replace(",", ".")
+        );
+        const novoTotal = checkbox.checked
+          ? novoValor - valorOriginal + valorNumerico
+          : valorNumerico - valorOriginal * 0.1;
+        totalEl.textContent = novoTotal.toFixed(2).replace(".", ",");
+      }
+    });
+    return checkbox;
+  }
+
+  private criarBotaoAvaria(codigo: number): HTMLButtonElement {
+    const btn = document.createElement("button");
+    btn.className = "btn btn-sm btn-danger";
+    btn.textContent = "Adicionar Avaria";
+    btn.setAttribute("data-bs-toggle", "modal");
+    btn.setAttribute("data-bs-target", "#modalAvarias");
+    btn.setAttribute("data-codigo-item", codigo.toString());
+
+    btn.addEventListener("click", () => {
+      const inputDescricao = document.getElementById(
+        "input-avarias"
+      ) as HTMLTextAreaElement;
+      const inputImagem = document.getElementById(
+        "add-image"
+      ) as HTMLInputElement;
+
+      if (inputDescricao) inputDescricao.value = "";
+      if (inputImagem) inputImagem.value = "";
+    });
+    return btn;
   }
 
   exibirMensagemSucesso(x: string): void {

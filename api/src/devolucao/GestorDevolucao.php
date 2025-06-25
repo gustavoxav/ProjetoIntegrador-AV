@@ -94,10 +94,10 @@ class GestorDevolucao {
         $calculadora = new CalculadoraPagamento();
         $valorCalculado = $calculadora->calcularValorPagamento($locacao, $dataHoraDevolucao);
         
-        $valorPago = floatval($dadosDevolucao['valorPago']);
-        if (abs($valorPago - $valorCalculado) > 0.01) {
-            throw new Exception("O valor informado não está correto. Valor esperado: R$ " . number_format($valorCalculado, 2, ',', '.') . ". Tente novamente.");
-        }
+        // $valorPago = floatval($dadosDevolucao['valorPago']);
+        // if (abs($valorPago - $valorCalculado) > 0.01) {
+        //     throw new Exception("O valor informado não está correto. Valor esperado: R$ " . number_format($valorCalculado, 2, ',', '.') . ". Tente novamente.");
+        // }
         
         $valorPago = $valorCalculado;
         

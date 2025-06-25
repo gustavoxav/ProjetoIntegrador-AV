@@ -1,4 +1,4 @@
-import type { RespostaLocacao } from "../types/types";
+import type { Funcionario, RespostaLocacao } from "../types/types";
 
 export interface VisaoLocacao {
   obterDadosLocacao(): {
@@ -8,6 +8,7 @@ export interface VisaoLocacao {
     valorTotal: string;
     dataLocacao: string;
     dataDevolucao: string;
+    registradoPor: Funcionario | null;
   };
 
   exibirListagemLocacao(locacoes: RespostaLocacao[] | undefined): void;
