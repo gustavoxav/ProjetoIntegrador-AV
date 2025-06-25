@@ -20,7 +20,8 @@
         "src/equipamento",
         "src/funcionario",
         "src/locacao",
-        "src/devolucao"
+        "src/devolucao",
+        "src/relatorio"
       ]
     },
     "files": [

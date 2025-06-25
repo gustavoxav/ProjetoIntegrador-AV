@@ -338,4 +338,64 @@ $app->post("/registrarAvaria/:id", function ($req, $res) use ($pdo) {
   }
 });
 
+// GET /api/relatorios/locacoes-devolvidas
+// Relatório de locações devolvidas por período (apenas Gerentes)
+// Gera dados para gráfico de colunas mostrando valores totais pagos nas devoluções agrupados por data de locação.
+// Exemplo de Requisição: /api/relatorios/locacoes-devolvidas?dataInicial=2024-01-01&dataFinal=2024-01-31
+// Se não informado, usa o primeiro e último dia do mês atual.
+$app->get("/relatorios/locacoes-devolvidas", function ($req, $res) use ($pdo) {
+  $middlewareResponse = AuthMiddleware::verificarGerente($req, $res, function($req, $res) use ($pdo) {
+    $dataInicial = $req->param('dataInicial');
+    $dataFinal = $req->param('dataFinal');
+
+    try {
+      $gestor = new GestorRelatorio(
+        new RepositorioRelatorioEmBDR($pdo)
+      );
+      $relatorio = $gestor->gerarRelatorioLocacoesDevolvidasPorPeriodo($dataInicial, $dataFinal);
+      return $res->json([
+        'sucesso' => true,
+        'relatorio' => $relatorio
+      ]);
+    } catch (Exception $e) {
+      return $res->status(400)->json([
+        'sucesso' => false,
+        'erro' => $e->getMessage()
+      ]);
+    }
+  });
+  
+  return $middlewareResponse;
+});
+
+// GET /api/relatorios/top-10-itens
+// Relatório de top 10 itens mais alugados (Gerentes e Atendentes)
+// Gera dados para gráfico de pizza e tabela de ranking dos equipamentos mais alugados.
+// Exemplo de Requisição: /api/relatorios/top-10-itens?dataInicial=2024-01-01&dataFinal=2024-01-31
+// Se não informado, usa o primeiro e último dia do mês atual.
+$app->get("/relatorios/top-10-itens", function ($req, $res) use ($pdo) {
+  $middlewareResponse = AuthMiddleware::verificarAtendente($req, $res, function($req, $res) use ($pdo) {
+    $dataInicial = $req->param('dataInicial');
+    $dataFinal = $req->param('dataFinal');
+
+    try {
+      $gestor = new GestorRelatorio(
+        new RepositorioRelatorioEmBDR($pdo)
+      );
+      $relatorio = $gestor->gerarRelatorioTop10ItensMaisAlugados($dataInicial, $dataFinal);
+      return $res->json([
+        'sucesso' => true,
+        'relatorio' => $relatorio
+      ]);
+    } catch (Exception $e) {
+      return $res->status(400)->json([
+        'sucesso' => false,
+        'erro' => $e->getMessage()
+      ]);
+    }
+  });
+  
+  return $middlewareResponse;
+});
+
 $app->listen(['rootURL' => API_PREFIX]);
