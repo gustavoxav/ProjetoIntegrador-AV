@@ -61,8 +61,10 @@ export class ControladoraFuncionario {
     }
   }
 
-  public obterNomeFuncionarioLogado(): string {
-    return FuncionarioLogado.obterNome();
+  public obterNomeECargoFuncionarioLogado(): string {
+    const nome = FuncionarioLogado.obterNome();
+    const cargo = FuncionarioLogado.obterCargo();
+    return cargo ? `${nome} - ${cargo}` : nome;
   }
 
   public async logout(): Promise<void> {

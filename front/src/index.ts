@@ -45,8 +45,8 @@ function carregarNomeUsuario() {
     
     if (usuarioLogadoElement) {
       const controladora = new ControladoraFuncionario(new VisaoFuncionarioEmHTML());
-      const nomeFormatado = controladora.obterNomeFuncionarioLogado();
-      usuarioLogadoElement.textContent = nomeFormatado;
+      const nomeECargoFormatado = controladora.obterNomeECargoFuncionarioLogado();
+      usuarioLogadoElement.textContent = nomeECargoFormatado;
     }
   }, 100);
 }
