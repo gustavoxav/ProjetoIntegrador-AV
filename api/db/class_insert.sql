@@ -34,36 +34,36 @@ INSERT INTO funcionario (nome, cpf, senha_hash, salt, cargo) values
 ('Aline Fernandes', '55555555555', 'e80a16456cc5a613c4707ff3b2618e79ea85ba3e20d15e480d20b3da88ae46a498d80103a9663977043d0ee758edaa46e80b1ca72ebeb5a3045ecc3503b604bb', '218df1d9295a4009dbdba69eb70aafa9', 'Gerente');
 
 -- Bicicleta
-insert into equipamento (tipo, modelo, fabricante, descricao, valor_hora, avarias, numero_seguro, disponivel) values
-('bicicleta', 'MTB 29', 'Caloi', 'Bicicleta de trilha com 21 marchas', 15.00, '', 'SEG123456', TRUE),
-('bicicleta', 'Elétrica 500W', 'Sense', 'Bicicleta elétrica com autonomia de 40km', 25.00, '', 'SEG987654', TRUE),
-('bicicleta', 'Urban Speed 2024', 'Specialized', 'Bicicleta urbana de alta performance', 22.00, '', 'SEG101010', TRUE),
-('bicicleta', 'Trail Master 500', 'Scott', 'Mountain Bike com suspensão total', 30.00, '', 'SEG202020', TRUE),
-('bicicleta', 'EcoBike City', 'Oggi', 'Bicicleta elétrica dobrável', 27.50, '', 'SEG303030', TRUE);
+insert into equipamento (tipo, modelo, fabricante, descricao, valor_compra, valor_hora, avarias, numero_seguro, disponivel) values
+('bicicleta', 'MTB 29', 'Caloi', 'Bicicleta de trilha com 21 marchas', 1500.00, 30.00, '', 'SEG123456', TRUE),
+('bicicleta', 'Elétrica 500W', 'Sense', 'Bicicleta elétrica com autonomia de 40km', 3500.00, 70.00, '', 'SEG987654', TRUE),
+('bicicleta', 'Urban Speed 2024', 'Specialized', 'Bicicleta urbana de alta performance', 2800.00, 56.00, '', 'SEG101010', TRUE),
+('bicicleta', 'Trail Master 500', 'Scott', 'Mountain Bike com suspensão total', 4200.00, 84.00, '', 'SEG202020', TRUE),
+('bicicleta', 'EcoBike City', 'Oggi', 'Bicicleta elétrica dobrável', 2200.00, 44.00, '', 'SEG303030', TRUE);
 
 -- Equipamentos Gerais
-insert into equipamento (tipo, modelo, fabricante, descricao, valor_hora, avarias, numero_seguro, disponivel) values
-('capacete', 'Capacete', 'Giro', 'Capacete de ciclismo', 5.00, '', NULL, TRUE),
-('farolete', 'Farol LED', 'Trek', 'Farol LED', 3.00, '', NULL, TRUE),
-('squeeze', 'Squeeze 600ml', 'Nike', 'Squeeze térmico', 1.00, '', NULL, TRUE),
-('suporte_para_squeeze', 'Suporte de Bicicleta', 'Shimano', 'Suporte para squeeze', 0.50, '', NULL, TRUE),
-('pisca_alerta', 'Pisca Dianteiro', 'GTS', 'Pisca alerta dianteiro LED', 2.00, '', NULL, TRUE),
-('acolchoamento_selim', 'Empresa Banco', 'Atrio', 'Banco de Gel', 1.50, '', NULL, TRUE),
-('refletor_roda', 'Refletor de Roda', 'shimano', 'Refletor circular para rodas', 0.75, '', NULL, TRUE),
-('refletor_selim', 'Refletor Traseiro', 'shimano', 'Refletor vermelho traseiro', 0.75, '', NULL, TRUE),
-('cadeado', 'Cadeado Antifurto', 'Haga', 'Cadeado com senha numérica', 1.00, '', NULL, TRUE),
-('tranca', 'Tranca Alta Segurança', 'Empresa Tranca', 'Tranca com chave e alarme', 2.50, '', NULL, TRUE),
-('capacete', 'Urban Helmet', 'Bell', 'Capacete urbano ventilado', 6.00, '', NULL, TRUE),
-('capacete', 'Sport Pro', 'Giro', 'Capacete com viseira removível', 7.00, '', NULL, TRUE),
-('farolete', 'LED Max', 'Trek', 'Farol LED recarregável', 3.50, '', NULL, TRUE),
-('farolete', 'Light Beam', 'GTS', 'Farol traseiro e dianteiro conjunto', 4.00, '', NULL, TRUE),
-('squeeze', 'Thermo 700ml', 'Nike', 'Squeeze com isolamento térmico', 1.50, '', NULL, TRUE),
-('tranca', 'Tranca X-Pro', 'Haga', 'Tranca com alarme embutido', 3.00, '', NULL, TRUE),
-('cadeado', 'Cadeado Flex', 'Zoli', 'Cadeado com senha digital', 1.75, '', NULL, TRUE),
-('refletor_roda', 'Roda Reflex', 'Shimano', 'Refletor com encaixe magnético', 1.00, '', NULL, TRUE),
-('refletor_selim', 'Reflex Red', 'Giro', 'Refletor traseiro com LED', 1.20, '', NULL, TRUE),
-('acolchoamento_selim', 'GelComfort', 'Atrio', 'Selim com gel extra confortável', 2.00, '', NULL, TRUE),
-('suporte_para_squeeze', 'Bike Holder', 'Shimano', 'Suporte ajustável para garrafa', 0.75, '', NULL, TRUE);
+insert into equipamento (tipo, modelo, fabricante, descricao, valor_compra, valor_hora, avarias, numero_seguro, disponivel) values
+('capacete', 'Capacete', 'Giro', 'Capacete de ciclismo', 180.00, 3.60, '', NULL, TRUE),
+('farolete', 'Farol LED', 'Trek', 'Farol LED', 120.00, 2.40, '', NULL, TRUE),
+('squeeze', 'Squeeze 600ml', 'Nike', 'Squeeze térmico', 45.00, 0.90, '', NULL, TRUE),
+('suporte_para_squeeze', 'Suporte de Bicicleta', 'Shimano', 'Suporte para squeeze', 35.00, 0.70, '', NULL, TRUE),
+('pisca_alerta', 'Pisca Dianteiro', 'GTS', 'Pisca alerta dianteiro LED', 80.00, 1.60, '', NULL, TRUE),
+('acolchoamento_selim', 'Empresa Banco', 'Atrio', 'Banco de Gel', 95.00, 1.90, '', NULL, TRUE),
+('refletor_roda', 'Refletor de Roda', 'shimano', 'Refletor circular para rodas', 25.00, 0.50, '', NULL, TRUE),
+('refletor_selim', 'Refletor Traseiro', 'shimano', 'Refletor vermelho traseiro', 25.00, 0.50, '', NULL, TRUE),
+('cadeado', 'Cadeado Antifurto', 'Haga', 'Cadeado com senha numérica', 65.00, 1.30, '', NULL, TRUE),
+('tranca', 'Tranca Alta Segurança', 'Empresa Tranca', 'Tranca com chave e alarme', 150.00, 3.00, '', NULL, TRUE),
+('capacete', 'Urban Helmet', 'Bell', 'Capacete urbano ventilado', 220.00, 4.40, '', NULL, TRUE),
+('capacete', 'Sport Pro', 'Giro', 'Capacete com viseira removível', 280.00, 5.60, '', NULL, TRUE),
+('farolete', 'LED Max', 'Trek', 'Farol LED recarregável', 160.00, 3.20, '', NULL, TRUE),
+('farolete', 'Light Beam', 'GTS', 'Farol traseiro e dianteiro conjunto', 200.00, 4.00, '', NULL, TRUE),
+('squeeze', 'Thermo 700ml', 'Nike', 'Squeeze com isolamento térmico', 75.00, 1.50, '', NULL, TRUE),
+('tranca', 'Tranca X-Pro', 'Haga', 'Tranca com alarme embutido', 180.00, 3.60, '', NULL, TRUE),
+('cadeado', 'Cadeado Flex', 'Zoli', 'Cadeado com senha digital', 90.00, 1.80, '', NULL, TRUE),
+('refletor_roda', 'Roda Reflex', 'Shimano', 'Refletor com encaixe magnético', 40.00, 0.80, '', NULL, TRUE),
+('refletor_selim', 'Reflex Red', 'Giro', 'Refletor traseiro com LED', 55.00, 1.10, '', NULL, TRUE),
+('acolchoamento_selim', 'GelComfort', 'Atrio', 'Selim com gel extra confortável', 130.00, 2.60, '', NULL, TRUE),
+('suporte_para_squeeze', 'Bike Holder', 'Shimano', 'Suporte ajustável para garrafa', 50.00, 1.00, '', NULL, TRUE);
 
 
 -- LOCACAO 1

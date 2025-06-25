@@ -21,6 +21,7 @@ export type Equipamento = {
   modelo: string;
   fabricante: string;
   descricao: string;
+  valorCompra: number;
   valorHora: number;
   avarias: string;
   disponivel: boolean;

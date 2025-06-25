@@ -33,6 +33,7 @@ create table equipamento (
   modelo VARCHAR(100),
   fabricante VARCHAR(100),
   descricao VARCHAR(255),
+  valor_compra DECIMAL(10,2) NOT NULL,
   valor_hora DECIMAL(10,2) NOT NULL,
   avarias VARCHAR(255),
   numero_seguro VARCHAR(50), -- Só preenchido para bicicletas

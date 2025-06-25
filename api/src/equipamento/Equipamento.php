@@ -6,6 +6,7 @@ class Equipamento implements JsonSerializable {
     private string $modelo = '',
     private string $fabricante = '',
     private string $descricao = '',
+    private float $valorCompra = 0,
     private float $valorHora = 0,
     private string $avarias = '',
     private bool $disponivel = true,
@@ -18,6 +19,7 @@ class Equipamento implements JsonSerializable {
       'modelo' => $this->modelo,
       'fabricante' => $this->fabricante,
       'descricao' => $this->descricao,
+      'valorCompra' => $this->valorCompra,
       'valorHora' => $this->valorHora,
       'avarias' => $this->avarias,
       'disponivel' => $this->disponivel,
@@ -33,6 +35,16 @@ class Equipamento implements JsonSerializable {
   public function calcularValorHora(int $horas): float
   {
     return $this->valorHora * $horas;
+  }
+
+  public function getValorCompra(): float 
+  {
+    return $this->valorCompra;
+  }
+
+  public function getValorHora(): float 
+  {
+    return $this->valorHora;
   }
 }
 ?>
