@@ -17,10 +17,24 @@ class AuthHelper {
     }
 
     /**
+     * Configura parâmetros seguros para cookies de sessão
+     */
+    private static function configurarCookiesSessao(): void {
+        session_set_cookie_params([
+            'lifetime' => self::TIMEOUT_SESSAO,
+            'path' => '/',
+            'domain' => '',
+            'secure' => false,
+            'httponly' => false,
+        ]);
+    }
+
+    /**
      * Inicia uma sessão para o funcionário autenticado
      */
     public static function iniciarSessao(array $funcionario): void {
         if (session_status() === PHP_SESSION_NONE) {
+            self::configurarCookiesSessao();
             session_start();
         }
 
@@ -35,6 +49,7 @@ class AuthHelper {
      */
     public static function estaAutenticado(): bool {
         if (session_status() === PHP_SESSION_NONE) {
+            self::configurarCookiesSessao();
             session_start();
         }
 
@@ -67,6 +82,7 @@ class AuthHelper {
      */
     public static function destruirSessao(): void {
         if (session_status() === PHP_SESSION_NONE) {
+            self::configurarCookiesSessao();
             session_start();
         }
 

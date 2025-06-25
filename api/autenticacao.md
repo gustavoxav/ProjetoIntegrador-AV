@@ -1,4 +1,4 @@
-# Sistema de Autenticação
+# Sistema de Autenticação - Pra ajudar a gente se tiver alguma dúvida de implementação
 
 ## Funcionalidades:
 
@@ -11,7 +11,8 @@
 ## Componentes
 
 ### 1. AuthHelper (Infraestrutura)
-- Gerenciamento de sessões PHP nativas -> com session_start()
+- Gerenciamento de sessões PHP nativas com session_start()
+- Configuração de cookies com session_set_cookie_params()
 - Verificação de senhas com hash SHA-512
 - Controle de timeout (10 minutos)
 - Verificação de permissões por cargo
