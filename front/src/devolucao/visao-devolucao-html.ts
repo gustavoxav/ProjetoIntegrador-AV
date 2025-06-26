@@ -29,13 +29,13 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   private callbackSelecionarLocacao?: (locacao: RespostaLocacao) => void;
   private readonly controladoraFuncionario: ControladoraFuncionario =
     new ControladoraFuncionario(new VisaoFuncionarioEmHTML());
-
   private readonly controladoraDevolucao: ControladoraDevolucao | null =
     new ControladoraDevolucao(
       this,
       new VisaoFuncionarioEmHTML(),
       new VisaoEquipamentoEmHTML()
     );
+  private grafico: Chart | null = null;
 
   public iniciarAdd(): void {
     document
@@ -128,6 +128,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const totalGeralSpan = document.getElementById("resumo-total-geral");
     const qtdLocacoesSpan = document.getElementById("resumo-qtd-locacoes");
     const qtdDiasSpan = document.getElementById("resumo-qtd-dias");
+    const output = document.querySelector("output");
 
     if (resumoContainer && totalGeralSpan && qtdLocacoesSpan && qtdDiasSpan) {
       totalGeralSpan.textContent = `R$ ${resumo.valorTotalGeral
@@ -143,11 +144,15 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       );
       return;
     }
-
+    output?.classList.add("d-none");
     const labels = dados.map((d) => formatarData(d.data));
     const valores = dados.map((d) => d.valorTotalPago);
     Chart.register(...registerables);
-    new Chart(canvas as ChartItem, {
+    if (this.grafico instanceof Chart) {
+      this.grafico.destroy();
+    }
+
+    this.grafico = new Chart(canvas as ChartItem, {
       type: "bar",
       data: {
         labels,
