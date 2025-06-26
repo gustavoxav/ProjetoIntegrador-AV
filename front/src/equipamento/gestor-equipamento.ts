@@ -1,5 +1,5 @@
 import { ErroDominio } from "../infra/ErroDominio";
-import { DadosResgitroAvaria } from "../types/types";
+import { DadosResgitroAvaria, RespostaRelatorioEquipamento } from "../types/types";
 import type { Equipamento } from "./Equipamento";
 
 export class GestorEquipamento {
@@ -92,6 +92,39 @@ export class GestorEquipamento {
         error instanceof Error
           ? error.message
           : "Erro ao conectar com o servidor",
+      ]);
+    }
+  }
+
+  async relatorioEquipamento(
+    dataInicial: string,
+    dataFinal: string
+  ): Promise<RespostaRelatorioEquipamento> {
+    try {
+      const response = await fetch(
+        `${this.urlApi}/relatorios/top-10-itens?dataInicial=${dataInicial}&dataFinal=${dataFinal}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Erro ao buscar relatório de itens (${response.status})`
+        );
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw ErroDominio.comProblemas([
+        error instanceof Error
+          ? error.message
+          : "Erro ao buscar relatório de itens",
       ]);
     }
   }

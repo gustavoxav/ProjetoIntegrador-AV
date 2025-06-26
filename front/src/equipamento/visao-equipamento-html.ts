@@ -1,17 +1,26 @@
-import type { Equipamento } from "../types/types.js";
+import type {
+  Equipamento,
+  RespostaRelatorioEquipamento,
+} from "../types/types.js";
 import { ControladoraEquipamento } from "./controladora-equipamento.js";
 import type { VisaoEquipamento } from "./visao-equipamento.js";
-import { formatarDataHora } from "../infra/utils.js";
+import {
+  bordas,
+  cores,
+  formatarDataHora,
+} from "../infra/utils.js";
 import {
   calcularValores,
   calcularValorIndividual,
   formatarValorComSimbolo,
 } from "../infra/calculadora-valores.js";
+import { Chart, ChartItem, registerables } from "chart.js";
 
 export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
   private readonly controladora: ControladoraEquipamento;
   private equipamentosSelecionados: Equipamento[] = [];
   private todosEquipamentos: Equipamento[] = [];
+  private grafico: Chart | null = null;
 
   constructor() {
     this.controladora = new ControladoraEquipamento(this);
@@ -61,7 +70,114 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     this.atualizarDatas();
   }
 
-  public iniciarAdd() {}
+  public iniciarRelatorio(): void {
+    const inputInicio = document.getElementById(
+      "start-date"
+    ) as HTMLInputElement;
+    const inputFim = document.getElementById("end-date") as HTMLInputElement;
+    const btnBuscar = document.getElementById("btn-buscar-relatorio");
+
+    if (!inputInicio || !inputFim || !btnBuscar) return;
+    const hoje = new Date();
+    const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+
+    inputInicio.value = primeiroDia.toISOString().split("T")[0];
+    inputFim.value = ultimoDia.toISOString().split("T")[0];
+
+    btnBuscar.addEventListener("click", async () => {
+      const dataInicio = inputInicio.value;
+      const dataFim = inputFim.value;
+
+      if (!dataInicio || !dataFim) return;
+
+      await this.controladora?.buscarDadosRelatorio(dataInicio, dataFim);
+    });
+
+    btnBuscar.click();
+  }
+
+  public exibirRelatorio(retorno: RespostaRelatorioEquipamento) {
+    const { ranking, grafico, resumo } = retorno.relatorio;
+    const canvas = document.getElementById("grafico-itens-alugados");
+    const totalGeralSpan = document.getElementById("resumo-total-geral");
+    const qtdItens = document.getElementById("resumo-qtd-itens");
+    const qtdTop10 = document.getElementById("resumo-qtd-top10");
+    const qtdOutros = document.getElementById("resumo-qtd-outros");
+    const output = document.querySelector("output");
+
+    if (qtdItens && totalGeralSpan && qtdTop10 && qtdOutros) {
+      totalGeralSpan.textContent = resumo.totalLocacoesPeriodo.toString();
+      qtdItens.textContent = resumo.totalItensUnicos.toString();
+      qtdTop10.textContent = resumo.quantidadeTop10.toString();
+      qtdOutros.textContent = resumo.quantidadeOutros.toString();
+    }
+
+    if (!grafico || grafico.length === 0) {
+      this.exibirMensagemErro(
+        "Nenhum dado encontrado para o período selecionado."
+      );
+      return;
+    }
+    output?.classList.add("d-none");
+    const labels = grafico.map((d) => d.label);
+    const valores = grafico.map((d) => d.valor);
+    const coresUsadas = cores.slice(0, valores.length);
+    const bordasUsadas = bordas.slice(0, valores.length);
+
+    Chart.register(...registerables);
+    if (this.grafico instanceof Chart) {
+      this.grafico.destroy();
+    }
+
+    this.grafico = new Chart(canvas as ChartItem, {
+      type: "pie",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Quantidade de locações: ",
+            data: valores,
+            backgroundColor: coresUsadas,
+            borderColor: bordasUsadas,
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    });
+
+    // -----------------------------------
+    const tbody = document.getElementById("tabela-equipamentos");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    if (!ranking || ranking.length === 0) {
+      const linha = document.createElement("tr");
+      linha.innerHTML = `
+      <td colspan="6" class="text-center">Nenhum item encontrada.</td>
+    `;
+      tbody.appendChild(linha);
+      return;
+    }
+
+    for (const eq of ranking) {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+      <td class="text-start align-middle">${eq.posicao}</td>
+      <td class="text-start align-middle">${eq.equipamentoId}</td>
+      <td class="text-start align-middle">${eq.descricao}</td>
+      <td class="text-start align-middle">${eq.modelo}</td>
+      <td class="text-start align-middle">${eq.quantidadeLocacoes}</td>
+      <td class="text-start align-middle">${eq.percentual}</td>
+    `;
+
+      tbody.appendChild(row);
+    }
+  }
 
   registrarAvaria(equipamento: Equipamento): void {
     // this.controladora.registrarAvaria(equipamento);
@@ -503,6 +619,14 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
     const outputElement = document.querySelector("output");
     if (outputElement) {
       outputElement.innerText = mensagens.join("\n");
+    }
+  }
+
+  exibirMensagemErro(x: string): void {
+    const output = document.querySelector("output");
+    if (output) {
+      output.className = "alert alert-danger mt-3 d-block";
+      output.textContent = x;
     }
   }
 }

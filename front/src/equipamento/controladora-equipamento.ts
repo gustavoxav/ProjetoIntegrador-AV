@@ -6,13 +6,13 @@ import type { VisaoEquipamento } from "./visao-equipamento.js";
 export class ControladoraEquipamento {
   private readonly visaoFuncionario = new VisaoFuncionarioEmHTML();
 
+  private readonly gestor: GestorEquipamento = new GestorEquipamento();
   constructor(private readonly visao: VisaoEquipamento) {}
 
   public async buscarEquipamento() {
     const visaoFilter = this.visao.filtroEquipamento();
-    const gestor = new GestorEquipamento();
     try {
-      const response = await gestor.obterEquipamento(
+      const response = await this.gestor.obterEquipamento(
         Number.parseInt(visaoFilter.filtro)
       );
       this.visao.retornarEquipamento(response);
@@ -28,9 +28,8 @@ export class ControladoraEquipamento {
   }
 
   public async buscarTodosEquipamentos() {
-    const gestor = new GestorEquipamento();
     try {
-      const response = await gestor.obterTodosEquipamentos();
+      const response = await this.gestor.obterTodosEquipamentos();
       this.visao.retornarTodosEquipamentos(response);
     } catch (error: unknown) {
       if (error instanceof ErroDominio) {
@@ -44,10 +43,9 @@ export class ControladoraEquipamento {
   }
 
   public async registrarAvarias() {
-    const gestor = new GestorEquipamento();
     try {
       const dadosAvarias = this.visao.retornarDadosAvaria();
-      await gestor.registrarAvaria({
+      await this.gestor.registrarAvaria({
         ...dadosAvarias,
         registradoPor: this.visaoFuncionario.obterDadosFuncionario(),
       });
@@ -58,6 +56,19 @@ export class ControladoraEquipamento {
         this.visao.exibirMensagens([error.message]);
       } else {
         this.visao.exibirMensagens(["Erro desconhecido"]);
+      }
+    }
+  }
+
+  public async buscarDadosRelatorio(inicio: string, fim: string) {
+    try {
+      const response = await this.gestor.relatorioEquipamento(inicio, fim);
+      this.visao.exibirRelatorio(response);
+    } catch (error: any) {
+      if (error instanceof ErroDominio) {
+        this.visao.exibirMensagemErro(error.getProblemas()[0]);
+      } else {
+        this.visao.exibirMensagemErro(error.message);
       }
     }
   }

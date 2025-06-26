@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   page("/avaria-add", AuthMiddleware.protegerRota, () =>
     carregarRota("/pages/avarias-add.html", () => {
-      new VisaoEquipamentoEmHTML().iniciarAdd();
+      new VisaoEquipamentoEmHTML();
       carregarNomeUsuario();
     })
   );
@@ -182,7 +182,10 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   );
   page("/relatorio-itens-alugados", AuthMiddleware.protegerRota, () =>
-    carregarRota("/pages/relatorio-itens-alugados.html", () => {})
+    carregarRota("/pages/relatorio-itens-alugados.html", () => {
+      new VisaoEquipamentoEmHTML().iniciarRelatorio();
+      carregarNomeUsuario();
+    })
   );
 
   // Rota alternativa de login

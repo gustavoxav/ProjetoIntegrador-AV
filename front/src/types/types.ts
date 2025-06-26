@@ -149,3 +149,35 @@ export type RespostaRelatorioDevolucao = {
     }[];
   };
 };
+
+export type RespostaRelatorioEquipamento = {
+  relatorio: {
+    periodo: {
+      dataInicial: string;
+      dataFinal: string;
+      dataInicialFormatada: string;
+      dataFinalFormatada: string;
+    };
+    resumo: {
+      totalLocacoesPeriodo: number;
+      totalItensUnicos: number;
+      quantidadeTop10: number;
+      quantidadeOutros: number;
+    };
+    ranking: {
+      posicao: number;
+      equipamentoId: number;
+      modelo: string;
+      fabricante: string;
+      descricao: string;
+      tipo: string;
+      quantidadeLocacoes: number;
+      percentual: number;
+    }[];
+    grafico: {
+      label: string;
+      valor: number;
+      percentual: number;
+    }[];
+  };
+};

@@ -1,4 +1,4 @@
-import type { Equipamento } from "../types/types.js";
+import type { Equipamento, RespostaRelatorioEquipamento } from "../types/types.js";
 
 export interface VisaoEquipamento {
   filtroEquipamento(): { filtro: string };
@@ -9,4 +9,6 @@ export interface VisaoEquipamento {
   obterEquipamentosSelecionados(): Equipamento[];
   registrarAvaria(equipamento: Equipamento): void;
   retornarDadosAvaria(): { codigo: number; descricao: string };
+  exibirRelatorio(relatorio: RespostaRelatorioEquipamento): void;
+  exibirMensagemErro(x: string): void;
 }

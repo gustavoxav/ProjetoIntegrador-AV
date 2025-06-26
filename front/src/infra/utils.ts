@@ -54,3 +54,31 @@ export function formatarData(dataISO: string): string {
   const data = new Date(dataISO);
   return data.toLocaleDateString("pt-BR");
 }
+
+export const cores = [
+  "rgba(255, 99, 132, 0.7)",
+  "rgba(54, 162, 235, 0.7)",
+  "rgba(255, 206, 86, 0.7)",
+  "rgba(75, 192, 192, 0.7)",
+  "rgba(153, 102, 255, 0.7)",
+  "rgba(255, 159, 64, 0.7)",
+  "rgba(199, 199, 199, 0.7)",
+  "rgba(83, 102, 255, 0.7)",
+  "rgba(40, 167, 69, 0.7)",
+  "rgba(120, 53, 0, 0.7)",
+  "rgba(255, 0, 0, 0.7)",
+];
+
+export const bordas = [
+  "rgb(255, 99, 132)",
+  "rgb(54, 162, 235)",
+  "rgb(255, 206, 86)",
+  "rgb(75, 192, 192)",
+  "rgb(153, 102, 255)",
+  "rgb(255, 159, 64)",
+  "rgb(199, 199, 199)",
+  "rgb(83, 102, 255)",
+  "rgb(40, 167, 69)",
+  "rgb(120, 53, 0)",
+  "rgb(255, 0, 0)",
+];

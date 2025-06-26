@@ -7,6 +7,7 @@ export class Equipamento {
     public valorHora: number = 0.0,
     public avarias: string = "",
     public disponivel: boolean = true,
-    public numeroSeguro: string = ""
+    public numeroSeguro: string = "",
+    public valorCompra: number = 0.0
   ) {}
 }

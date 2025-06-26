@@ -217,3 +217,9 @@
 #tabela-devolucao td:last-child {
   padding-right: 1.5rem;
 }
+
+#grafico-itens-alugados {
+  max-width: 600px;
+  max-height: 600px;
+  margin: 0 auto;
+}
