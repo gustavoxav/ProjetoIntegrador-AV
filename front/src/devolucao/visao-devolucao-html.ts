@@ -4,12 +4,14 @@ import type {
   Equipamento,
   RespostaDevolucao,
   RespostaLocacao,
+  RespostaRelatorioDevolucao,
   RespostaSimulacaoDevolucao,
 } from "../types/types.js";
 import {
   formatarDataHora,
   calcularHorasUtilizadas,
   calcularHorasCobranca,
+  formatarData,
 } from "../infra/utils.js";
 import {
   calcularValores,
@@ -20,6 +22,7 @@ import { ControladoraDevolucao } from "./controladora-devolucao.js";
 import { VisaoFuncionarioEmHTML } from "../funcionario/visao-funcionario-html.js";
 import { VisaoEquipamentoEmHTML } from "../equipamento/visao-equipamento-html.js";
 import { ControladoraFuncionario } from "../funcionario/controladora-funcionario.js";
+import { Chart, ChartItem, registerables } from "chart.js";
 
 export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   private devolucaoData: RespostaSimulacaoDevolucao | null = null;
@@ -86,6 +89,97 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         );
       });
     }
+  }
+
+  public iniciarRelatorio(): void {
+    const inputInicio = document.getElementById(
+      "start-date"
+    ) as HTMLInputElement;
+    const inputFim = document.getElementById("end-date") as HTMLInputElement;
+    const btnBuscar = document.getElementById("btn-buscar-relatorio");
+
+    if (!inputInicio || !inputFim || !btnBuscar) return;
+    const hoje = new Date();
+    const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+
+    inputInicio.value = primeiroDia.toISOString().split("T")[0];
+    inputFim.value = ultimoDia.toISOString().split("T")[0];
+
+    btnBuscar.addEventListener("click", async () => {
+      const dataInicio = inputInicio.value;
+      const dataFim = inputFim.value;
+
+      if (!dataInicio || !dataFim) return;
+
+      await this.controladoraDevolucao?.buscarDadosRelatorio(
+        dataInicio,
+        dataFim
+      );
+    });
+
+    btnBuscar.click();
+  }
+
+  public exibirRelatorio(retorno: RespostaRelatorioDevolucao) {
+    const { dados, periodo, resumo } = retorno.relatorio;
+    const canvas = document.getElementById("grafico-gevolucao");
+    const resumoContainer = document.getElementById("resumo-relatorio");
+    const totalGeralSpan = document.getElementById("resumo-total-geral");
+    const qtdLocacoesSpan = document.getElementById("resumo-qtd-locacoes");
+    const qtdDiasSpan = document.getElementById("resumo-qtd-dias");
+
+    if (resumoContainer && totalGeralSpan && qtdLocacoesSpan && qtdDiasSpan) {
+      totalGeralSpan.textContent = `R$ ${resumo.valorTotalGeral
+        .toFixed(2)
+        .replace(".", ",")}`;
+      qtdLocacoesSpan.textContent = resumo.quantidadeLocacoesGeral.toString();
+      qtdDiasSpan.textContent = resumo.quantidadeDias.toString();
+    }
+
+    if (!dados || dados.length === 0) {
+      this.exibirMensagemErro(
+        "Nenhum dado encontrado para o período selecionado."
+      );
+      return;
+    }
+
+    const labels = dados.map((d) => formatarData(d.data));
+    const valores = dados.map((d) => d.valorTotalPago);
+    Chart.register(...registerables);
+    new Chart(canvas as ChartItem, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Valor pago na devolução (R$)",
+            data: valores,
+            backgroundColor: "rgba(54, 162, 235, 0.5)",
+            borderColor: "rgb(54, 162, 235)",
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Valor pago (R$)",
+            },
+          },
+          x: {
+            title: {
+              display: true,
+              text: "Data da locação",
+            },
+          },
+        },
+      },
+    });
   }
 
   obterDadosDevolucao() {

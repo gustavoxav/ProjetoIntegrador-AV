@@ -1,5 +1,10 @@
 import { ErroDominio } from "../infra/ErroDominio.js";
-import type { DadosDevolucao, RespostaDevolucao, RespostaSimulacaoDevolucao } from "../types/types.js";
+import type {
+  DadosDevolucao,
+  RespostaDevolucao,
+  RespostaRelatorioDevolucao,
+  RespostaSimulacaoDevolucao,
+} from "../types/types.js";
 
 export class GestorDevolucao {
   private readonly urlApi: string = import.meta.env.VITE_API_URL || "";
@@ -73,25 +78,67 @@ export class GestorDevolucao {
     }
   }
 
-    async obterSimulacaoDevolucoes(locacaoId: number): Promise<RespostaSimulacaoDevolucao> {
+  async obterSimulacaoDevolucoes(
+    locacaoId: number
+  ): Promise<RespostaSimulacaoDevolucao> {
     try {
-      const response = await fetch(`${this.urlApi}/devolucoes/simulacao/${locacaoId}`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${this.urlApi}/devolucoes/simulacao/${locacaoId}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
-        throw new Error(`Erro ao buscar simulação da decolução (${response.status})`);
+        throw new Error(
+          `Erro ao buscar simulação da decolução (${response.status})`
+        );
       }
 
       return await response.json();
     } catch (error) {
       throw ErroDominio.comProblemas([
-        error instanceof Error ? error.message : "Erro ao buscar simulação devoluções",
+        error instanceof Error
+          ? error.message
+          : "Erro ao buscar simulação devoluções",
+      ]);
+    }
+  }
+
+  async relatorioDevolucao(
+    dataInicial: string,
+    dataFinal: string
+  ): Promise<RespostaRelatorioDevolucao> {
+    try {
+      const response = await fetch(
+        `${this.urlApi}/relatorios/locacoes-devolvidas?dataInicial=${dataInicial}&dataFinal=${dataFinal}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Erro ao buscar relatório de devoluções (${response.status})`
+        );
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw ErroDominio.comProblemas([
+        error instanceof Error
+          ? error.message
+          : "Erro ao buscar relatório de devoluções",
       ]);
     }
   }

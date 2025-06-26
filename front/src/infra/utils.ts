@@ -46,6 +46,11 @@ export function calcularHorasCobranca(
 
   const horasCompletas = Math.floor(totalMinutos / 60);
   const minutosExcedentes = totalMinutos % 60;
-  
+
   return minutosExcedentes > 0 ? horasCompletas + 1 : horasCompletas;
+}
+
+export function formatarData(dataISO: string): string {
+  const data = new Date(dataISO);
+  return data.toLocaleDateString("pt-BR");
 }

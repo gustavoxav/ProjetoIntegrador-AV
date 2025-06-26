@@ -28,7 +28,7 @@ function gerarMenuPorCargo(cargo: string) {
         id: "opt-nova-devolucao",
       },
       {
-        href: "/relatorio-itens",
+        href: "/relatorio-itens-alugados",
         texto: "Relatório Itens Alugados",
         id: "opt-relatorio-itens",
       }
@@ -36,9 +36,9 @@ function gerarMenuPorCargo(cargo: string) {
   }
   if (cargo === "Gerente") {
     links.push({
-      href: "/relatorio-devolucoes",
+      href: "/relatorio-devolucao",
       texto: "Relatório Devoluções",
-      id: "opt-relatorio-devolucoes",
+      id: "opt-relatorio-devolucao",
     });
   }
 
@@ -78,15 +78,15 @@ function carregarRota(htmlPath: string, initFn: () => void) {
     new VisaoFuncionarioEmHTML()
   );
 
-  if (!controladora.isRotaAllowed()) {
-    window.location.href = "/locacao-list";
-    return;
-  }
   const mainContainer = document.getElementById("main-controller");
   carregadorElemento(mainContainer, htmlPath);
   setTimeout(() => {
+    if (!controladora.isRotaAllowed()) {
+      window.location.href = "/locacao-list";
+      return;
+    }
     initFn();
-  }, 50);
+  }, 200);
 }
 
 function configurarEventosNavbar() {
@@ -174,6 +174,15 @@ document.addEventListener("DOMContentLoaded", () => {
       new VisaoEquipamentoEmHTML().iniciarAdd();
       carregarNomeUsuario();
     })
+  );
+  page("/relatorio-devolucao", AuthMiddleware.protegerRota, () =>
+    carregarRota("/pages/relatorio-devolucao.html", () => {
+      new VisaoDevolucaoEmHTML().iniciarRelatorio();
+      carregarNomeUsuario();
+    })
+  );
+  page("/relatorio-itens-alugados", AuthMiddleware.protegerRota, () =>
+    carregarRota("/pages/relatorio-itens-alugados.html", () => {})
   );
 
   // Rota alternativa de login

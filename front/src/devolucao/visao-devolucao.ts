@@ -2,7 +2,8 @@ import type {
   RespostaDevolucao,
   RespostaLocacao,
   RespostaSimulacaoDevolucao,
-  DevolucaoComFuncionario
+  DevolucaoComFuncionario,
+  RespostaRelatorioDevolucao,
 } from "../types/types";
 
 export interface VisaoDevolucao {
@@ -15,6 +16,7 @@ export interface VisaoDevolucao {
     filtro: string | undefined;
   };
   preencherDevolucao(devolucao: RespostaSimulacaoDevolucao): void;
+  exibirRelatorio(relatorio: RespostaRelatorioDevolucao): void;
   exibirMensagemSucesso(x: string): void;
   exibirMensagemErro(x: string): void;
 }

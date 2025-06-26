@@ -127,3 +127,25 @@ export type DadosResgitroAvaria = {
 export type DevolucaoComFuncionario = RespostaSimulacaoDevolucao & {
   registradoPor: Funcionario;
 };
+
+export type RespostaRelatorioDevolucao = {
+  relatorio: {
+    periodo: {
+      dataInicial: string;
+      dataFinal: string;
+      dataInicialFormatada: string;
+      dataFinalFormatada: string;
+    };
+    resumo: {
+      valorTotalGeral: number;
+      quantidadeLocacoesGeral: number;
+      quantidadeDias: number;
+    };
+    dados: {
+      data: string;
+      dataFormatada: string;
+      valorTotalPago: number;
+      quantidadeLocacoes: number;
+    }[];
+  };
+};

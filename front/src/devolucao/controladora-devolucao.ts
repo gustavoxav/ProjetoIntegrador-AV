@@ -123,4 +123,17 @@ export class ControladoraDevolucao {
       }
     }
   }
+
+  public async buscarDadosRelatorio(inicio: string, fim: string) {
+    try {
+      const response = await this.gestor.relatorioDevolucao(inicio, fim);
+      this.visao.exibirRelatorio(response);
+    } catch (error: any) {
+      if (error instanceof ErroDominio) {
+        this.visao.exibirMensagemErro(error.getProblemas()[0]);
+      } else {
+        this.visao.exibirMensagemErro(error.message);
+      }
+    }
+  }
 }

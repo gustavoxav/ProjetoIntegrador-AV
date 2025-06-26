@@ -66,8 +66,8 @@ export class ControladoraFuncionario {
         "/locacao-add",
         "/devolucao-list",
         "/devolucao-add",
-        "/relatorio-devolucoes",
-        "/relatorio-itens",
+        "/relatorio-devolucao",
+        "/relatorio-itens-alugados",
       ];
       if (!rotasValidas.includes(rota)) {
         return false;
@@ -78,15 +78,15 @@ export class ControladoraFuncionario {
           "/locacao-add",
           "/devolucao-list",
           "/devolucao-add",
-          "/relatorio-devolucoes",
-          "/relatorio-itens",
+          "/relatorio-devolucao",
+          "/relatorio-itens-alugados",
         ],
         Atendente: [
           "/locacao-list",
           "/locacao-add",
           "/devolucao-list",
           "/devolucao-add",
-          "/relatorio-itens",
+          "/relatorio-itens-alugados",
         ],
         Mecanico: ["/locacao-list", "/devolucao-list"],
       };
