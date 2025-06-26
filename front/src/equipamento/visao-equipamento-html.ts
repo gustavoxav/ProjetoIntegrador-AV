@@ -4,11 +4,7 @@ import type {
 } from "../types/types.js";
 import { ControladoraEquipamento } from "./controladora-equipamento.js";
 import type { VisaoEquipamento } from "./visao-equipamento.js";
-import {
-  bordas,
-  cores,
-  formatarDataHora,
-} from "../infra/utils.js";
+import { bordas, cores, formatarDataHora } from "../infra/utils.js";
 import {
   calcularValores,
   calcularValorIndividual,
@@ -149,8 +145,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       },
     });
 
-    // -----------------------------------
-    const tbody = document.getElementById("tabela-equipamentos");
+    const tbody = document.getElementById("tabela-itens-selecionados");
     if (!tbody) return;
 
     tbody.innerHTML = "";
