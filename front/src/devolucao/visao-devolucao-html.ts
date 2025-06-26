@@ -24,6 +24,8 @@ import { ControladoraFuncionario } from "../funcionario/controladora-funcionario
 export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   private devolucaoData: RespostaSimulacaoDevolucao | null = null;
   private callbackSelecionarLocacao?: (locacao: RespostaLocacao) => void;
+  private readonly controladoraFuncionario: ControladoraFuncionario =
+    new ControladoraFuncionario(new VisaoFuncionarioEmHTML());
 
   private readonly controladoraDevolucao: ControladoraDevolucao | null =
     new ControladoraDevolucao(
@@ -65,6 +67,15 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   public iniciarList(): void {
     this.controladoraDevolucao?.buscarDevolucoes();
     const addButton = document.getElementById("addButton");
+
+    if (
+      this.controladoraFuncionario.obterFuncionarioLogado()?.cargo ===
+      "Mecanico"
+    ) {
+      addButton?.classList.add("d-none");
+      return;
+    }
+
     if (addButton) {
       addButton.addEventListener("click", () => {
         window.history.pushState({}, "", "/devolucao-add");
@@ -83,14 +94,11 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const valorNumerico = parseFloat(
       texto.replace("R$", "").replace(/\./g, "").replace(",", ".")
     );
-    const controladora = new ControladoraFuncionario(
-      new VisaoFuncionarioEmHTML()
-    );
 
     return {
       ...this.devolucaoData,
       valorPago: valorNumerico,
-      registradoPor: controladora.obterFuncionarioLogado(),
+      registradoPor: this.controladoraFuncionario.obterFuncionarioLogado(),
     } as DevolucaoComFuncionario;
   }
 
@@ -348,6 +356,10 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       horas
     );
 
+    const isAtendente =
+      this.controladoraFuncionario.obterFuncionarioLogado()?.cargo ===
+      "Atendente";
+
     const tr = document.createElement("tr");
     tr.setAttribute("equip-codigo", equipamento.codigo.toString());
     tr.appendChild(
@@ -369,12 +381,13 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     textLimp.textContent = " + 10%";
     tdLimp.appendChild(this.checkLimpeza(valorTotal, tdValorTotal));
     tdLimp.appendChild(textLimp);
-
-    const btnAvaria = this.criarBotaoAvaria(equipamento.codigo);
-    tdAva.appendChild(btnAvaria);
     tr.appendChild(tdLimp);
-    tr.appendChild(tdAva);
 
+    if (!isAtendente) {
+      const btnAvaria = this.criarBotaoAvaria(equipamento.codigo);
+      tdAva.appendChild(btnAvaria);
+      tr.appendChild(tdAva);
+    }
     return tr;
   }
 

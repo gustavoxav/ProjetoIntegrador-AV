@@ -8,6 +8,9 @@ import { VisaoFuncionarioEmHTML } from "../funcionario/visao-funcionario-html.js
 import { ControladoraFuncionario } from "../funcionario/controladora-funcionario.js";
 
 export class VisaoLocacaoEmHTML implements VisaoLocacao {
+  private readonly controladoraFuncionario: ControladoraFuncionario =
+    new ControladoraFuncionario(new VisaoFuncionarioEmHTML());
+
   public iniciarAdd(): void {
     const controladoraLocacao = new ControladoraLocacao(
       new VisaoLocacaoEmHTML(),
@@ -54,6 +57,13 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
     controladoraLocacao.buscarLocacoes();
 
     const addButton = document.getElementById("addButton");
+    if (
+      this.controladoraFuncionario.obterFuncionarioLogado()?.cargo ===
+      "Mecanico"
+    ) {
+      addButton?.classList.add("d-none");
+      return;
+    }
     if (addButton) {
       addButton.addEventListener("click", () => {
         window.history.pushState({}, "", "/locacao-add");
@@ -69,9 +79,6 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
   obterDadosLocacao() {
     const horas =
       Number((document.getElementById("hora") as HTMLInputElement)?.value) || 0;
-    const controladora = new ControladoraFuncionario(
-      new VisaoFuncionarioEmHTML()
-    );
     return {
       horas,
       subtotal:
@@ -81,7 +88,7 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
       dataLocacao: document.getElementById("data-locacao")?.textContent ?? "-",
       dataDevolucao:
         document.getElementById("data-devolucao")?.textContent ?? "-",
-      registradoPor: controladora.obterFuncionarioLogado(),
+      registradoPor: this.controladoraFuncionario.obterFuncionarioLogado(),
     };
   }
 
@@ -100,6 +107,10 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
     }
     for (const locacao of locacoes) {
       const row = document.createElement("tr");
+
+      const isMecanico =
+        this.controladoraFuncionario.obterFuncionarioLogado()?.cargo ===
+        "Mecanico";
 
       const acaoColuna = locacao.devolvida
         ? `<span class="btn btn-sm btn-success" style="pointer-events: none; cursor: default; width: 92.63px">Devolvida</span>`
@@ -125,9 +136,11 @@ export class VisaoLocacaoEmHTML implements VisaoLocacao {
       )}</td>
       <td class="text-start align-middle">${locacao.cliente.nomeCompleto}</td>
       <td class="text-start align-middle">${locacao.cliente.telefone}</td>
-      <td class="text-start align-middle">
-        ${acaoColuna}
-      </td>
+      ${
+        !isMecanico
+          ? `<td class="text-start align-middle">${acaoColuna}</td>`
+          : ""
+      }
     `;
 
       tbody.appendChild(row);

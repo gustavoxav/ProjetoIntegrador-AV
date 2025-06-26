@@ -6,7 +6,7 @@ import type { Funcionario } from "../types/types.js";
 
 export class ControladoraFuncionario {
   private readonly gestor: GestorFuncionario = new GestorFuncionario();
-  constructor(private visao: VisaoFuncionario) {}
+  constructor(private readonly visao: VisaoFuncionario) {}
 
   public iniciarFiltro() {
     this.buscarTodosFuncionarios();
@@ -50,6 +50,52 @@ export class ControladoraFuncionario {
           error instanceof Error ? error.message : "Erro ao realizar login";
         this.visao.exibirMensagemErro(errorMessage);
       }
+    }
+  }
+
+  public isRotaAllowed(): boolean {
+    try {
+      const rota = window.location.pathname;
+      if (rota === "/" || rota === "/login") {
+        return true;
+      }
+      const funcionario = FuncionarioLogado.obter();
+      const cargo = funcionario?.cargo ?? "";
+      const rotasValidas = [
+        "/locacao-list",
+        "/locacao-add",
+        "/devolucao-list",
+        "/devolucao-add",
+        "/relatorio-devolucoes",
+        "/relatorio-itens",
+      ];
+      if (!rotasValidas.includes(rota)) {
+        return false;
+      }
+      const acessosPorCargo: Record<string, string[]> = {
+        Gerente: [
+          "/locacao-list",
+          "/locacao-add",
+          "/devolucao-list",
+          "/devolucao-add",
+          "/relatorio-devolucoes",
+          "/relatorio-itens",
+        ],
+        Atendente: [
+          "/locacao-list",
+          "/locacao-add",
+          "/devolucao-list",
+          "/devolucao-add",
+          "/relatorio-itens",
+        ],
+        Mecanico: ["/locacao-list", "/devolucao-list"],
+      };
+      const rotasPermitidas = acessosPorCargo[cargo] || [];
+
+      return rotasPermitidas.includes(rota);
+    } catch (error) {
+      console.error("Erro ao verificar acesso à rota:", error);
+      return false;
     }
   }
 
