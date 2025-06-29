@@ -148,7 +148,8 @@ $app->get("/funcionarios/:filtro", function ($req, $res) use ($pdo) {
 $app->get("/equipamentos", function ($req, $res) use ($pdo) {
   try {
     $gestor = new GestorEquipamento(
-      new RepositorioEquipamentoEmBDR($pdo)
+      new RepositorioEquipamentoEmBDR($pdo),
+      new RepositorioAvariaEmBDR($pdo)
     );
     $saida = $gestor->obterEquipamentos(null);
     $res->json($saida);
@@ -164,7 +165,8 @@ $app->get("/equipamentos/:filtro", function ($req, $res) use ($pdo) {
 
   try {
     $gestor = new GestorEquipamento(
-      new RepositorioEquipamentoEmBDR($pdo)
+      new RepositorioEquipamentoEmBDR($pdo),
+      new RepositorioAvariaEmBDR($pdo)
     );
     $saida = $gestor->obterEquipamentos($filtro);
     $res->json($saida);
@@ -313,28 +315,176 @@ $app->get("/devolucoes", function ($req, $res) use ($pdo) {
   }
 });
 
-// POST /api/registrarAvaria/:id: Adiciona uma avaria ao equipamento
-$app->post("/registrarAvaria/:id", function ($req, $res) use ($pdo) {
-  $params = $req->params();
-  $id = (int) ($params['id'] ?? 0);
+// POST /api/avarias - Registra uma nova avaria (apenas Gerente)
+$app->post("/avarias", function ($req, $res) use ($pdo) {
+  $middlewareResponse = AuthMiddleware::verificarGerente($req, $res, function($req, $res) use ($pdo) {
+    try {
+      $dadosAvaria = [];
 
-  $body = $req->body();
-  $novaAvaria = $body['avaria'] ?? '';
+      $dadosAvaria['avaliadorId'] = (int) ($_POST['avaliadorId'] ?? 0);
+      $dadosAvaria['descricao'] = $_POST['descricao'] ?? '';
+      $dadosAvaria['valorCobrar'] = floatval($_POST['valorCobrar'] ?? 0);
+      $dadosAvaria['equipamentoId'] = (int) ($_POST['equipamentoId'] ?? 0);
+      $dadosAvaria['locacaoId'] = (int) ($_POST['locacaoId'] ?? 0);
+      $dadosAvaria['foto'] = $_FILES['foto'] ?? null;
+
+      $gestor = new GestorAvaria(
+        new RepositorioAvariaEmBDR($pdo),
+        new RepositorioEquipamentoEmBDR($pdo),
+        new RepositorioLocacaoEmBDR($pdo)
+      );
+      
+      $avaria = $gestor->registrarAvaria($dadosAvaria);
+      return $res->status(201)->json([
+        'sucesso' => true,
+        'avaria' => $avaria,
+        'mensagem' => 'Avaria registrada com sucesso.'
+      ]);
+    } catch (AvariaException $e) {
+      return $res->status(400)->json([
+        'sucesso' => false,
+        'erro' => $e->getMessage()
+      ]);
+    }
+  });
+  
+  return $middlewareResponse;
+});
+
+// GET /api/avarias/equipamento/:equipamentoId - Obtém avarias de um equipamento
+$app->get("/avarias/equipamento/:equipamentoId", function ($req, $res) use ($pdo) {
+  $params = $req->params();
+  $equipamentoId = (int) ($params['equipamentoId'] ?? 0);
+
+  if (!$equipamentoId) {
+    return $res->status(400)->json(['erro' => 'ID do equipamento é obrigatório']);
+  }
 
   try {
-    $gestor = new GestorEquipamento(
-      new RepositorioEquipamentoEmBDR($pdo)
+    $gestor = new GestorAvaria(
+      new RepositorioAvariaEmBDR($pdo),
+      new RepositorioEquipamentoEmBDR($pdo),
+      new RepositorioLocacaoEmBDR($pdo)
     );
-
-    $gestor->registrarAvaria($id, $novaAvaria);
-
-    return $res->json(["mensagem" => "Avaria registrada com sucesso."]);
-  } catch (InvalidArgumentException $e) {
-    return $res->status(400)->json(["erro" => $e->getMessage()]);
-  } catch (ErroAtualizacaoEquipamentoException $e) {
-    return $res->status(500)->json(["erro" => "Erro ao atualizar o equipamento."]);
+    
+    $avarias = $gestor->obterAvariasPorEquipamento($equipamentoId);
+    return $res->json([
+      'sucesso' => true,
+      'avarias' => $avarias
+    ]);
   } catch (AvariaException $e) {
-    return $res->status(500)->json(["erro" => "Erro não esperado ao atualizar equipamento: " . $e->getMessage()]);
+    return $res->status(500)->json([
+      'sucesso' => false,
+      'erro' => $e->getMessage()
+    ]);
+  }
+});
+
+// GET /api/avarias/locacao/:locacaoId - Obtém avarias de uma locação
+$app->get("/avarias/locacao/:locacaoId", function ($req, $res) use ($pdo) {
+  $params = $req->params();
+  $locacaoId = (int) ($params['locacaoId'] ?? 0);
+
+  if (!$locacaoId) {
+    return $res->status(400)->json(['erro' => 'ID da locação é obrigatório']);
+  }
+
+  try {
+    $gestor = new GestorAvaria(
+      new RepositorioAvariaEmBDR($pdo),
+      new RepositorioEquipamentoEmBDR($pdo),
+      new RepositorioLocacaoEmBDR($pdo)
+    );
+    
+    $avarias = $gestor->obterAvariasPorLocacao($locacaoId);
+    return $res->json([
+      'sucesso' => true,
+      'avarias' => $avarias
+    ]);
+  } catch (AvariaException $e) {
+    return $res->status(500)->json([
+      'sucesso' => false,
+      'erro' => $e->getMessage()
+    ]);
+  }
+});
+
+// DELETE /api/avarias/:id - Remove uma avaria (apenas Atendente ou Gerente)
+$app->delete("/avarias/:id", function ($req, $res) use ($pdo) {
+  $middlewareResponse = AuthMiddleware::verificarAtendente($req, $res, function($req, $res) use ($pdo) {
+    $params = $req->params();
+    $id = $params['id'] ?? '';
+
+    if (!$id) {
+      return $res->status(400)->json(['erro' => 'ID da avaria é obrigatório']);
+    }
+
+    try {
+      $gestor = new GestorAvaria(
+        new RepositorioAvariaEmBDR($pdo),
+        new RepositorioEquipamentoEmBDR($pdo),
+        new RepositorioLocacaoEmBDR($pdo)
+      );
+      
+      $removida = $gestor->removerAvaria($id);
+      
+      if ($removida) {
+        return $res->json([
+          'sucesso' => true,
+          'mensagem' => 'Avaria removida com sucesso.'
+        ]);
+      } else {
+        return $res->status(404)->json([
+          'sucesso' => false,
+          'erro' => 'Avaria não encontrada.'
+        ]);
+      }
+    } catch (AvariaException $e) {
+      return $res->status(400)->json([
+        'sucesso' => false,
+        'erro' => $e->getMessage()
+      ]);
+    }
+  });
+  
+  return $middlewareResponse;
+});
+
+// GET /api/avarias/foto/:id - foto de uma avaria
+$app->get("/avarias/foto/:id", function ($req, $res) use ($pdo) {
+  $params = $req->params();
+  $id = $params['id'] ?? '';
+
+  if (!$id) {
+    return $res->status(400)->json(['erro' => 'ID da avaria é obrigatório']);
+  }
+
+  try {
+    $gestor = new GestorAvaria(
+      new RepositorioAvariaEmBDR($pdo),
+      new RepositorioEquipamentoEmBDR($pdo),
+      new RepositorioLocacaoEmBDR($pdo)
+    );
+    
+    $avaria = $gestor->obterAvariaPorId($id);
+    
+    if (!$avaria) {
+      return $res->status(404)->json(['erro' => 'Avaria não encontrada']);
+    }
+    
+    $caminhoArquivo = __DIR__ . '/' . $avaria['fotoCaminho'];
+    
+    if (!file_exists($caminhoArquivo)) {
+      return $res->status(404)->json(['erro' => 'Arquivo de foto não encontrado']);
+    }
+    
+    $res->header('Content-Type', 'image/jpeg');
+    $res->header('Content-Length', filesize($caminhoArquivo));
+    
+    readfile($caminhoArquivo);
+    
+  } catch (AvariaException $e) {
+    return $res->status(500)->json(['erro' => $e->getMessage()]);
   }
 });
 

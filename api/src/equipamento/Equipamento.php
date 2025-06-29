@@ -46,5 +46,10 @@ class Equipamento implements JsonSerializable {
   {
     return $this->valorHora;
   }
+
+  public function getAvarias(): string 
+  {
+    return $this->avarias;
+  }
 }
 ?>

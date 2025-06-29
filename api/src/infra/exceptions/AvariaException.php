@@ -1,3 +1,3 @@
 <?php
 
-class AvariaException extends Exception {}
+class AvariaException extends DominioException {}

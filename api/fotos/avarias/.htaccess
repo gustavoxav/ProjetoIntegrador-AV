@@ -1,0 +1,11 @@
+# Permite acesso direto aos arquivos JPG
+<Files "*.jpg">
+    Order allow,deny
+    Allow from all
+</Files>
+
+# Bloqueia acesso a outros tipos de arquivo
+<FilesMatch "\.(php|html|htm|js|css)$">
+    Order deny,allow
+    Deny from all
+</FilesMatch> 

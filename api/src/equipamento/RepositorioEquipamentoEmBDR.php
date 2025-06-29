@@ -76,22 +76,4 @@ class RepositorioEquipamentoEmBDR implements RepositorioEquipamento
       );
     }
   }
-
-  public function adicionarAvarias(int $equipamentoId, string $avarias): void
-  {
-    try {
-      $sql = "UPDATE equipamento SET avarias = :avarias WHERE id = :id";
-      $ps = $this->pdo->prepare($sql);
-      $ps->execute([
-        ':avarias' => $avarias,
-        ':id' => $equipamentoId,
-      ]);
-    } catch (PDOException $e) {
-      throw new RepositorioException(
-        'Erro ao adicionar avarias do equipamento.',
-        (int) $e->getCode(),
-        $e
-      );
-    }
-  }
 }

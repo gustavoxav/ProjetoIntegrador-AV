@@ -76,6 +76,21 @@ create table devolucao (
   FOREIGN KEY (funcionario_id) REFERENCES funcionario(id)
 );
 
+-- Criação Avaria
+create table avaria (
+  id VARCHAR(36) PRIMARY KEY, -- UUID
+  data_hora_lancamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  avaliador_id INTEGER NOT NULL,
+  descricao TEXT NOT NULL,
+  foto_caminho VARCHAR(255) NOT NULL,
+  valor_cobrar DECIMAL(10,2) NOT NULL,
+  equipamento_id INTEGER NOT NULL,
+  locacao_id INTEGER NOT NULL,
+  FOREIGN KEY (avaliador_id) REFERENCES funcionario(id),
+  FOREIGN KEY (equipamento_id) REFERENCES equipamento(id),
+  FOREIGN KEY (locacao_id) REFERENCES locacao(id)
+);
+
 -- Índices para as tabelas
 CREATE INDEX idx_locacao_cliente ON locacao(cliente_id);
 CREATE INDEX idx_locacao_funcionario ON locacao(funcionario_id);
@@ -83,3 +98,6 @@ CREATE INDEX idx_item_locado_equipamento ON item_locado(equipamento_id);
 CREATE INDEX idx_item_locado_locacao ON item_locado(locacao_id);
 CREATE INDEX idx_devolucao_locacao ON devolucao(locacao_id);
 CREATE INDEX idx_devolucao_funcionario ON devolucao(funcionario_id);
+CREATE INDEX idx_avaria_equipamento ON avaria(equipamento_id);
+CREATE INDEX idx_avaria_locacao ON avaria(locacao_id);
+CREATE INDEX idx_avaria_avaliador ON avaria(avaliador_id);

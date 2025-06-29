@@ -21,7 +21,8 @@
         "src/funcionario",
         "src/locacao",
         "src/devolucao",
-        "src/relatorio"
+        "src/relatorio",
+        "src/avaria"
       ]
     },
     "files": [

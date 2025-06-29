@@ -34,16 +34,4 @@ describe("GestorEquipamento", function () {
             expect($equipamento)->toBeAnInstanceOf(Equipamento::class);
         }
     });
-
-    it("Deve registrar uma nova avaria em um equipamento existente", function () {
-        $gestor = new GestorEquipamento($this->clienteRepo);
-
-        $equipamentoId = 1;
-        $novaAvaria = "Bicicleta com avaria";
-
-        $gestor->registrarAvaria($equipamentoId, $novaAvaria);
-
-        $equipamentoAtualizado = $gestor->obterEquipamentos($equipamentoId);
-        expect($equipamentoAtualizado->avarias)->toContain("Bicicleta com avaria");
-    });
 });
