@@ -24,35 +24,35 @@ class GestorLocacao {
      *   horasContratadas: int
      * } $dadosLocacao Array com os dados da locação
      * @return array<string,mixed> Dados da locação registrada
-     * @throws Exception Se houver algum erro durante o registro
+     * @throws InvalidArgumentException|EquipamentosException Se houver algum erro durante o registro
      */
     public function registrarLocacao(array $dadosLocacao): array {
         $dadosLocacao = $this->objectToArray($dadosLocacao);
         
         if (empty($dadosLocacao['cliente']) || empty($dadosLocacao['cliente']['codigo'])) {
-            throw new Exception("Cliente não informado");
+            throw new InvalidArgumentException("Cliente não informado");
         }
         
         if (empty($dadosLocacao['registradoPor']) || empty($dadosLocacao['registradoPor']['codigo'])) {
-            throw new Exception("Funcionário não informado");
+            throw new InvalidArgumentException("Funcionário não informado");
         }
         
         if (empty($dadosLocacao['itens']) || count($dadosLocacao['itens']) === 0) {
-            throw new Exception("Nenhum item adicionado à locação");
+            throw new InvalidArgumentException("Nenhum item adicionado à locação");
         }
         
         if (empty($dadosLocacao['horasContratadas']) || $dadosLocacao['horasContratadas'] <= 0) {
-            throw new Exception("Horas contratadas inválidas");
+            throw new InvalidArgumentException("Horas contratadas inválidas");
         }
         
         $itens = [];
         foreach ($dadosLocacao['itens'] as $itemData) {
             if (empty($itemData['equipamento']) || empty($itemData['equipamento']['codigo'])) {
-                throw new Exception("Equipamento não informado");
+                throw new InvalidArgumentException("Equipamento não informado");
             }
             
             if (!$itemData['equipamento']['disponivel']) {
-                throw new Exception("Equipamento {$itemData['equipamento']['codigo']} não está disponível");
+                throw new EquipamentosException("Equipamento {$itemData['equipamento']['codigo']} não está disponível");
             }
             
             $item = new ItemLocado(

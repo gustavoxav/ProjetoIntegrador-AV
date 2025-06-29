@@ -31,7 +31,7 @@ $app->post("/login", function ($req, $res) use ($pdo) {
       'funcionario' => $funcionario,
       'mensagem' => 'Login realizado com sucesso.'
     ]);
-  } catch (Exception $e) {
+  } catch (ErroLoginException $e) {
     return $res->status(401)->json([
       'sucesso' => false,
       'erro' => $e->getMessage()
@@ -49,7 +49,7 @@ $app->post("/logout", function ($req, $res) use ($pdo) {
       'sucesso' => true,
       'mensagem' => $resultado['mensagem']
     ]);
-  } catch (Exception $e) {
+  } catch (ErroLogoutException $e) {
     return $res->status(500)->json([
       'sucesso' => false,
       'erro' => $e->getMessage()
@@ -76,7 +76,7 @@ $app->get("/auth/me", function ($req, $res) use ($pdo) {
       'autenticado' => true,
       'funcionario' => $funcionario
     ]);
-  } catch (Exception $e) {
+  } catch (AuthException $e) {
     return $res->status(500)->json([
       'sucesso' => false,
       'autenticado' => false,
@@ -94,7 +94,7 @@ $app->get("/clientes", function ($req, $res) use ($pdo) {
     );
     $saida = $gestor->obterClientes(null);
     $res->json($saida);
-  } catch (Exception $e) {
+  } catch (ClienteException $e) {
     $res->status(500)->json([$e->getMessage()]);
   }
 });
@@ -110,7 +110,7 @@ $app->get("/clientes/:filtro", function ($req, $res) use ($pdo) {
     );
     $saida = $gestor->obterClientes($filtro);
     $res->json($saida);
-  } catch (Exception $e) {
+  } catch (ClienteException $e) {
     $res->status(500)->json([$e->getMessage()]);
   }
 });
@@ -123,7 +123,7 @@ $app->get("/funcionarios", function ($req, $res) use ($pdo) {
     );
     $saida = $gestor->obterFuncionarios(null);
     $res->json($saida);
-  } catch (Exception $e) {
+  } catch (FuncionarioException $e) {
     $res->status(500)->json([$e->getMessage()]);
   }
 });
@@ -139,7 +139,7 @@ $app->get("/funcionarios/:filtro", function ($req, $res) use ($pdo) {
     );
     $saida = $gestor->obterFuncionarios($filtro);
     $res->json($saida);
-  } catch (Exception $e) {
+  } catch (FuncionarioException $e) {
     $res->status(500)->json([$e->getMessage()]);
   }
 });
@@ -152,7 +152,7 @@ $app->get("/equipamentos", function ($req, $res) use ($pdo) {
     );
     $saida = $gestor->obterEquipamentos(null);
     $res->json($saida);
-  } catch (Exception $e) {
+  } catch (EquipamentosException $e) {
     $res->status(500)->json([$e->getMessage()]);
   }
 });
@@ -168,7 +168,7 @@ $app->get("/equipamentos/:filtro", function ($req, $res) use ($pdo) {
     );
     $saida = $gestor->obterEquipamentos($filtro);
     $res->json($saida);
-  } catch (Exception $e) {
+  } catch (EquipamentosException $e) {
     $res->status(500)->json([$e->getMessage()]);
   }
 });
@@ -184,7 +184,7 @@ $app->post("/locacoes", function ($req, $res) use ($pdo) {
       );
       $saida = $gestor->registrarLocacao($dadosLocacao);
       return $res->status(201)->json($saida);
-    } catch (Exception $e) {
+    } catch (LocacaoException $e) {
       return $res->status(400)->json(["erro" => $e->getMessage()]);
     }
   });
@@ -200,7 +200,7 @@ $app->get("/locacoes", function ($req, $res) use ($pdo) {
     );
     $saida = $gestor->obterLocacoes(null);
     $res->json($saida);
-  } catch (Exception $e) {
+  } catch (LocacaoException $e) {
     $res->status(500)->json(["erro" => $e->getMessage()]);
   }
 });
@@ -222,7 +222,7 @@ $app->get("/locacoes/:filtro", function ($req, $res) use ($pdo) {
     }
 
     $res->json($saida);
-  } catch (Exception $e) {
+  } catch (LocacaoException $e) {
     $res->status(500)->json(["erro" => $e->getMessage()]);
   }
 });
@@ -260,7 +260,7 @@ $app->get("/devolucoes/simulacao/:locacaoId", function ($req, $res) use ($pdo) {
 
     $saida = $gestor->calcularValorPagamento($dadosDevolucao);
     $res->json($saida);
-  } catch (Exception $e) {
+  } catch (DevolucaoException $e) {
     $mensagem = $e->getMessage();
     $status = 400;
 
@@ -284,7 +284,7 @@ $app->post("/devolucoes", function ($req, $res) use ($pdo) {
       );
       $saida = $gestor->registrarDevolucao($dadosDevolucao);
       return $res->status(201)->json($saida);
-    } catch (Exception $e) {
+    } catch (DevolucaoException $e) {
       $mensagem = $e->getMessage();
       $status = 400;
 
@@ -308,7 +308,7 @@ $app->get("/devolucoes", function ($req, $res) use ($pdo) {
     );
     $saida = $gestor->obterDevolucoes(null);
     $res->json($saida);
-  } catch (Exception $e) {
+  } catch (DevolucaoException $e) {
     $res->status(500)->json(["erro" => $e->getMessage()]);
   }
 });
@@ -333,7 +333,7 @@ $app->post("/registrarAvaria/:id", function ($req, $res) use ($pdo) {
     return $res->status(400)->json(["erro" => $e->getMessage()]);
   } catch (ErroAtualizacaoEquipamentoException $e) {
     return $res->status(500)->json(["erro" => "Erro ao atualizar o equipamento."]);
-  } catch (Exception $e) {
+  } catch (AvariaException $e) {
     return $res->status(500)->json(["erro" => "Erro não esperado ao atualizar equipamento: " . $e->getMessage()]);
   }
 });
@@ -357,7 +357,7 @@ $app->get("/relatorios/locacoes-devolvidas", function ($req, $res) use ($pdo) {
         'sucesso' => true,
         'relatorio' => $relatorio
       ]);
-    } catch (Exception $e) {
+    } catch (RelatorioException $e) {
       return $res->status(400)->json([
         'sucesso' => false,
         'erro' => $e->getMessage()
@@ -387,7 +387,7 @@ $app->get("/relatorios/top-10-itens", function ($req, $res) use ($pdo) {
         'sucesso' => true,
         'relatorio' => $relatorio
       ]);
-    } catch (Exception $e) {
+    } catch (RelatorioException $e) {
       return $res->status(400)->json([
         'sucesso' => false,
         'erro' => $e->getMessage()

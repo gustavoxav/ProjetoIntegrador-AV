@@ -21,7 +21,7 @@ class GestorCliente
                 return $this->repositorioCliente->buscarClientes();
             }
             return $this->repositorioCliente->buscarClienteFiltro($filtro);
-        } catch (\Throwable $error) {
+        } catch (ClienteException $error) {
             throw $error;
         }
     }
@@ -39,7 +39,7 @@ class GestorCliente
      *   foto: string
      * } $dadosCliente Dados do cliente a ser registrado
      * @return array<string, mixed> Cliente salvo
-     * @throws Exception Em caso de erro de validação ou persistência
+     * @throws InvalidArgumentException Em caso de erro de validação ou persistência
      */
     public function registrarCliente(array $dadosCliente): array
     {
@@ -47,7 +47,7 @@ class GestorCliente
 
         $clienteExistente = $this->repositorioCliente->buscarClienteFiltro($dadosCliente['cpf']);
         if ($clienteExistente) {
-            throw new Exception("Já existe um cliente com o CPF informado");
+            throw new InvalidArgumentException("Já existe um cliente com o CPF informado");
         }
 
         $cliente = new Cliente(
@@ -63,7 +63,7 @@ class GestorCliente
 
         $erros = $cliente->validar();
         if (!empty($erros)) {
-            throw new Exception("Erros de validação: " . implode(", ", $erros));
+            throw new InvalidArgumentException("Erros de validação: " . implode(", ", $erros));
         }
 
         $clienteSalvo = $this->repositorioCliente->salvar($cliente);

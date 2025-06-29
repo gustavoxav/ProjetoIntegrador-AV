@@ -38,7 +38,7 @@ class RepositorioDevolucaoEmBDR implements RepositorioDevolucao {
             $this->pdo->commit();
             
             return $this->obterPorId((int)$codigoDevolucao);
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             $this->pdo->rollBack();
             throw $e;
         }
@@ -144,4 +144,4 @@ class RepositorioDevolucaoEmBDR implements RepositorioDevolucao {
         
         return $devolucoes;
     }
-} 
+}

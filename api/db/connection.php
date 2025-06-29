@@ -17,11 +17,11 @@ try {
   $sql = stream_get_contents(STDIN);
 
   if (!$sql) {
-    throw new Exception("Nenhum conteúdo recebido.");
+    throw new PDOException("Nenhum conteúdo recebido.");
   }
 
   $pdo->exec($sql);
-} catch (Exception $e) {
+} catch (PDOException $e) {
   echo "Erro: " . $e->getMessage() . "\n";
   exit(1);
 }

@@ -16,23 +16,23 @@ class CalculadoraPagamento {
      * } $locacao Dados da locação
      * @param string $dataHoraDevolucao Data e hora da devolução
      * @return float Valor a ser pago
-     * @throws Exception erro
+     * @throws InvalidArgumentException erro
      */
     public function calcularValorPagamento(array $locacao, string $dataHoraDevolucao): float {
         if (!isset($locacao['dataHoraLocacao']) || empty($locacao['dataHoraLocacao'])) {
-            throw new Exception("Data e hora da locação não informados");
+            throw new InvalidArgumentException("Data e hora da locação não informados");
         }
         
         if (!isset($locacao['horasContratadas']) || !is_numeric($locacao['horasContratadas'])) {
-            throw new Exception("Horas contratadas inválidas ou não informadas");
+            throw new InvalidArgumentException("Horas contratadas inválidas ou não informadas");
         }
         
         if (!isset($locacao['dataHoraEntregaPrevista']) || empty($locacao['dataHoraEntregaPrevista'])) {
-            throw new Exception("Data e hora prevista de entrega não informados");
+            throw new InvalidArgumentException("Data e hora prevista de entrega não informados");
         }
         
         if (!isset($locacao['itens']) || !is_array($locacao['itens']) || count($locacao['itens']) === 0) {
-            throw new Exception("Itens da locação não informados ou inválidos");
+            throw new InvalidArgumentException("Itens da locação não informados ou inválidos");
         }
         
 

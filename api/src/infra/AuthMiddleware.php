@@ -16,7 +16,7 @@ class AuthMiddleware {
       }
 
       return $next($req, $res);
-    } catch (Exception $e) {
+    } catch (AuthException $e) {
       return $res->status(500)->json([
         'sucesso' => false,
         'erro' => 'Erro interno do servidor ao verificar autenticação.',
@@ -48,7 +48,7 @@ class AuthMiddleware {
         }
 
         return $next($req, $res);
-      } catch (Exception $e) {
+      } catch (AuthException $e) {
         return $res->status(500)->json([
           'sucesso' => false,
           'erro' => 'Erro interno do servidor ao verificar permissões.',

@@ -19,13 +19,13 @@ class GestorDevolucao {
      *   dataHoraDevolucao: string,
      *   valorPago: float
      * } Dados com o valor a ser pago
-     * @throws Exception erro
+     * @throws InvalidArgumentException erro
      */
     public function calcularValorPagamento(array $dadosDevolucao): array {
         $dadosDevolucao = $this->objectToArray($dadosDevolucao);
         
         if (empty($dadosDevolucao['locacaoId'])) {
-            throw new Exception("Locação não informada");
+            throw new InvalidArgumentException("Locação não informada");
         }
         
         $this->verificarDevolucaoExistente($dadosDevolucao['locacaoId']);
@@ -33,7 +33,7 @@ class GestorDevolucao {
         $locacao = $this->repositorioLocacao->obterPorId($dadosDevolucao['locacaoId']);
         
         if (!$locacao) {
-            throw new Exception("Locação não encontrada para o ID: " . $dadosDevolucao['locacaoId']);
+            throw new InvalidArgumentException("Locação não encontrada para o ID: " . $dadosDevolucao['locacaoId']);
         }
         
         date_default_timezone_set('America/Sao_Paulo');
@@ -59,31 +59,31 @@ class GestorDevolucao {
      *   dataHoraDevolucao?: string
      * } $dadosDevolucao Array com os dados da devolução
      * @return array<string,mixed> Dados da devolução registrada
-     * @throws Exception erro
+     * @throws InvalidArgumentException erro
      */
     public function registrarDevolucao(array $dadosDevolucao): array {
         $dadosDevolucao = $this->objectToArray($dadosDevolucao);
         
         if (empty($dadosDevolucao['locacaoId'])) {
-            throw new Exception("Locação não informada");
+            throw new InvalidArgumentException("Locação não informada");
         }
         
         if (empty($dadosDevolucao['registradoPor']) || empty($dadosDevolucao['registradoPor']['codigo'])) {
-            throw new Exception("Funcionário não informado");
+            throw new InvalidArgumentException("Funcionário não informado");
         }
         
         if (!isset($dadosDevolucao['valorPago'])) {
-            throw new Exception("Valor pago é obrigatório");
+            throw new InvalidArgumentException("Valor pago é obrigatório");
         }
         
         if ($dadosDevolucao['valorPago'] === '') {
-            throw new Exception("Valor pago é obrigatório e não pode ser uma string vazia");
+            throw new InvalidArgumentException("Valor pago é obrigatório e não pode ser uma string vazia");
         }
         
         $locacao = $this->repositorioLocacao->obterPorId($dadosDevolucao['locacaoId']);
         
         if (!$locacao) {
-            throw new Exception("Locação não encontrada para o ID: " . $dadosDevolucao['locacaoId']);
+            throw new InvalidArgumentException("Locação não encontrada para o ID: " . $dadosDevolucao['locacaoId']);
         }
         
         $this->verificarDevolucaoExistente($dadosDevolucao['locacaoId']);
@@ -102,7 +102,7 @@ class GestorDevolucao {
         $valorPago = $valorCalculado;
         
         if ($valorPago <= 0) {
-            throw new Exception("Valor pago inválido");
+            throw new InvalidArgumentException("Valor pago inválido");
         }
         
         $devolucao = new Devolucao(
@@ -157,13 +157,13 @@ class GestorDevolucao {
      * 
      * @param int $locacaoId ID da locação a ser verificada
      * @return void
-     * @throws Exception erro
+     * @throws InvalidArgumentException erro
      */
     private function verificarDevolucaoExistente(int $locacaoId): void {
         $devolucoes = $this->repositorio->obterTodos((string)$locacaoId, true);
         
         if (!empty($devolucoes)) {
-            throw new Exception("Esta locação já foi devolvida");
+            throw new InvalidArgumentException("Esta locação já foi devolvida");
         }
     }
-} 
+}
