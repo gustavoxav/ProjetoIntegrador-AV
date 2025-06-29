@@ -1,5 +1,5 @@
 import { expect, describe, it, vi, beforeEach, afterEach } from "vitest";
-import { GestorCliente } from "../src/gestor/gestor-cliente";
+import { GestorCliente } from "../src/cliente/gestor-cliente";
 import { ErroDominio } from "../src/infra/ErroDominio";
 
 describe("GestorCliente", () => {

@@ -1,5 +1,5 @@
 import { expect, describe, it, vi, beforeEach, afterEach } from "vitest";
-import { GestorDevolucao } from "../src/gestor/gestor-devolucao";
+import { GestorDevolucao } from "../src/devolucao/gestor-devolucao";
 import { ErroDominio } from "../src/infra/ErroDominio";
 import type { DadosDevolucao, RespostaDevolucao } from "../src/types/types";
 

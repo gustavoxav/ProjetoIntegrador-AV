@@ -1,5 +1,5 @@
 import { expect, describe, it, vi, beforeEach, afterEach } from "vitest";
-import { GestorLocacao } from "../src/gestor/gestor-locacao";
+import { GestorLocacao } from "../src/locacao/gestor-locacao";
 import type { DadosLocacao, RespostaLocacao } from "../src/types/types";
 import { ErroDominio } from "../src/infra/ErroDominio";
 
@@ -43,6 +43,7 @@ describe("Teste da classe Gestor Locacao", () => {
             avarias: "",
             disponivel: true,
             numeroSeguro: "SEG001",
+            valorCompra: 500,
           },
         },
       ],
@@ -117,6 +118,7 @@ describe("Teste da classe Gestor Locacao", () => {
             avarias: "",
             disponivel: true,
             numeroSeguro: "SEG001",
+            valorCompra: 500,
           },
         },
       ],
@@ -153,6 +155,7 @@ describe("Teste da classe Gestor Locacao", () => {
             avarias: "",
             disponivel: true,
             numeroSeguro: "SEG001",
+            valorCompra: 500,
           },
         },
       ],
@@ -226,6 +229,7 @@ describe("Teste da classe Gestor Locacao", () => {
             avarias: "",
             disponivel: true,
             numeroSeguro: "SEG001",
+            valorCompra: 500,
           },
         },
       ],

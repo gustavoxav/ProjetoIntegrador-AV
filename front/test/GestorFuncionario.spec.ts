@@ -1,5 +1,5 @@
 import { expect, describe, it, vi, beforeEach, afterEach } from "vitest";
-import { GestorFuncionario } from "../src/gestor/gestor-funcionario";
+import { GestorFuncionario } from "../src/funcionario/gestor-funcionario";
 import { ErroDominio } from "../src/infra/ErroDominio";
 
 describe("GestorFuncionario", () => {

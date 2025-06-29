@@ -21,10 +21,7 @@ export class VisaoFuncionarioEmHTML implements VisaoFuncionario {
 
     const loginButton = document.getElementById("realizar-login");
     if (loginButton) {
-      const newButton = loginButton.cloneNode(true);
-      loginButton.parentNode?.replaceChild(newButton, loginButton);
-
-      newButton.addEventListener("click", (e) => {
+      loginButton.addEventListener("click", (e) => {
         e.preventDefault();
         this.controladoraFuncionario?.login();
         return false;
