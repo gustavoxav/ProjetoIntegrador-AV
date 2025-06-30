@@ -153,7 +153,14 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
                 return `${label} - Qtd. locações: ${value} (${percentage}%)`;
               }
             }
-          }
+          },
+          legend: {
+            position: 'bottom' as const,
+            align: 'center' as const,
+            labels: {
+              padding: 5,
+            }
+          },
         }
       },
     });
