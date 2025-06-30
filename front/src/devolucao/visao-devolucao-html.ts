@@ -206,7 +206,9 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
 
     const listagem = document.getElementById("listagem-avarias");
     if (!listagem) return;
-    const urlImagem = URL.createObjectURL(avaria.foto);
+    
+    const urlApi = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+    const urlImagem = `${urlApi}/avarias/foto/${avaria.id}`;
     const div = document.createElement("div");
     div.className = "card mb-3 p-3";
     div.style.border = "1px solid #ccc";

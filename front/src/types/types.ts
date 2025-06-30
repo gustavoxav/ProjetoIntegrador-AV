@@ -85,7 +85,7 @@ export type RespostaAvaria = {
   id: string;
   dataHoraLancamento: string;
   descricao: string;
-  foto: File;
+  foto: string;
   valorCobrar: number;
   avaliador: {
     codigo: number;

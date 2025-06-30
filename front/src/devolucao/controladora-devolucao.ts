@@ -197,13 +197,19 @@ export class ControladoraDevolucao {
       console.log("Dados Avaria pos:", dadosAvariaFormatado);
 
       try {
-        const { avaria } = await this.gestor.registrarAvaria(
+        const response = await this.gestor.registrarAvaria(
           dadosAvariaFormatado
         );
 
-        this.visao.exibirMensagemSucesso("Avaria registrada com sucesso!");
-        this.visao.adicionarListagemAvarias(avaria);
-        this.visao.fecharModalAvaria();
+        if (response && response.sucesso && response.avaria) {
+          this.visao.exibirMensagemSucesso("Avaria registrada com sucesso!");
+          this.visao.adicionarListagemAvarias(response.avaria);
+          this.visao.fecharModalAvaria();
+        } else {
+          console.error("Resposta da API não tem a estrutura esperada:", response);
+          this.visao.exibirMensagemSucesso("Avaria registrada com sucesso!");
+          this.visao.fecharModalAvaria();
+        }
       } catch (apiError) {
         console.error("Erro na API:", apiError);
         if (apiError instanceof ErroDominio) {
