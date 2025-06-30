@@ -227,6 +227,58 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   `;
 
     listagem.appendChild(div);
+    
+    this.atualizarExibicaoValorAvarias();
+    
+    this.atualizarValorTotalComAvarias();
+  }
+
+  private calcularValorTotalAvarias(): number {
+    return this.avariasAdicionadas.reduce((total, avaria) => total + avaria.valorCobrar, 0);
+  }
+
+  private atualizarExibicaoValorAvarias(): void {
+    const valorAvariasEl = document.getElementById("valor-avarias");
+    const valorAvariasLinhaEl = document.getElementById("valor-avarias-linha");
+    
+    const valorTotal = this.calcularValorTotalAvarias();
+    
+    if (valorAvariasEl) {
+      valorAvariasEl.textContent = valorTotal.toFixed(2).replace(".", ",");
+    }
+    
+    if (valorAvariasLinhaEl) {
+      if (valorTotal > 0) {
+        valorAvariasLinhaEl.classList.remove("d-none");
+      } else {
+        valorAvariasLinhaEl.classList.add("d-none");
+      }
+    }
+  }
+
+  private atualizarValorTotalComAvarias(): void {
+    const totalEl = document.getElementById("valor-total");
+    const subtotalEl = document.getElementById("subtotal-itens");
+    const descontoEl = document.getElementById("desconto");
+    
+    if (!totalEl || !subtotalEl || !descontoEl || !this.devolucaoData) return;
+
+    const textoSubtotal = subtotalEl.textContent?.trim() ?? "0";
+    const valorSubtotal = parseFloat(
+      textoSubtotal.replace("R$", "").replace(/\./g, "").replace(",", ".")
+    );
+
+    const textoDesconto = descontoEl.textContent?.trim() ?? "0";
+    const valorDesconto = parseFloat(
+      textoDesconto.replace("R$", "").replace(/\./g, "").replace(",", ".")
+    );
+
+    const valorBase = valorSubtotal - valorDesconto;
+
+    const valorAvarias = this.calcularValorTotalAvarias();
+    const valorFinal = valorBase + valorAvarias;
+
+    totalEl.textContent = valorFinal.toFixed(2).replace(".", ",");
   }
 
   obterDadosAvarias(): DadosAvariaVisao | null {
@@ -393,6 +445,13 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       (item) => item.equipamento
     );
 
+    this.avariasAdicionadas.length = 0;
+    const listagemAvarias = document.getElementById("listagem-avarias");
+    if (listagemAvarias) {
+      listagemAvarias.innerHTML = "";
+    }
+    this.atualizarExibicaoValorAvarias();
+
     this.atualizarValoresTotais(
       equipamentos,
       horasParaCalculo,
@@ -475,8 +534,10 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     if (descontoEl)
       descontoEl.textContent = resultado.desconto.toFixed(2).replace(".", ",");
     if (totalEl) {
-      const valorTotal = valorTotalSimulacao ?? resultado.valorTotal;
-      totalEl.textContent = valorTotal.toFixed(2).replace(".", ",");
+      const valorBase = valorTotalSimulacao ?? resultado.valorTotal;
+      const valorAvarias = this.calcularValorTotalAvarias();
+      const valorFinal = valorBase + valorAvarias;
+      totalEl.textContent = valorFinal.toFixed(2).replace(".", ",");
     }
   }
 
@@ -520,6 +581,8 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       horas
     );
 
+    const valorSubtotal = equipamento.valorHora * horas;
+
     const isAtendente =
       this.controladoraFuncionario.obterFuncionarioLogado()?.cargo ===
       "Atendente";
@@ -543,7 +606,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const tdLimp = document.createElement("td");
     const textLimp = document.createElement("span");
     textLimp.textContent = " + 10%";
-    tdLimp.appendChild(this.checkLimpeza(valorTotal, tdValorTotal));
+    tdLimp.appendChild(this.checkLimpeza(valorSubtotal, tdValorTotal, desconto));
     tdLimp.appendChild(textLimp);
     tr.appendChild(tdLimp);
 
@@ -565,16 +628,19 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   }
 
   private checkLimpeza(
-    valorOriginal: number,
-    celulaValor: HTMLTableCellElement
+    valorSubtotal: number,
+    celulaValor: HTMLTableCellElement,
+    desconto: number
   ): HTMLInputElement {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.className = "form-check-input";
 
     checkbox.addEventListener("change", () => {
-      const novoValor = checkbox.checked ? valorOriginal * 1.1 : valorOriginal;
-      celulaValor.textContent = formatarValorComSimbolo(novoValor);
+      const taxaLimpeza = checkbox.checked ? valorSubtotal * 0.1 : 0;
+      const valorFinal = valorSubtotal + taxaLimpeza - desconto;
+      
+      celulaValor.textContent = formatarValorComSimbolo(valorFinal);
 
       const subtotalEl = document.getElementById("subtotal-itens");
       if (subtotalEl) {
@@ -582,24 +648,15 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         const valorNumerico = parseFloat(
           texto.replace("R$", "").replace(/\./g, "").replace(",", ".")
         );
+        
         const novoTotal = checkbox.checked
-          ? novoValor - valorOriginal + valorNumerico
-          : valorNumerico - valorOriginal * 0.1;
+          ? valorNumerico + valorSubtotal * 0.1
+          : valorNumerico - valorSubtotal * 0.1;
 
         subtotalEl.textContent = novoTotal.toFixed(2).replace(".", ",");
       }
 
-      const totalEl = document.getElementById("valor-total");
-      if (totalEl) {
-        const texto = totalEl.textContent?.trim() ?? "0";
-        const valorNumerico = parseFloat(
-          texto.replace("R$", "").replace(/\./g, "").replace(",", ".")
-        );
-        const novoTotal = checkbox.checked
-          ? novoValor - valorOriginal + valorNumerico
-          : valorNumerico - valorOriginal * 0.1;
-        totalEl.textContent = novoTotal.toFixed(2).replace(".", ",");
-      }
+      this.atualizarValorTotalComAvarias();
     });
     return checkbox;
   }
