@@ -172,26 +172,35 @@
         <label for="input">Descrição</label>
         <textarea
           class="form-control mb-3"
-          id="input-avarias"
+          id="descricao-avaria"
           rows="3"
           placeholder="Descreva as avarias do item selecionado"></textarea>
         <label for="add-image">Imagem</label>
         <input
           class="form-control mb-3"
           type="file"
-          id="add-image"
+          id="foto-avaria"
           accept=".jpg, .jpeg, image/jpeg" />
-        <label for="add-image">Valor</label>
-        <input
-          class="form-control mb-3"
-          type="number"
-          id="valor-avaria"/>
+        <label for="valor-avaria">Valor</label>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">R$</span>
+          </div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="00,00"
+            id="valor-avaria"
+            aria-label="Valor da avaria" />
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           Cancelar
         </button>
-        <button type="button" class="btn btn-danger" id="btn-salvar-avarias">Salvar avarias</button>
+        <button type="button" class="btn btn-danger" id="btn-salvar-avarias">
+          Salvar avarias
+        </button>
       </div>
     </div>
   </div>

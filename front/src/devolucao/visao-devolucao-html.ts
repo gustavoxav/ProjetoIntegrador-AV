@@ -1,5 +1,8 @@
+declare const bootstrap: any;
+
 import type { VisaoDevolucao } from "./visao-devolucao.js";
 import type {
+  DadosAvariaVisao,
   DevolucaoComFuncionario,
   Equipamento,
   RespostaDevolucao,
@@ -36,6 +39,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       new VisaoEquipamentoEmHTML()
     );
   private grafico: Chart | null = null;
+  private idItemAvaria: { codigo: number; valorOriginal: number } | null = null;
 
   public iniciarAdd(): void {
     document
@@ -43,6 +47,14 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       ?.addEventListener("click", (e) => {
         e.preventDefault();
         this.controladoraDevolucao?.registrarDevolucao();
+        return false;
+      });
+
+    document
+      .getElementById("btn-salvar-avarias")
+      ?.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.controladoraDevolucao?.registrarAvarias();
         return false;
       });
 
@@ -185,6 +197,42 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         },
       },
     });
+  }
+
+  obterDadosAvarias(): DadosAvariaVisao | null {
+    const descricao = (
+      document.getElementById("descricao-avaria") as HTMLTextAreaElement
+    )?.value.trim();
+    const valorPago = parseFloat(
+      (document.getElementById("valor-avaria") as HTMLInputElement)?.value
+    );
+
+    const fotoInput = document.getElementById(
+      "foto-avaria"
+    ) as HTMLInputElement;
+    const foto = fotoInput?.files?.[0] ?? null;
+
+    console.log(
+      "Dados Avaria:",
+      this.idItemAvaria,
+      descricao,
+      valorPago,
+      foto,
+      !foto
+    );
+
+    if (!foto) {
+      return null;
+    }
+
+    return {
+      equipamento: this.idItemAvaria,
+      avaliadorId: 0,
+      descricao,
+      locacaoId: this.devolucaoData?.locacao.codigo,
+      valorCobrar: valorPago,
+      foto,
+    };
   }
 
   obterDadosDevolucao() {
@@ -483,7 +531,10 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     tr.appendChild(tdLimp);
 
     if (!isAtendente) {
-      const btnAvaria = this.criarBotaoAvaria(equipamento.codigo);
+      const btnAvaria = this.criarBotaoAvaria(
+        equipamento.codigo,
+        equipamento.valorHora * horas
+      );
       tdAva.appendChild(btnAvaria);
       tr.appendChild(tdAva);
     }
@@ -536,7 +587,17 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     return checkbox;
   }
 
-  private criarBotaoAvaria(codigo: number): HTMLButtonElement {
+  public fecharModalAvaria(): void {
+    const modalElement = document.getElementById("modalAvarias");
+    if (modalElement) {
+      const modalInstance =
+        bootstrap.Modal.getInstance(modalElement) ||
+        new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
+
+  private criarBotaoAvaria(codigo: number, valor: number): HTMLButtonElement {
     const btn = document.createElement("button");
     btn.className = "btn btn-sm btn-danger";
     btn.textContent = "Adicionar Avaria";
@@ -545,6 +606,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     btn.setAttribute("data-codigo-item", codigo.toString());
 
     btn.addEventListener("click", () => {
+      this.idItemAvaria = { codigo, valorOriginal: valor };
       const inputDescricao = document.getElementById(
         "input-avarias"
       ) as HTMLTextAreaElement;

@@ -1,5 +1,6 @@
 import { ErroDominio } from "../infra/ErroDominio.js";
 import type {
+  DadosAvaria,
   DadosDevolucao,
   RespostaDevolucao,
   RespostaRelatorioDevolucao,
@@ -38,6 +39,44 @@ export class GestorDevolucao {
           .catch(() => ({ erro: "Erro no servidor" }));
         throw ErroDominio.comProblemas([
           errorData.erro ?? `Erro ao registrar Devolução (${response.status})`,
+        ]);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      if (error instanceof ErroDominio) {
+        throw error;
+      }
+      throw ErroDominio.comProblemas([
+        error instanceof Error
+          ? error.message
+          : "Erro ao conectar com o servidor",
+      ]);
+    }
+  }
+
+  async registrarAvaria(dadosAvaria: DadosAvaria): Promise<any> {
+    const reqBody = JSON.stringify(dadosAvaria);
+
+    try {
+      const response = await fetch(`${this.urlApi}/avarias`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: reqBody,
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        console.error("Erro na resposta da API:", response);
+        const errorData = await response
+          .json()
+          .catch(() => ({ erro: "Erro no servidor" }));
+        throw ErroDominio.comProblemas([
+          errorData.erro ?? `Erro ao registrar Avarias (${response.status})`,
         ]);
       }
 
