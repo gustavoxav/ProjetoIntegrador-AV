@@ -132,7 +132,7 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
         labels,
         datasets: [
           {
-            label: "Quantidade de locações: ",
+            label: "Qtd. locações",
             data: valores,
             backgroundColor: coresUsadas,
             borderColor: bordasUsadas,
@@ -142,6 +142,19 @@ export class VisaoEquipamentoEmHTML implements VisaoEquipamento {
       },
       options: {
         responsive: true,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.parsed;
+                const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+                const percentage = ((value / total) * 100).toFixed(1);
+                return `${label} - Qtd. locações: ${value} (${percentage}%)`;
+              }
+            }
+          }
+        }
       },
     });
 
