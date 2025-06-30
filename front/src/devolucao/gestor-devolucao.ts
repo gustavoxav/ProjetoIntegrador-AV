@@ -57,16 +57,20 @@ export class GestorDevolucao {
   }
 
   async registrarAvaria(dadosAvaria: DadosAvaria): Promise<any> {
-    const reqBody = JSON.stringify(dadosAvaria);
+    const formData = new FormData();
+    formData.append('avaliadorId', dadosAvaria.avaliadorId.toString());
+    formData.append('descricao', dadosAvaria.descricao);
+    formData.append('valorCobrar', dadosAvaria.valorCobrar.toString());
+    formData.append('equipamentoId', dadosAvaria.equipamentoId.toString());
+    if (dadosAvaria.locacaoId) {
+      formData.append('locacaoId', dadosAvaria.locacaoId.toString());
+    }
+    formData.append('foto', dadosAvaria.foto);
 
     try {
       const response = await fetch(`${this.urlApi}/avarias`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: reqBody,
+        body: formData,
         credentials: "include",
       });
 
