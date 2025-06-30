@@ -78,7 +78,7 @@ export type DadosAvariaVisao = {
   valorCobrar: number;
   equipamento: { codigo: number; valorOriginal: number } | null;
   locacaoId?: number;
-  foto: File;
+  foto: File | null;
 };
 
 export type DadosDevolucao = {

@@ -158,7 +158,18 @@ export class ControladoraDevolucao {
       }
 
       if (!dadosAvaria?.descricao) {
-        this.visao.exibirMensagemErro("Selecione um equipamento");
+        this.visao.exibirMensagemErro("Adicione uma descrição para a avaria!");
+        return;
+      }
+
+      if (!dadosAvaria?.foto) {
+        this.visao.exibirMensagemErro("Adicione uma imagem para a avaria!");
+        return;
+      }
+
+      const nomeArquivo = dadosAvaria.foto.name.toLowerCase();
+      if (!nomeArquivo.endsWith(".jpg")) {
+        this.visao.exibirMensagemErro("A imagem deve estar no formato .jpg!");
         return;
       }
 
@@ -167,8 +178,7 @@ export class ControladoraDevolucao {
         return;
       }
       if (
-        dadosAvaria?.valorCobrar >
-        (dadosAvaria.equipamento?.valorOriginal ?? 0)
+        dadosAvaria?.valorCobrar > (dadosAvaria.equipamento?.valorOriginal ?? 0)
       ) {
         this.visao.exibirMensagemErro(
           "O valor da avaria não pode ser maior que o valor do item!"

@@ -212,19 +212,6 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     ) as HTMLInputElement;
     const foto = fotoInput?.files?.[0] ?? null;
 
-    console.log(
-      "Dados Avaria:",
-      this.idItemAvaria,
-      descricao,
-      valorPago,
-      foto,
-      !foto
-    );
-
-    if (!foto) {
-      return null;
-    }
-
     return {
       equipamento: this.idItemAvaria,
       avaliadorId: 0,
@@ -593,7 +580,16 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       const modalInstance =
         bootstrap.Modal.getInstance(modalElement) ||
         new bootstrap.Modal(modalElement);
+
       modalInstance.hide();
+      setTimeout(() => {
+        const backdrop = document.querySelector(".modal-backdrop");
+        if (backdrop) {
+          backdrop.remove();
+          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
+        }
+      }, 350);
     }
   }
 
