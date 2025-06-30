@@ -81,6 +81,24 @@ export type DadosAvariaVisao = {
   foto: File | null;
 };
 
+export type RespostaAvaria = {
+  id: string;
+  dataHoraLancamento: string;
+  descricao: string;
+  foto: File;
+  valorCobrar: number;
+  avaliador: {
+    codigo: number;
+    nome: string;
+  };
+  equipamento: {
+    codigo: number;
+    descricao: string;
+    valorCompra: number;
+  };
+  locacaoId: number;
+};
+
 export type DadosDevolucao = {
   locacaoId: number;
   registradoPor: Funcionario;

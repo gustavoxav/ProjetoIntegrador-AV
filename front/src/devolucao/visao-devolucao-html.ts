@@ -5,6 +5,7 @@ import type {
   DadosAvariaVisao,
   DevolucaoComFuncionario,
   Equipamento,
+  RespostaAvaria,
   RespostaDevolucao,
   RespostaLocacao,
   RespostaRelatorioDevolucao,
@@ -40,6 +41,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     );
   private grafico: Chart | null = null;
   private idItemAvaria: { codigo: number; valorOriginal: number } | null = null;
+  private readonly avariasAdicionadas: RespostaAvaria[] = [];
 
   public iniciarAdd(): void {
     document
@@ -197,6 +199,32 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         },
       },
     });
+  }
+
+  adicionarListagemAvarias(avaria: RespostaAvaria): void {
+    this.avariasAdicionadas.push(avaria);
+
+    const listagem = document.getElementById("listagem-avarias");
+    if (!listagem) return;
+    const urlImagem = URL.createObjectURL(avaria.foto);
+    const div = document.createElement("div");
+    div.className = "card mb-3 p-3";
+    div.style.border = "1px solid #ccc";
+    div.style.borderRadius = "8px";
+    div.style.backgroundColor = "#f8f9fa";
+
+    div.innerHTML = `
+    <strong>${avaria.equipamento.codigo} - ${
+      avaria.equipamento.descricao
+    }</strong>
+    <p class="mb-1">${avaria.descricao}</p>
+    <span class="d-block text-danger fw-semibold mb-2">
+      ${formatarValorComSimbolo(avaria.valorCobrar)}
+    </span>
+    <img src="${urlImagem}" alt="Foto da avaria" style="max-width: 100%; max-height: 200px; object-fit: contain; border: 1px solid #ddd; border-radius: 4px;" />
+  `;
+
+    listagem.appendChild(div);
   }
 
   obterDadosAvarias(): DadosAvariaVisao | null {
@@ -577,19 +605,18 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   public fecharModalAvaria(): void {
     const modalElement = document.getElementById("modalAvarias");
     if (modalElement) {
-      const modalInstance =
-        bootstrap.Modal.getInstance(modalElement) ||
-        new bootstrap.Modal(modalElement);
+      const modalInstance = bootstrap.Modal.getInstance(modalElement);
 
-      modalInstance.hide();
-      setTimeout(() => {
-        const backdrop = document.querySelector(".modal-backdrop");
-        if (backdrop) {
-          backdrop.remove();
+      if (modalInstance) {
+        modalInstance.hide();
+        setTimeout(() => {
+          document
+            .querySelectorAll(".modal-backdrop")
+            .forEach((b) => b.remove());
           document.body.classList.remove("modal-open");
           document.body.style.overflow = "";
-        }
-      }, 350);
+        }, 500);
+      }
     }
   }
 
@@ -604,14 +631,27 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     btn.addEventListener("click", () => {
       this.idItemAvaria = { codigo, valorOriginal: valor };
       const inputDescricao = document.getElementById(
-        "input-avarias"
+        "descricao-avaria"
       ) as HTMLTextAreaElement;
-      const inputImagem = document.getElementById(
-        "add-image"
-      ) as HTMLInputElement;
-
       if (inputDescricao) inputDescricao.value = "";
+
+      const inputImagem = document.getElementById(
+        "foto-avaria"
+      ) as HTMLInputElement;
       if (inputImagem) inputImagem.value = "";
+
+      const inputValor = document.getElementById(
+        "valor-avaria"
+      ) as HTMLInputElement;
+      if (inputValor) inputValor.value = "";
+
+      const output = document.querySelector(
+        "#modalAvarias output"
+      ) as HTMLOutputElement;
+      if (output) {
+        output.value = "";
+        output.classList.add("d-none");
+      }
     });
     return btn;
   }

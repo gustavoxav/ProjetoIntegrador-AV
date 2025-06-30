@@ -5,6 +5,7 @@ import type {
   DevolucaoComFuncionario,
   RespostaRelatorioDevolucao,
   DadosAvariaVisao,
+  RespostaAvaria,
 } from "../types/types";
 
 export interface VisaoDevolucao {
@@ -22,4 +23,5 @@ export interface VisaoDevolucao {
   exibirMensagemErro(x: string): void;
   obterDadosAvarias(): DadosAvariaVisao | null;
   fecharModalAvaria(): void;
+  adicionarListagemAvarias(avaria: RespostaAvaria | null): void;
 }

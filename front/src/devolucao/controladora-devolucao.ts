@@ -197,10 +197,12 @@ export class ControladoraDevolucao {
       console.log("Dados Avaria pos:", dadosAvariaFormatado);
 
       try {
-        await this.gestor.registrarAvaria(dadosAvariaFormatado);
+        const { avaria } = await this.gestor.registrarAvaria(
+          dadosAvariaFormatado
+        );
 
         this.visao.exibirMensagemSucesso("Avaria registrada com sucesso!");
-
+        this.visao.adicionarListagemAvarias(avaria);
         this.visao.fecharModalAvaria();
       } catch (apiError) {
         console.error("Erro na API:", apiError);
