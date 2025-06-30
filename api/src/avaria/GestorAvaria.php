@@ -48,7 +48,7 @@ class GestorAvaria {
         
         $equipamentoArray = [
             'codigo' => $dadosAvaria['equipamentoId'],
-            'modelo' => $equipamento->jsonSerialize()['modelo'] ?? '',
+            'descricao' => $equipamento->jsonSerialize()['descricao'] ?? '',
             'valorCompra' => $equipamento->getValorCompra()
         ];
         

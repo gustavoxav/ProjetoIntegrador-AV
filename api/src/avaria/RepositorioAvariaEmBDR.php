@@ -40,7 +40,7 @@ class RepositorioAvariaEmBDR implements RepositorioAvaria {
         $query = '
             SELECT a.*, 
                 f.id as avaliador_id, f.nome as avaliador_nome,
-                e.id as equipamento_id, e.modelo as equipamento_modelo, e.valor_compra as equipamento_valor_compra
+                e.id as equipamento_id, e.descricao as equipamento_descricao, e.valor_compra as equipamento_valor_compra
             FROM avaria a
             INNER JOIN funcionario f ON a.avaliador_id = f.id
             INNER JOIN equipamento e ON a.equipamento_id = e.id
@@ -62,7 +62,7 @@ class RepositorioAvariaEmBDR implements RepositorioAvaria {
         $query = '
             SELECT a.*, 
                 f.id as avaliador_id, f.nome as avaliador_nome,
-                e.id as equipamento_id, e.modelo as equipamento_modelo, e.valor_compra as equipamento_valor_compra
+                e.id as equipamento_id, e.descricao as equipamento_descricao, e.valor_compra as equipamento_valor_compra
             FROM avaria a
             INNER JOIN funcionario f ON a.avaliador_id = f.id
             INNER JOIN equipamento e ON a.equipamento_id = e.id
@@ -86,7 +86,7 @@ class RepositorioAvariaEmBDR implements RepositorioAvaria {
         $query = '
             SELECT a.*, 
                 f.id as avaliador_id, f.nome as avaliador_nome,
-                e.id as equipamento_id, e.modelo as equipamento_modelo, e.valor_compra as equipamento_valor_compra
+                e.id as equipamento_id, e.descricao as equipamento_descricao, e.valor_compra as equipamento_valor_compra
             FROM avaria a
             INNER JOIN funcionario f ON a.avaliador_id = f.id
             INNER JOIN equipamento e ON a.equipamento_id = e.id
@@ -147,7 +147,7 @@ class RepositorioAvariaEmBDR implements RepositorioAvaria {
         
         $equipamento = [
             'codigo' => $avariaData['equipamento_id'],
-            'modelo' => $avariaData['equipamento_modelo'],
+            'descricao' => $avariaData['equipamento_descricao'],
             'valorCompra' => floatval($avariaData['equipamento_valor_compra'])
         ];
         
@@ -162,6 +162,9 @@ class RepositorioAvariaEmBDR implements RepositorioAvaria {
             intval($avariaData['locacao_id'])
         );
         
-        return $avaria->toArray();
+        $avariaArray = $avaria->toArray();
+        $avariaArray['foto'] = '/api/avarias/foto/' . $avariaData['id'];
+        
+        return $avariaArray;
     }
 } 

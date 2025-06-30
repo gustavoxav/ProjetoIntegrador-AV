@@ -8,7 +8,7 @@ class Avaria {
     private float $valorCobrar;
     /** @var array{codigo: int, nome?: string} */
     private array $avaliador;
-    /** @var array{codigo: int, modelo?: string, valorCompra?: float} */
+    /** @var array{codigo: int, descricao?: string, valorCompra?: float} */
     private array $equipamento;
     private int $locacaoId;
 
@@ -19,7 +19,7 @@ class Avaria {
      * @param string $fotoCaminho Caminho da foto da avaria
      * @param float $valorCobrar Valor a cobrar pela avaria
      * @param array{codigo: int, nome?: string} $avaliador Funcionário avaliador
-     * @param array{codigo: int, modelo?: string, valorCompra?: float} $equipamento Equipamento com avaria
+     * @param array{codigo: int, descricao?: string, valorCompra?: float} $equipamento Equipamento com avaria
      * @param int $locacaoId ID da locação
      */
     public function __construct(
@@ -70,7 +70,7 @@ class Avaria {
     }
 
     /**
-     * @return array{codigo: int, modelo?: string, valorCompra?: float}
+     * @return array{codigo: int, descricao?: string, valorCompra?: float}
      */
     public function getEquipamento(): array {
         return $this->equipamento;
@@ -88,7 +88,7 @@ class Avaria {
      *   fotoCaminho: string,
      *   valorCobrar: float,
      *   avaliador: array{codigo: int, nome?: string},
-     *   equipamento: array{codigo: int, modelo?: string, valorCompra?: float},
+     *   equipamento: array{codigo: int, descricao?: string, valorCompra?: float},
      *   locacaoId: int
      * }
      */
