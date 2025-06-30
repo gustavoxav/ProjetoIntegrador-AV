@@ -35,11 +35,15 @@ export class ControladoraDevolucao {
         );
         return;
       }
+      
+      const taxasLimpeza = this.visao.obterTaxasLimpezaSelecionadas();
+      
       const dadosDevolucaoFormatado = {
         locacaoId: Number(dadosSimulacao?.locacao.codigo),
         registradoPor: dadosSimulacao.registradoPor,
         dataHoraDevolucao: dadosSimulacao?.dataHoraDevolucao,
         valorPago: dadosSimulacao?.valorPago,
+        taxasLimpeza: taxasLimpeza
       };
 
       try {

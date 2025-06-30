@@ -9,9 +9,10 @@ define('API_PREFIX', '/api');
 $app = new Router();
 
 $app->use(cors([
-  'origin' => ['http://localhost:5173', 'http://localhost:8080'],
+  'origin' => ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:8000'],
   'allowedHeaders' => ['Host', 'Origin', 'Accept', 'Content-Type', 'Content-Length', 'Cookie'],
-  'exposeHeaders' => ['Content-Type', 'Content-Length', 'Set-Cookie']
+  'exposeHeaders' => ['Content-Type', 'Content-Length', 'Set-Cookie'],
+  'credentials' => true
 ]));
 
 $pdo = conectarPDO();
@@ -252,7 +253,8 @@ $app->get("/devolucoes/simulacao/:locacaoId", function ($req, $res) use ($pdo) {
 
     $gestor = new GestorDevolucao(
       new RepositorioDevolucaoEmBDR($pdo),
-      new RepositorioLocacaoEmBDR($pdo)
+      new RepositorioLocacaoEmBDR($pdo),
+      new RepositorioAvariaEmBDR($pdo)
     );
 
     $dadosDevolucao = [
@@ -260,7 +262,7 @@ $app->get("/devolucoes/simulacao/:locacaoId", function ($req, $res) use ($pdo) {
       'dataHoraDevolucao' => date('Y-m-d H:i:s')
     ];
 
-    $saida = $gestor->calcularValorPagamento($dadosDevolucao);
+    $saida = $gestor->simularDevolucao($dadosDevolucao);
     $res->json($saida);
   } catch (DevolucaoException $e) {
     $mensagem = $e->getMessage();
@@ -282,7 +284,8 @@ $app->post("/devolucoes", function ($req, $res) use ($pdo) {
     try {
       $gestor = new GestorDevolucao(
         new RepositorioDevolucaoEmBDR($pdo),
-        new RepositorioLocacaoEmBDR($pdo)
+        new RepositorioLocacaoEmBDR($pdo),
+        new RepositorioAvariaEmBDR($pdo)
       );
       $saida = $gestor->registrarDevolucao($dadosDevolucao);
       return $res->status(201)->json($saida);
@@ -306,7 +309,8 @@ $app->get("/devolucoes", function ($req, $res) use ($pdo) {
   try {
     $gestor = new GestorDevolucao(
       new RepositorioDevolucaoEmBDR($pdo),
-      new RepositorioLocacaoEmBDR($pdo)
+      new RepositorioLocacaoEmBDR($pdo),
+      new RepositorioAvariaEmBDR($pdo)
     );
     $saida = $gestor->obterDevolucoes(null);
     $res->json($saida);

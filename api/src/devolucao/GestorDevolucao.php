@@ -4,48 +4,98 @@ class GestorDevolucao {
 
     public function __construct(
         private RepositorioDevolucao $repositorio,
-        private RepositorioLocacao $repositorioLocacao
+        private RepositorioLocacao $repositorioLocacao,
+        private ?RepositorioAvaria $repositorioAvaria = null
     ) {}
 
     /**
-     * Calcula o valor pra pagar na devolução
+     * Simula uma devolução calculando o valor a ser pago com taxas e avarias
      * 
      * @param array{
      *   locacaoId: int,
-     *   dataHoraDevolucao?: string
+     *   dataHoraDevolucao?: string,
+     *   taxasLimpeza?: array<int, bool>
      * } $dadosDevolucao Array com os dados da devolução
      * @return array{
      *   locacao: array<string,mixed>,
      *   dataHoraDevolucao: string,
-     *   valorPago: float
-     * } Dados com o valor a ser pago
-     * @throws InvalidArgumentException erro
+     *   valorPago: float,
+     *   valorBase: float,
+     *   valorTaxaLimpeza: float,
+     *   valorAvarias: float,
+     *   horasReais: int,
+     *   detalhesItens: array<int, array{
+     *     equipamentoId: int,
+     *     subtotal: float,
+     *     taxaLimpeza: float,
+     *     valorComTaxa: float
+     *   }>
+     * } Dados detalhados da simulação
+     * @throws DevolucaoException
      */
-    public function calcularValorPagamento(array $dadosDevolucao): array {
-        $dadosDevolucao = $this->objectToArray($dadosDevolucao);
-        
-        if (empty($dadosDevolucao['locacaoId'])) {
-            throw new InvalidArgumentException("Locação não informada");
+    public function simularDevolucao(array $dadosDevolucao): array {
+        if (!isset($dadosDevolucao['locacaoId'])) {
+            throw new DevolucaoException("ID da locação é obrigatório");
         }
         
+        
+        $this->verificarDevolucaoExistente($dadosDevolucao['locacaoId']);
+        
+
         $this->verificarDevolucaoExistente($dadosDevolucao['locacaoId']);
         
         $locacao = $this->repositorioLocacao->obterPorId($dadosDevolucao['locacaoId']);
         
         if (!$locacao) {
-            throw new InvalidArgumentException("Locação não encontrada para o ID: " . $dadosDevolucao['locacaoId']);
+            throw new DevolucaoException("Locação não encontrada");
+        }
+
+        $this->verificarDevolucaoExistente($dadosDevolucao['locacaoId']);
+
+        $dataHoraDevolucao = $dadosDevolucao['dataHoraDevolucao'] ?? date('Y-m-d H:i:s');
+        $taxasLimpeza = $dadosDevolucao['taxasLimpeza'] ?? null;
+        
+        if ($taxasLimpeza !== null) {
+            $taxasLimpeza = $this->objectToArray($taxasLimpeza);
         }
         
-        date_default_timezone_set('America/Sao_Paulo');
-        $dataHoraDevolucao = $dadosDevolucao['dataHoraDevolucao'] ?? date('Y-m-d H:i:s');
-        
-        $calculadora = new CalculadoraPagamento();
-        $valorPago = $calculadora->calcularValorPagamento($locacao, $dataHoraDevolucao);
+        $calculadora = new CalculadoraPagamento($this->repositorioAvaria);
+        $resultado = $calculadora->calcularValorPagamento($locacao, $dataHoraDevolucao, $taxasLimpeza);
         
         return [
             'locacao' => $locacao,
             'dataHoraDevolucao' => $dataHoraDevolucao,
-            'valorPago' => $valorPago
+            'valorPago' => $resultado['valorTotal'],
+            'valorBase' => $resultado['valorBase'],
+            'valorTaxaLimpeza' => $resultado['valorTaxaLimpeza'],
+            'valorAvarias' => $resultado['valorAvarias'],
+            'horasReais' => $resultado['horasReais'],
+            'detalhesItens' => $resultado['detalhesItens']
+        ];
+    }
+
+    /**
+     * Calcula o valor de pagamento
+     * 
+     * @param array{
+     *   locacaoId: int,
+     *   dataHoraDevolucao?: string,
+     *   taxasLimpeza?: array<int, bool>
+     * } $dadosDevolucao Array com os dados da devolução
+     * @return array{
+     *   locacao: array<string,mixed>,
+     *   dataHoraDevolucao: string,
+     *   valorPago: float
+     * } Dados da simulação
+     * @throws DevolucaoException
+     */
+    public function calcularValorPagamento(array $dadosDevolucao): array {
+        $resultado = $this->simularDevolucao($dadosDevolucao);
+        
+        return [
+            'locacao' => $resultado['locacao'],
+            'dataHoraDevolucao' => $resultado['dataHoraDevolucao'],
+            'valorPago' => $resultado['valorPago']
         ];
     }
 
@@ -56,7 +106,8 @@ class GestorDevolucao {
      *   locacaoId: int,
      *   registradoPor: array{codigo: int, nome?: string},
      *   valorPago: float,
-     *   dataHoraDevolucao?: string
+     *   dataHoraDevolucao?: string,
+     *   taxasLimpeza?: array<int, bool>
      * } $dadosDevolucao Array com os dados da devolução
      * @return array<string,mixed> Dados da devolução registrada
      * @throws InvalidArgumentException erro
@@ -91,13 +142,14 @@ class GestorDevolucao {
         date_default_timezone_set('America/Sao_Paulo');
         $dataHoraDevolucao = $dadosDevolucao['dataHoraDevolucao'] ?? date('Y-m-d H:i:s');
         
-        $calculadora = new CalculadoraPagamento();
-        $valorCalculado = $calculadora->calcularValorPagamento($locacao, $dataHoraDevolucao);
+        $calculadora = new CalculadoraPagamento($this->repositorioAvaria);
+        $taxasLimpeza = $dadosDevolucao['taxasLimpeza'] ?? null;
         
-        // $valorPago = floatval($dadosDevolucao['valorPago']);
-        // if (abs($valorPago - $valorCalculado) > 0.01) {
-        //     throw new Exception("O valor informado não está correto. Valor esperado: R$ " . number_format($valorCalculado, 2, ',', '.') . ". Tente novamente.");
-        // }
+        if ($taxasLimpeza !== null) {
+            $taxasLimpeza = $this->objectToArray($taxasLimpeza);
+        }
+        
+        $valorCalculado = $calculadora->calcularValorPagamentoSimples($locacao, $dataHoraDevolucao, $taxasLimpeza);
         
         $valorPago = $valorCalculado;
         
@@ -157,13 +209,13 @@ class GestorDevolucao {
      * 
      * @param int $locacaoId ID da locação a ser verificada
      * @return void
-     * @throws InvalidArgumentException erro
+     * @throws DevolucaoException erro
      */
     private function verificarDevolucaoExistente(int $locacaoId): void {
         $devolucoes = $this->repositorio->obterTodos((string)$locacaoId, true);
         
         if (!empty($devolucoes)) {
-            throw new InvalidArgumentException("Esta locação já foi devolvida");
+            throw new DevolucaoException("Esta locação já foi devolvida");
         }
     }
 }

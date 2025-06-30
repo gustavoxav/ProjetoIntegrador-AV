@@ -18,6 +18,7 @@ export interface VisaoDevolucao {
     filtro: string | undefined;
   };
   preencherDevolucao(devolucao: RespostaSimulacaoDevolucao): void;
+  obterTaxasLimpezaSelecionadas(): Record<number, boolean>;
   exibirRelatorio(relatorio: RespostaRelatorioDevolucao): void;
   exibirMensagemSucesso(x: string): void;
   exibirMensagemErro(x: string): void;

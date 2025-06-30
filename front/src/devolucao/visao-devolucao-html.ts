@@ -204,81 +204,53 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   adicionarListagemAvarias(avaria: RespostaAvaria): void {
     this.avariasAdicionadas.push(avaria);
 
-    const listagem = document.getElementById("listagem-avarias");
-    if (!listagem) return;
-    
+    const container = document.getElementById("listagem-avarias");
+    if (!container) return;
+
+    if (this.avariasAdicionadas.length === 1) {
+      container.innerHTML = `
+        <h6>Avarias Registradas</h6>
+        <table class="table table-sm table-bordered">
+          <thead>
+            <tr>
+              <th>Equipamento</th>
+              <th>Descrição</th>
+              <th>Valor</th>
+              <th>Foto</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-avarias"></tbody>
+        </table>
+      `;
+    }
+
+    const tbody = document.getElementById("tbody-avarias");
+    if (!tbody) return;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${avaria.equipamento.codigo} - ${avaria.equipamento.descricao}</td>
+      <td>${avaria.descricao}</td>
+      <td>R$ ${avaria.valorCobrar.toFixed(2).replace(".", ",")}</td>
+      <td>
+        <img src="${this.construirUrlImagem(avaria.id)}" 
+             alt="Avaria" 
+             style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;"
+             onclick="window.open('${this.construirUrlImagem(avaria.id)}', '_blank')">
+      </td>
+    `;
+    tbody.appendChild(row);
+
+    this.recalcularValoresLocalmente();
+  }
+
+  private construirUrlImagem(avariaId: number): string {
     const urlApi = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-    const urlImagem = `${urlApi}/avarias/foto/${avaria.id}`;
-    const div = document.createElement("div");
-    div.className = "card mb-3 p-3";
-    div.style.border = "1px solid #ccc";
-    div.style.borderRadius = "8px";
-    div.style.backgroundColor = "#f8f9fa";
-
-    div.innerHTML = `
-    <strong>${avaria.equipamento.codigo} - ${
-      avaria.equipamento.descricao
-    }</strong>
-    <p class="mb-1">${avaria.descricao}</p>
-    <span class="d-block text-danger fw-semibold mb-2">
-      ${formatarValorComSimbolo(avaria.valorCobrar)}
-    </span>
-    <img src="${urlImagem}" alt="Foto da avaria" style="max-width: 100%; max-height: 200px; object-fit: contain; border: 1px solid #ddd; border-radius: 4px;" />
-  `;
-
-    listagem.appendChild(div);
-    
-    this.atualizarExibicaoValorAvarias();
-    
-    this.atualizarValorTotalComAvarias();
+    return `${urlApi}/avarias/foto/${avariaId}`;
   }
 
   private calcularValorTotalAvarias(): number {
     return this.avariasAdicionadas.reduce((total, avaria) => total + avaria.valorCobrar, 0);
-  }
-
-  private atualizarExibicaoValorAvarias(): void {
-    const valorAvariasEl = document.getElementById("valor-avarias");
-    const valorAvariasLinhaEl = document.getElementById("valor-avarias-linha");
-    
-    const valorTotal = this.calcularValorTotalAvarias();
-    
-    if (valorAvariasEl) {
-      valorAvariasEl.textContent = valorTotal.toFixed(2).replace(".", ",");
-    }
-    
-    if (valorAvariasLinhaEl) {
-      if (valorTotal > 0) {
-        valorAvariasLinhaEl.classList.remove("d-none");
-      } else {
-        valorAvariasLinhaEl.classList.add("d-none");
-      }
-    }
-  }
-
-  private atualizarValorTotalComAvarias(): void {
-    const totalEl = document.getElementById("valor-total");
-    const subtotalEl = document.getElementById("subtotal-itens");
-    const descontoEl = document.getElementById("desconto");
-    
-    if (!totalEl || !subtotalEl || !descontoEl || !this.devolucaoData) return;
-
-    const textoSubtotal = subtotalEl.textContent?.trim() ?? "0";
-    const valorSubtotal = parseFloat(
-      textoSubtotal.replace("R$", "").replace(/\./g, "").replace(",", ".")
-    );
-
-    const textoDesconto = descontoEl.textContent?.trim() ?? "0";
-    const valorDesconto = parseFloat(
-      textoDesconto.replace("R$", "").replace(/\./g, "").replace(",", ".")
-    );
-
-    const valorBase = valorSubtotal - valorDesconto;
-
-    const valorAvarias = this.calcularValorTotalAvarias();
-    const valorFinal = valorBase + valorAvarias;
-
-    totalEl.textContent = valorFinal.toFixed(2).replace(".", ",");
   }
 
   obterDadosAvarias(): DadosAvariaVisao | null {
@@ -426,62 +398,63 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   public preencherDevolucao(devolucao: RespostaSimulacaoDevolucao) {
     this.devolucaoData = devolucao;
 
-    const horasUtilizadas = calcularHorasUtilizadas(
-      devolucao.locacao.dataHoraLocacao,
-      devolucao.dataHoraDevolucao
-    );
+    const dataLocacao = document.getElementById("data-locacao");
+    const horasContratadas = document.getElementById("horas-contratadas");
+    const horasTexto = document.getElementById("horas-texto");
+    const horasUtilizadas = document.getElementById("horas-utilizadas");
 
-    const horasCobranca = calcularHorasCobranca(
-      devolucao.locacao.dataHoraLocacao,
-      devolucao.dataHoraDevolucao
-    );
+    if (dataLocacao) {
+      dataLocacao.textContent = formatarDataHora(
+        devolucao.locacao.dataHoraLocacao
+      );
+    }
+    if (horasContratadas) {
+      horasContratadas.textContent = devolucao.locacao.horasContratadas.toString();
+    }
+    if (horasTexto) {
+      horasTexto.textContent =
+        devolucao.locacao.horasContratadas === 1 ? "hora" : "horas";
+    }
 
-    const horasParaCalculo = Math.max(
-      horasCobranca,
+    if (horasUtilizadas) {
+      const horasCalculadas = calcularHorasUtilizadas(
+        devolucao.locacao.dataHoraLocacao,
+        devolucao.dataHoraDevolucao
+      );
+      
+      if (horasCalculadas.minutos > 0) {
+        horasUtilizadas.textContent = `${horasCalculadas.horas}h ${horasCalculadas.minutos}min`;
+      } else {
+        horasUtilizadas.textContent = `${horasCalculadas.horas}h`;
+      }
+
+      const avisoEl = document.getElementById("aviso-valor-minimo");
+        if (avisoEl) {
+          if (horasCalculadas.horas < devolucao.locacao.horasContratadas) {
+          avisoEl.classList.remove("d-none");
+        } else {
+          avisoEl.classList.add("d-none");
+        }
+      }
+    }
+
+    const equipamentos = devolucao.locacao.itens.map((item) => item.equipamento);
+    this.atualizarTabelaEquipamentos(
+      equipamentos,
       devolucao.locacao.horasContratadas
     );
 
-    const equipamentos = devolucao.locacao.itens.map(
-      (item) => item.equipamento
-    );
-
-    this.avariasAdicionadas.length = 0;
-    const listagemAvarias = document.getElementById("listagem-avarias");
-    if (listagemAvarias) {
-      listagemAvarias.innerHTML = "";
-    }
-    this.atualizarExibicaoValorAvarias();
-
-    this.atualizarValoresTotais(
-      equipamentos,
-      horasParaCalculo,
-      devolucao.valorPago
-    );
-
-    this.atualizarTabelaEquipamentos(equipamentos, horasParaCalculo);
-
     this.atualizarHorasNaTela(devolucao.locacao.horasContratadas);
 
-    const dataLocacaoEl = document.getElementById("data-locacao");
-    if (dataLocacaoEl) {
-      dataLocacaoEl.textContent = formatarDataHora(devolucao.dataHoraDevolucao);
+    this.avariasAdicionadas.length = 0;
+    const container = document.getElementById("listagem-avarias");
+    if (container) {
+      container.innerHTML = "";
     }
 
-    const horasUtilizadasEl = document.getElementById("horas-utilizadas");
-    if (horasUtilizadasEl) {
-      const horaTexto = horasUtilizadas.horas === 1 ? "hora" : "horas";
-      const minutoTexto = horasUtilizadas.minutos === 1 ? "minuto" : "minutos";
-      horasUtilizadasEl.textContent = `${horasUtilizadas.horas} ${horaTexto} e ${horasUtilizadas.minutos} ${minutoTexto}`;
-    }
-
-    const avisoEl = document.getElementById("aviso-valor-minimo");
-    if (avisoEl) {
-      if (horasCobranca < devolucao.locacao.horasContratadas) {
-        avisoEl.classList.remove("d-none");
-      } else {
-        avisoEl.classList.add("d-none");
-      }
-    }
+    setTimeout(() => {
+      this.recalcularValoresLocalmente();
+    }, 100);
   }
 
   selecionarLocacao(locacao: RespostaLocacao) {
@@ -576,12 +549,10 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     equipamento: Equipamento,
     horas: number
   ): HTMLTableRowElement {
-    const { valorTotal, desconto, temDesconto } = calcularValorIndividual(
-      equipamento,
-      horas
-    );
-
     const valorSubtotal = equipamento.valorHora * horas;
+    
+    const temDesconto = horas > 2;
+    const desconto = temDesconto ? valorSubtotal * 0.1 : 0;
 
     const isAtendente =
       this.controladoraFuncionario.obterFuncionarioLogado()?.cargo ===
@@ -595,7 +566,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     tr.appendChild(
       this.criarCelula(formatarValorComSimbolo(equipamento.valorHora))
     );
-    const tdValorTotal = this.criarCelula(formatarValorComSimbolo(valorTotal));
+    const tdValorTotal = this.criarCelula(formatarValorComSimbolo(valorSubtotal));
     tr.appendChild(tdValorTotal);
 
     const tdDesconto = this.criarCelula(formatarValorComSimbolo(desconto));
@@ -637,28 +608,97 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     checkbox.className = "form-check-input";
 
     checkbox.addEventListener("change", () => {
-      const taxaLimpeza = checkbox.checked ? valorSubtotal * 0.1 : 0;
-      const valorFinal = valorSubtotal + taxaLimpeza - desconto;
+      this.recalcularValoresLocalmente();
+    });
+    
+    return checkbox;
+  }
+
+  private recalcularValoresLocalmente(): void {
+    if (!this.devolucaoData) {
+      return;
+    }
+
+    const horas = this.devolucaoData.locacao.horasContratadas;
+    const temDesconto = horas > 2;
+
+    let subtotalGeral = 0;
+    let descontoGeral = 0;
+    let taxasLimpezaGeral = 0;
+
+    document.querySelectorAll('[equip-codigo]').forEach(row => {
+      const equipamentoCodigo = row.getAttribute('equip-codigo');
+      if (!equipamentoCodigo) return;
       
-      celulaValor.textContent = formatarValorComSimbolo(valorFinal);
+      const equipamentoId = parseInt(equipamentoCodigo);
+      if (isNaN(equipamentoId)) return;
+      
+      const checkbox = row.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      const valorCell = row.children[2] as HTMLTableCellElement;
+      
+      const item = this.devolucaoData!.locacao.itens.find(i => i.equipamento.codigo === equipamentoId);
+      if (!item) return;
 
-      const subtotalEl = document.getElementById("subtotal-itens");
-      if (subtotalEl) {
-        const texto = subtotalEl.textContent?.trim() ?? "0";
-        const valorNumerico = parseFloat(
-          texto.replace("R$", "").replace(/\./g, "").replace(",", ".")
-        );
-        
-        const novoTotal = checkbox.checked
-          ? valorNumerico + valorSubtotal * 0.1
-          : valorNumerico - valorSubtotal * 0.1;
+      const subtotalBase = item.equipamento.valorHora * horas;
+      const desconto = temDesconto ? subtotalBase * 0.1 : 0;
+      const taxaLimpeza = checkbox?.checked ? subtotalBase * 0.1 : 0;
+      
+      const valorMostrado = subtotalBase + taxaLimpeza;
 
-        subtotalEl.textContent = novoTotal.toFixed(2).replace(".", ",");
+      if (valorCell) {
+        valorCell.textContent = `R$ ${valorMostrado.toFixed(2).replace(".", ",")}`;
       }
 
-      this.atualizarValorTotalComAvarias();
+      subtotalGeral += valorMostrado;
+      descontoGeral += desconto;
+      taxasLimpezaGeral += taxaLimpeza;
     });
-    return checkbox;
+
+    const valorAvarias = this.calcularValorTotalAvarias();
+
+    const valorTotal = subtotalGeral + valorAvarias - descontoGeral;
+
+    this.atualizarElementosTela({
+      subtotal: subtotalGeral,
+      desconto: descontoGeral,
+      taxasLimpeza: taxasLimpezaGeral,
+      valorAvarias: valorAvarias,
+      valorTotal: valorTotal
+    });
+  }
+
+  private atualizarElementosTela(valores: {
+    subtotal: number;
+    desconto: number;
+    taxasLimpeza: number;
+    valorAvarias: number;
+    valorTotal: number;
+  }): void {
+    const subtotalEl = document.getElementById("subtotal-itens");
+    if (subtotalEl) {
+      subtotalEl.textContent = valores.subtotal.toFixed(2).replace(".", ",");
+    }
+
+    const descontoEl = document.getElementById("desconto");
+    if (descontoEl) {
+      descontoEl.textContent = valores.desconto.toFixed(2).replace(".", ",");
+    }
+
+    const valorAvariasEl = document.getElementById("valor-avarias");
+    const valorAvariasLinhaEl = document.getElementById("valor-avarias-linha");
+    if (valorAvariasEl && valorAvariasLinhaEl) {
+      if (valores.valorAvarias > 0) {
+        valorAvariasEl.textContent = valores.valorAvarias.toFixed(2).replace(".", ",");
+        valorAvariasLinhaEl.classList.remove("d-none");
+      } else {
+        valorAvariasLinhaEl.classList.add("d-none");
+      }
+    }
+
+    const totalEl = document.getElementById("valor-total");
+    if (totalEl) {
+      totalEl.textContent = valores.valorTotal.toFixed(2).replace(".", ",");
+    }
   }
 
   public fecharModalAvaria(): void {
@@ -729,5 +769,22 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       output.className = "alert alert-danger mt-3 d-block";
       output.textContent = x;
     }
+  }
+
+  obterTaxasLimpezaSelecionadas(): Record<number, boolean> {
+    const taxas: Record<number, boolean> = {};
+    
+    document.querySelectorAll('[equip-codigo]').forEach(row => {
+      const equipamentoCodigo = row.getAttribute('equip-codigo');
+      if (!equipamentoCodigo) return;
+      
+      const equipamentoId = parseInt(equipamentoCodigo);
+      const checkbox = row.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      if (checkbox && !isNaN(equipamentoId)) {
+        taxas[equipamentoId] = checkbox.checked;
+      }
+    });
+    
+    return taxas;
   }
 }
