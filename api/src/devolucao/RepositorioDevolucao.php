@@ -22,4 +22,4 @@ interface RepositorioDevolucao {
      * @return array<int,array<string,mixed>> Lista de devoluções
      */
     public function obterTodos($filtro = null, $apenasLocacaoId = false);
-} 
+}

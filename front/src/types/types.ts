@@ -63,6 +63,24 @@ export type DadosLocacao = {
   }>;
 };
 
+export type DadosAvaria = {
+  avaliadorId: number;
+  descricao: string;
+  valorCobrar: number;
+  equipamentoId: number;
+  locacaoId?: number;
+  foto: File;
+};
+
+export type DadosAvariaVisao = {
+  avaliadorId: number;
+  descricao: string;
+  valorCobrar: number;
+  equipamento: { codigo: number; valorOriginal: number } | null;
+  locacaoId?: number;
+  foto: File;
+};
+
 export type DadosDevolucao = {
   locacaoId: number;
   registradoPor: Funcionario;

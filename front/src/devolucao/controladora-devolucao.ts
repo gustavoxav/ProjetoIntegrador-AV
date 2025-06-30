@@ -5,6 +5,7 @@ import { GestorLocacao } from "../locacao/gestor-locacao.js";
 import { VisaoEquipamento } from "../equipamento/visao-equipamento.js";
 import { VisaoFuncionario } from "../funcionario/visao-funcionario.js";
 import { ControladoraFuncionario } from "../funcionario/controladora-funcionario.js";
+import { DadosAvaria } from "../types/types.js";
 
 export class ControladoraDevolucao {
   private readonly gestor: GestorDevolucao;
@@ -133,6 +134,80 @@ export class ControladoraDevolucao {
         this.visao.exibirMensagemErro(error.getProblemas()[0]);
       } else {
         this.visao.exibirMensagemErro(error.message);
+      }
+    }
+  }
+
+  public async registrarAvarias(): Promise<void> {
+    try {
+      const dadosAvaria = this.visao.obterDadosAvarias();
+      const dadosFuncionario = this.visaoFuncionario?.obterDadosFuncionario();
+      console.log(
+        "Dados Avaria teste:",
+        dadosAvaria,
+        dadosAvaria &&
+          dadosAvaria?.valorCobrar <=
+            (dadosAvaria.equipamento?.valorOriginal ?? 0)
+      );
+      console.log("Dados Funcionário:", dadosFuncionario);
+      if (!dadosFuncionario?.codigo) {
+        this.visao.exibirMensagemErro(
+          "Selecione um funcionário responsável pela devolução"
+        );
+        return;
+      }
+
+      if (!dadosAvaria?.descricao) {
+        this.visao.exibirMensagemErro("Selecione um equipamento");
+        return;
+      }
+
+      if (!dadosAvaria?.valorCobrar) {
+        this.visao.exibirMensagemErro("O valor da avaria é obrigatório!");
+        return;
+      }
+      if (
+        dadosAvaria?.valorCobrar >
+        (dadosAvaria.equipamento?.valorOriginal ?? 0)
+      ) {
+        this.visao.exibirMensagemErro(
+          "O valor da avaria não pode ser maior que o valor do item!"
+        );
+        return;
+      }
+      console.log("Dados Avaria pre:", dadosAvaria);
+      const dadosAvariaFormatado: DadosAvaria = {
+        valorCobrar: dadosAvaria?.valorCobrar,
+        avaliadorId: dadosFuncionario.codigo,
+        descricao: dadosAvaria?.descricao,
+        equipamentoId: dadosAvaria?.equipamento?.codigo ?? 0,
+        locacaoId: dadosAvaria?.locacaoId,
+        foto: dadosAvaria?.foto,
+      };
+      console.log("Dados Avaria pos:", dadosAvariaFormatado);
+
+      try {
+        await this.gestor.registrarAvaria(dadosAvariaFormatado);
+
+        this.visao.exibirMensagemSucesso("Avaria registrada com sucesso!");
+
+        this.visao.fecharModalAvaria();
+      } catch (apiError) {
+        console.error("Erro na API:", apiError);
+        if (apiError instanceof ErroDominio) {
+          this.visao.exibirMensagemErro(apiError.getProblemas()[0]);
+        } else {
+          this.visao.exibirMensagemErro("Erro ao processar requisição");
+        }
+      }
+    } catch (error: unknown) {
+      console.error("Erro ao processar avaria:", error);
+      if (error instanceof ErroDominio) {
+        this.visao.exibirMensagemErro(error.getProblemas()[0]);
+      } else {
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro ao registrar avaria";
+        this.visao.exibirMensagemErro(errorMessage);
       }
     }
   }
