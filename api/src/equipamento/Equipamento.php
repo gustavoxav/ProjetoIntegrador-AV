@@ -51,5 +51,9 @@ class Equipamento implements JsonSerializable {
   {
     return $this->avarias;
   }
+    public function getCodigo(): string 
+  {
+    return $this->codigo;
+  }
 }
 ?>

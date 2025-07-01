@@ -45,7 +45,7 @@ create table locacao (
   id INT AUTO_INCREMENT PRIMARY KEY,
   data_hora_locacao TIMESTAMP,
   horas_contratadas INTEGER,
-  data_hora_entrega_prevista TIMESTAMP NOT NULL,
+  data_hora_entrega_prevista DATETIME NOT NULL,
   desconto DECIMAL(10,2) NOT NULL,
   valor_total DECIMAL(10,2) NOT NULL,
   cliente_id INTEGER NOT NULL,
@@ -76,6 +76,21 @@ create table devolucao (
   FOREIGN KEY (funcionario_id) REFERENCES funcionario(id)
 );
 
+-- Criação Avaria
+create table avaria (
+  id VARCHAR(36) PRIMARY KEY, -- UUID
+  data_hora_lancamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  avaliador_id INTEGER NOT NULL,
+  descricao TEXT NOT NULL,
+  foto_caminho VARCHAR(255) NOT NULL,
+  valor_cobrar DECIMAL(10,2) NOT NULL,
+  equipamento_id INTEGER NOT NULL,
+  locacao_id INTEGER NOT NULL,
+  FOREIGN KEY (avaliador_id) REFERENCES funcionario(id),
+  FOREIGN KEY (equipamento_id) REFERENCES equipamento(id),
+  FOREIGN KEY (locacao_id) REFERENCES locacao(id)
+);
+
 -- Índices para as tabelas
 CREATE INDEX idx_locacao_cliente ON locacao(cliente_id);
 CREATE INDEX idx_locacao_funcionario ON locacao(funcionario_id);
@@ -83,6 +98,10 @@ CREATE INDEX idx_item_locado_equipamento ON item_locado(equipamento_id);
 CREATE INDEX idx_item_locado_locacao ON item_locado(locacao_id);
 CREATE INDEX idx_devolucao_locacao ON devolucao(locacao_id);
 CREATE INDEX idx_devolucao_funcionario ON devolucao(funcionario_id);
+CREATE INDEX idx_avaria_equipamento ON avaria(equipamento_id);
+CREATE INDEX idx_avaria_locacao ON avaria(locacao_id);
+CREATE INDEX idx_avaria_avaliador ON avaria(avaliador_id);
+
 
 -- Cliente
 insert into cliente (nome_completo, foto, data_nascimento, cpf, telefone, email, endereco) values
@@ -93,10 +112,7 @@ insert into cliente (nome_completo, foto, data_nascimento, cpf, telefone, email,
 ('Mariano Costa', 'https://jpimg.com.br/uploads/2025/03/7-animais-mais-fofos-do-mundo.jpg', '1992-08-25', '65432198700', '(11) 92345-6789', 'marianocosta@gmail.com', 'Rua do Sol, 654'),
 ('Amanda Ribeiro', 'https://jpimg.com.br/uploads/2025/02/8-animais-mais-fortes-do-mundo.jpg', '1996-04-12', '12345678001', '(11) 99123-4567', 'amanda.ribeiro@gmail.com', 'Rua Jacarandá, 87'),
 ('Bruno Costa', 'https://portaledicase.com/wp-content/uploads/2025/02/Hipopotamo-1024x683.jpg', '1989-08-25', '23456789002', '(21) 99876-5432', 'bruno.costa@email.com', 'Av. Copacabana, 145'),
-('Carolina Mello', 'https://rizzoimobiliaria.com.br/images/media/dfe779831f7a3f38504a77dbfa883a341673881279.jpg', '1994-12-03', '34567890103', '(31) 98765-4321', 'carol.mello@gmail.com', 'Rua das Palmeiras, 321'),
-('Diego Nunes', 'https://cdn.gazetasp.com.br/img/c/825/500/dn_arquivo/2025/01/lobo-guara.jpg', '1992-01-10', '45678901204', '(41) 97654-3210', 'diego.nunes@hotmail.com', 'Travessa do Sol, 12'),
-('Elisa Martins', 'https://ogimg.infoglobo.com.br/in/14638550-9ee-f9a/FT1086A/20141123-125719.jpg', '1990-07-28', '56789012305', '(51) 96543-2109', 'elisa.martins@yahoo.com', 'Rua dos Lírios, 98'),
-('Felipe Gomes', 'https://ufape.com.br/wp-content/uploads/2024/06/Ufape-Hospital-Veterinario-filhote-de-cachorro-brincando-na-grama-GS2-MKT-Freepik.jpg', '1995-03-05', '67890123406', '(61) 95432-1098', 'felipe.gomes@outlook.com', 'Alameda Central, 250');
+('Carolina Mello', 'https://rizzoimobiliaria.com.br/images/media/dfe779831f7a3f38504a77dbfa883a341673881279.jpg', '1994-12-03', '34567890103', '(31) 98765-4321', 'carol.mello@gmail.com', 'Rua das Palmeiras, 321');
 
 -- Funcionario - Pimenta: "projetoI123456" - Senha:"123456"
 INSERT INTO funcionario (nome, cpf, senha_hash, salt, cargo) values
