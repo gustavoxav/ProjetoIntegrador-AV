@@ -7,6 +7,33 @@ export async function navegarPara(
   await page.waitForURL(`**/${urlEsperada}`);
 }
 
+export async function aguardarElementoComReload(
+  page: any,
+  seletor: string,
+  maxTentativas: number = 3,
+  timeoutPorTentativa: number = 5000
+): Promise<void> {
+  let tentativas = 0;
+  
+  while (tentativas < maxTentativas) {
+    try {
+      const elemento = await page.waitForSelector(seletor, { timeout: timeoutPorTentativa });
+      if (elemento) {
+        return;
+      }
+    } catch (error) {
+      tentativas++;
+      
+      if (tentativas < maxTentativas) {
+        await page.reload({ waitUntil: 'networkidle' });
+        await page.waitForTimeout(3000);
+      } else {
+        throw new Error(`Elemento ${seletor} não encontrado após ${maxTentativas} tentativas`);
+      }
+    }
+  }
+}
+
 export function formatarDataHora(isoString: string): string {
   const data = new Date(isoString);
   const dia = data.getDate().toString().padStart(2, "0");

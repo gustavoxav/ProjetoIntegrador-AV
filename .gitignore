@@ -32,3 +32,7 @@ api/vendor/
 .env
 /api/.env
 /front/.env
+
+# Playwright
+playwright/.auth
+front/playwright/.auth

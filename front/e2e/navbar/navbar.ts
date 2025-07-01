@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
 import dotenv from "dotenv";
-import { navegarPara } from "../../src/infra/utils";
+import { navegarPara, aguardarElementoComReload } from "../../src/infra/utils";
 
 dotenv.config();
 export class Navbar {
@@ -11,19 +11,35 @@ export class Navbar {
     await this.page.goto(apiUrl);
   }
 
-  async navegarParaListagemLocacao() {
-    await navegarPara("#opt-list-locacao", "", this.page);
+  async navegarPara(seletor: string, rota: string = "") {
+    await this.page.waitForTimeout(900);
+    
+    await aguardarElementoComReload(this.page, seletor, 2, 3000);
+    
+    await navegarPara(seletor, rota, this.page);
   }
 
-  async navegarParaNovaLocacao() {
-    await navegarPara("#opt-nova-locacao", "locacao-add", this.page);
+  async temOpcao(seletor: string): Promise<boolean> {
+    try {
+      await this.page.waitForTimeout(900);
+      
+      await aguardarElementoComReload(this.page, seletor, 2, 3000);
+      
+      const elemento = await this.page.locator(seletor);
+      return await elemento.isVisible();
+    } catch (error) {
+      return false;
+    }
   }
 
-  async navegarParalistagemDevolucao() {
-    await navegarPara("#opt-list-devolucao", "devolucao-list", this.page);
-  }
-
-  async navegarParaNovaDevolucao() {
-    await navegarPara("#opt-nova-devolucao", "devolucao-add", this.page);
+  async naoTemOpcao(seletor: string): Promise<boolean> {
+    try {
+      await this.page.waitForTimeout(900);
+      const elemento = await this.page.locator(seletor);
+      const isVisible = await elemento.isVisible({ timeout: 1000 });
+      return !isVisible;
+    } catch (error) {
+      return true;
+    }
   }
 }

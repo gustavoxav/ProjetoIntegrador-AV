@@ -15,7 +15,12 @@ export class Login {
   async preencherLogin(cpf: string, senha: string) {
     await this.page.fill("#cpf", cpf);
     await this.page.fill("#senha", senha);
+  
+    await this.page.waitForTimeout(500);
+  
     await this.page.click("#realizar-login");
+  
+    await this.page.waitForTimeout(1000);
   }
 
   async verificarCampoLogin(cpf: string, senha: string) {

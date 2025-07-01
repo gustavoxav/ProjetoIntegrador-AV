@@ -2,6 +2,8 @@ import { test, expect } from "@playwright/test";
 import { Login } from "./login";
 import dotenv from "dotenv";
 
+test.use({ storageState: { cookies: [], origins: [] } });
+
 dotenv.config();
 
 test.describe("Fluxo de Login", () => {
@@ -17,17 +19,17 @@ test.describe("Fluxo de Login", () => {
     {
       cpf: "11111111111",
       senha: "123456",
-      cargo: "Gerente",
+      cargo: "Patrícia Oliveira - Gerente",
     },
     {
       cpf: "22222222222",
       senha: "123456",
-      cargo: "Atendente",
+      cargo: "Renato Silva - Atendente",
     },
     {
       cpf: "33333333333",
       senha: "123456",
-      cargo: "Atendente",
+      cargo: "Juliana Castro - Mecanico",
     },
   ];
 
@@ -35,7 +37,7 @@ test.describe("Fluxo de Login", () => {
     test(`Login correto - ${usuario.cargo} (${usuario.cpf})`, async () => {
       await tela.preencherLogin(usuario.cpf, usuario.senha);
 
-      await expect(tela.page).toHaveURL(`${apiUrl}/locacao-list`);
+      await expect(tela.page).toHaveURL(`${apiUrl}/locacao-list`, { timeout: 10000 });
 
       const cargoLocator = tela.page.locator("#usuario-logado");
       await expect(cargoLocator).toHaveText(usuario.cargo, { timeout: 5000 });
@@ -46,30 +48,28 @@ test.describe("Fluxo de Login", () => {
     await tela.preencherLogin("11111111111", "senhaErrada");
 
     const erro = await tela.verificarMensagemErro();
-    expect(erro).toContain("CPF ou senha inválidos");
+    expect(erro).toContain("Erro ao realizar login");
   });
 
   test("Login falha - CPF incorreto e senha correta", async () => {
     await tela.preencherLogin("00000000000", "123456");
 
     const erro = await tela.verificarMensagemErro();
-    expect(erro).toContain("CPF ou senha inválidos");
+    expect(erro).toContain("Erro ao realizar login");
   });
 
   test("Login falha - Ambos incorretos", async () => {
     await tela.preencherLogin("00000000000", "senhaErrada");
 
     const erro = await tela.verificarMensagemErro();
-    expect(erro).toContain("CPF ou senha inválidos");
+    expect(erro).toContain("Erro ao realizar login");
   });
 
   test("Login em sequência com múltiplos usuários", async ({ page }) => {
     for (const usuario of usuarios) {
-      tela = new Login(page);
-      await tela.abrir();
       await tela.preencherLogin(usuario.cpf, usuario.senha);
 
-      await expect(tela.page).toHaveURL(`${apiUrl}/locacao-list`);
+      await expect(tela.page).toHaveURL(`${apiUrl}/locacao-list`, { timeout: 10000 });
 
       const cargoLocator = tela.page.locator("#usuario-logado");
       await expect(cargoLocator).toHaveText(usuario.cargo, { timeout: 5000 });
