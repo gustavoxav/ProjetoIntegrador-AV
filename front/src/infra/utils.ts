@@ -10,8 +10,8 @@ export async function navegarPara(
 export async function aguardarElementoComReload(
   page: any,
   seletor: string,
-  maxTentativas: number = 3,
-  timeoutPorTentativa: number = 5000
+  maxTentativas: number = 4,
+  timeoutPorTentativa: number = 10000
 ): Promise<void> {
   let tentativas = 0;
   
