@@ -14,14 +14,9 @@ import type {
 import {
   formatarDataHora,
   calcularHorasUtilizadas,
-  calcularHorasCobranca,
   formatarData,
 } from "../infra/utils.js";
-import {
-  calcularValores,
-  calcularValorIndividual,
-  formatarValorComSimbolo,
-} from "../infra/calculadora-valores.js";
+import { formatarValorComSimbolo } from "../infra/calculadora-valores.js";
 import { ControladoraDevolucao } from "./controladora-devolucao.js";
 import { VisaoFuncionarioEmHTML } from "../funcionario/visao-funcionario-html.js";
 import { VisaoEquipamentoEmHTML } from "../equipamento/visao-equipamento-html.js";
@@ -136,7 +131,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   }
 
   public exibirRelatorio(retorno: RespostaRelatorioDevolucao) {
-    const { dados, periodo, resumo } = retorno.relatorio;
+    const { dados, resumo } = retorno.relatorio;
     const canvas = document.getElementById("grafico-gevolucao");
     const resumoContainer = document.getElementById("resumo-relatorio");
     const totalGeralSpan = document.getElementById("resumo-total-geral");
@@ -233,10 +228,12 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       <td>${avaria.descricao}</td>
       <td>R$ ${avaria.valorCobrar.toFixed(2).replace(".", ",")}</td>
       <td>
-        <img src="${this.construirUrlImagem(avaria.id)}" 
+        <img src="${this.construirUrlImagem(Number(avaria.id))}" 
              alt="Avaria" 
              style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;"
-             onclick="window.open('${this.construirUrlImagem(avaria.id)}', '_blank')">
+             onclick="window.open('${this.construirUrlImagem(
+               Number(avaria.id)
+             )}', '_blank')">
       </td>
     `;
     tbody.appendChild(row);
@@ -245,12 +242,15 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
   }
 
   private construirUrlImagem(avariaId: number): string {
-    const urlApi = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+    const urlApi = import.meta.env.VITE_API_URL ?? "http://localhost:8000/api";
     return `${urlApi}/avarias/foto/${avariaId}`;
   }
 
   private calcularValorTotalAvarias(): number {
-    return this.avariasAdicionadas.reduce((total, avaria) => total + avaria.valorCobrar, 0);
+    return this.avariasAdicionadas.reduce(
+      (total, avaria) => total + avaria.valorCobrar,
+      0
+    );
   }
 
   obterDadosAvarias(): DadosAvariaVisao | null {
@@ -409,7 +409,8 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       );
     }
     if (horasContratadas) {
-      horasContratadas.textContent = devolucao.locacao.horasContratadas.toString();
+      horasContratadas.textContent =
+        devolucao.locacao.horasContratadas.toString();
     }
     if (horasTexto) {
       horasTexto.textContent =
@@ -421,7 +422,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         devolucao.locacao.dataHoraLocacao,
         devolucao.dataHoraDevolucao
       );
-      
+
       if (horasCalculadas.minutos > 0) {
         horasUtilizadas.textContent = `${horasCalculadas.horas}h ${horasCalculadas.minutos}min`;
       } else {
@@ -429,8 +430,8 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       }
 
       const avisoEl = document.getElementById("aviso-valor-minimo");
-        if (avisoEl) {
-          if (horasCalculadas.horas < devolucao.locacao.horasContratadas) {
+      if (avisoEl) {
+        if (horasCalculadas.horas < devolucao.locacao.horasContratadas) {
           avisoEl.classList.remove("d-none");
         } else {
           avisoEl.classList.add("d-none");
@@ -438,7 +439,9 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       }
     }
 
-    const equipamentos = devolucao.locacao.itens.map((item) => item.equipamento);
+    const equipamentos = devolucao.locacao.itens.map(
+      (item) => item.equipamento
+    );
     this.atualizarTabelaEquipamentos(
       equipamentos,
       devolucao.locacao.horasContratadas
@@ -491,29 +494,6 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     }
   }
 
-  private atualizarValoresTotais(
-    equipamentos: Equipamento[],
-    horas: number,
-    valorTotalSimulacao?: number
-  ): void {
-    const resultado = calcularValores(equipamentos, horas);
-
-    const subtotalEl = document.getElementById("subtotal-itens");
-    const descontoEl = document.getElementById("desconto");
-    const totalEl = document.getElementById("valor-total");
-
-    if (subtotalEl)
-      subtotalEl.textContent = resultado.subtotal.toFixed(2).replace(".", ",");
-    if (descontoEl)
-      descontoEl.textContent = resultado.desconto.toFixed(2).replace(".", ",");
-    if (totalEl) {
-      const valorBase = valorTotalSimulacao ?? resultado.valorTotal;
-      const valorAvarias = this.calcularValorTotalAvarias();
-      const valorFinal = valorBase + valorAvarias;
-      totalEl.textContent = valorFinal.toFixed(2).replace(".", ",");
-    }
-  }
-
   private atualizarHorasNaTela(horas: number): void {
     const horasContratadasEl = document.getElementById("horas-contratadas");
     if (horasContratadasEl) horasContratadasEl.textContent = horas.toString();
@@ -550,7 +530,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     horas: number
   ): HTMLTableRowElement {
     const valorSubtotal = equipamento.valorHora * horas;
-    
+
     const temDesconto = horas > 2;
     const desconto = temDesconto ? valorSubtotal * 0.1 : 0;
 
@@ -566,7 +546,9 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     tr.appendChild(
       this.criarCelula(formatarValorComSimbolo(equipamento.valorHora))
     );
-    const tdValorTotal = this.criarCelula(formatarValorComSimbolo(valorSubtotal));
+    const tdValorTotal = this.criarCelula(
+      formatarValorComSimbolo(valorSubtotal)
+    );
     tr.appendChild(tdValorTotal);
 
     const tdDesconto = this.criarCelula(formatarValorComSimbolo(desconto));
@@ -577,7 +559,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const tdLimp = document.createElement("td");
     const textLimp = document.createElement("span");
     textLimp.textContent = " + 10%";
-    tdLimp.appendChild(this.checkLimpeza(valorSubtotal, tdValorTotal, desconto));
+    tdLimp.appendChild(this.checkLimpeza());
     tdLimp.appendChild(textLimp);
     tr.appendChild(tdLimp);
 
@@ -598,11 +580,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     return td;
   }
 
-  private checkLimpeza(
-    valorSubtotal: number,
-    celulaValor: HTMLTableCellElement,
-    desconto: number
-  ): HTMLInputElement {
+  private checkLimpeza(): HTMLInputElement {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.className = "form-check-input";
@@ -610,7 +588,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     checkbox.addEventListener("change", () => {
       this.recalcularValoresLocalmente();
     });
-    
+
     return checkbox;
   }
 
@@ -626,27 +604,33 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     let descontoGeral = 0;
     let taxasLimpezaGeral = 0;
 
-    document.querySelectorAll('[equip-codigo]').forEach(row => {
-      const equipamentoCodigo = row.getAttribute('equip-codigo');
+    document.querySelectorAll("[equip-codigo]").forEach((row) => {
+      const equipamentoCodigo = row.getAttribute("equip-codigo");
       if (!equipamentoCodigo) return;
-      
+
       const equipamentoId = parseInt(equipamentoCodigo);
       if (isNaN(equipamentoId)) return;
-      
-      const checkbox = row.querySelector('input[type="checkbox"]') as HTMLInputElement;
+
+      const checkbox = row.querySelector(
+        'input[type="checkbox"]'
+      ) as HTMLInputElement;
       const valorCell = row.children[2] as HTMLTableCellElement;
-      
-      const item = this.devolucaoData!.locacao.itens.find(i => i.equipamento.codigo === equipamentoId);
+
+      const item = this.devolucaoData!.locacao.itens.find(
+        (i) => i.equipamento.codigo === equipamentoId
+      );
       if (!item) return;
 
       const subtotalBase = item.equipamento.valorHora * horas;
       const desconto = temDesconto ? subtotalBase * 0.1 : 0;
       const taxaLimpeza = checkbox?.checked ? subtotalBase * 0.1 : 0;
-      
+
       const valorMostrado = subtotalBase + taxaLimpeza;
 
       if (valorCell) {
-        valorCell.textContent = `R$ ${valorMostrado.toFixed(2).replace(".", ",")}`;
+        valorCell.textContent = `R$ ${valorMostrado
+          .toFixed(2)
+          .replace(".", ",")}`;
       }
 
       subtotalGeral += valorMostrado;
@@ -663,7 +647,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       desconto: descontoGeral,
       taxasLimpeza: taxasLimpezaGeral,
       valorAvarias: valorAvarias,
-      valorTotal: valorTotal
+      valorTotal: valorTotal,
     });
   }
 
@@ -688,7 +672,9 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const valorAvariasLinhaEl = document.getElementById("valor-avarias-linha");
     if (valorAvariasEl && valorAvariasLinhaEl) {
       if (valores.valorAvarias > 0) {
-        valorAvariasEl.textContent = valores.valorAvarias.toFixed(2).replace(".", ",");
+        valorAvariasEl.textContent = valores.valorAvarias
+          .toFixed(2)
+          .replace(".", ",");
         valorAvariasLinhaEl.classList.remove("d-none");
       } else {
         valorAvariasLinhaEl.classList.add("d-none");
@@ -773,18 +759,20 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
 
   obterTaxasLimpezaSelecionadas(): Record<number, boolean> {
     const taxas: Record<number, boolean> = {};
-    
-    document.querySelectorAll('[equip-codigo]').forEach(row => {
-      const equipamentoCodigo = row.getAttribute('equip-codigo');
+
+    document.querySelectorAll("[equip-codigo]").forEach((row) => {
+      const equipamentoCodigo = row.getAttribute("equip-codigo");
       if (!equipamentoCodigo) return;
-      
+
       const equipamentoId = parseInt(equipamentoCodigo);
-      const checkbox = row.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      const checkbox = row.querySelector(
+        'input[type="checkbox"]'
+      ) as HTMLInputElement;
       if (checkbox && !isNaN(equipamentoId)) {
         taxas[equipamentoId] = checkbox.checked;
       }
     });
-    
+
     return taxas;
   }
 }
