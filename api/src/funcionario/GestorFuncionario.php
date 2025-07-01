@@ -37,20 +37,20 @@ class GestorFuncionario
     {
         try {
             if (empty($cpf) || empty($senha)) {
-                throw new CredenciaisInvalidasException("CPF e senha são obrigatórios para o login.");
+                throw new \CredenciaisInvalidasException("CPF e senha são obrigatórios para o login.");
             }
             if (strlen($cpf) !== 11) {
-                throw new CredenciaisInvalidasException("CPF inválido. Deve conter 11 dígitos.");
+                throw new \CredenciaisInvalidasException("CPF inválido. Deve conter 11 dígitos.");
             }
 
             $funcionario = $this->repositorioFuncionario->buscarFuncionarioFiltro($cpf);
 
             if (!$funcionario) {
-                throw new CredenciaisInvalidasException("CPF ou senha inválidos");
+                throw new \CredenciaisInvalidasException("CPF ou senha inválidos");
             }
 
             if (!AuthHelper::verificarSenha($senha, $funcionario->getSalt(), $funcionario->getSenhaHash())) {
-                throw new CredenciaisInvalidasException("CPF ou senha inválidos");
+                throw new \CredenciaisInvalidasException("CPF ou senha inválidos");
             }
 
             $dadosFuncionario = [
@@ -63,10 +63,8 @@ class GestorFuncionario
             AuthHelper::iniciarSessao($dadosFuncionario);
 
             return $dadosFuncionario;
-        } catch (CredenciaisInvalidasException $e) {
-            throw $e;
         } catch (\Throwable $error) {
-            throw new ErroLoginException($error->getMessage());
+            throw new \ErroLoginException("Erro ao realizar login: " . $error->getMessage());
         }
     }
 

@@ -31,21 +31,21 @@ describe("Valida retorno de erros do Login de Funcionário", function () {
 
     it("Deve lançar CredenciaisInvalidasException se o CPF não existir", function () {
         expect(fn() => $this->gestor->login("00000000000", "123456"))
-            ->toThrow(CredenciaisInvalidasException::class);
+            ->toThrow(new \ErroLoginException, "CPF ou senha inválidos");
     });
 
     it("Deve lançar CredenciaisInvalidasException se a senha estiver incorreta", function () {
         expect(fn() => $this->gestor->login("11111111111", "senhaerrada"))
-            ->toThrow(CredenciaisInvalidasException::class);
+            ->toThrow(new \ErroLoginException, "CPF ou senha inválidos");
     });
 
     it("Deve lançar CredenciaisInvalidasException se o CPF tiver menos de 11 dígitos", function () {
         expect(fn() => $this->gestor->login("123", "123456"))
-            ->toThrow(CredenciaisInvalidasException::class, "CPF inválido. Deve conter 11 dígitos.");
+            ->toThrow(new \ErroLoginException, "CPF inválido. Deve conter 11 dígitos.");
     });
 
     it("Deve lançar CredenciaisInvalidasException se CPF ou senha forem vazios", function () {
         expect(fn() => $this->gestor->login("", ""))
-            ->toThrow(CredenciaisInvalidasException::class);
+            ->toThrow(new \ErroLoginException, "CPF e senha são obrigatórios para o login.");
     });
 });
