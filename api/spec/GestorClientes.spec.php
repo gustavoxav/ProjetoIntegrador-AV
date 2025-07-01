@@ -1,12 +1,19 @@
 <?php
 
+require_once __DIR__ . '/../src/infra/helperTests.php';
+
 describe("GestorCliente", function () {
     beforeAll(function () {
         $this->pdo = conectarPDO();
         $this->pdo->exec(file_get_contents('db/test_script.sql'));
+        realizarLoginTests('Gerente');
         $this->clienteRepo = new RepositorioClienteEmBDR($this->pdo);
     });
-    
+
+    afterAll(function () {
+        realizarLogout();
+    });
+
 
     it("Deve retornar todos os clientes quando nenhum filtro é passado", function () {
         $gestor = new GestorCliente($this->clienteRepo);
@@ -24,7 +31,7 @@ describe("GestorCliente", function () {
 
         expect($cliente)->not->toBe(null);
         expect($cliente)->toBeAnInstanceOf(Cliente::class);
-        expect($cliente->codigo)->toEqual(1);
+        expect($cliente->getCodigo())->toEqual(1);
     });
 
     it("Deve retornar um cliente por CPF", function () {
@@ -33,7 +40,7 @@ describe("GestorCliente", function () {
 
         expect($cliente)->not->toBe(null);
         expect($cliente)->toBeAnInstanceOf(Cliente::class);
-        expect($cliente->cpf)->toEqual("12345678900");
+        expect($cliente->getCpf())->toEqual("12345678900");
     });
 
     it("Deve retornar null quando o cliente não é encontrado", function () {
