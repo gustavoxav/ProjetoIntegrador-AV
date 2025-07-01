@@ -13,7 +13,7 @@ describe("Login de Funcionário", function () {
     it("Deve fazer login com sucesso com CPF e senha corretos", function () {
         $dados = $this->gestor->login("11111111111", "123456");
 
-        expect($dados)->toBeArray();
+        expect($dados)->toBeA('array');
         expect($dados['nome'])->toEqual("Patrícia Oliveira");
         expect($dados['cpf'])->toEqual("11111111111");
         expect($dados['cargo'])->toBe("Gerente");

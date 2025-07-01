@@ -20,13 +20,15 @@ class AuthHelper {
      * Configura parâmetros seguros para cookies de sessão
      */
     private static function configurarCookiesSessao(): void {
-        session_set_cookie_params([
-            'lifetime' => self::TIMEOUT_SESSAO,
-            'path' => '/',
-            'domain' => '',
-            'secure' => false,
-            'httponly' => false,
-        ]);
+        if (!headers_sent()) {
+            session_set_cookie_params([
+                'lifetime' => self::TIMEOUT_SESSAO,
+                'path' => '/',
+                'domain' => '',
+                'secure' => false,
+                'httponly' => false,
+            ]);
+        }
     }
 
     /**
@@ -34,7 +36,7 @@ class AuthHelper {
      * @param array{codigo: int, nome: string, cpf: string, cargo: string} $funcionario
      */
     public static function iniciarSessao(array $funcionario): void {
-        if (session_status() === PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
             self::configurarCookiesSessao();
             session_start();
         }
@@ -42,14 +44,16 @@ class AuthHelper {
         $_SESSION['funcionario'] = $funcionario;
         $_SESSION['ultimo_acesso'] = time();
         
-        session_regenerate_id(true);
+        if (!headers_sent()) {
+            session_regenerate_id(true);
+        }
     }
 
     /**
      * Verifica se o usuário está autenticado e se a sessão não expirou
      */
     public static function estaAutenticado(): bool {
-        if (session_status() === PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
             self::configurarCookiesSessao();
             session_start();
         }
@@ -83,14 +87,14 @@ class AuthHelper {
      * Destrói a sessão atual (logout)
      */
     public static function destruirSessao(): void {
-        if (session_status() === PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
             self::configurarCookiesSessao();
             session_start();
         }
 
         $_SESSION = array();
 
-        if (ini_get("session.use_cookies")) {
+        if (ini_get("session.use_cookies") && !headers_sent()) {
             $params = session_get_cookie_params();
             $sessionName = session_name();
             if ($sessionName !== false) {
@@ -101,7 +105,9 @@ class AuthHelper {
             }
         }
 
-        session_destroy();
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
     }
 
     /**
