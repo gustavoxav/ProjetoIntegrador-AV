@@ -10,11 +10,12 @@ class GestorEquipamento
 
     /**
      * Buscar um Equipamento por Código. Caso não tenha nenhum filtro, retorna todos os equipamentos.
+     * Pode retornar objetos Equipamento ou arrays serializados dependendo da presença do repositório de avarias.
      *
-     * @param int|null $filtro
-     * @return Equipamento[]|array<string,mixed>
+     * @param int|null $filtro Código do equipamento ou null para buscar todos
+     * @return mixed Equipamentos, dados serializados ou null
      */
-    public function obterEquipamentos(int|null $filtro): array|Equipamento|null
+    public function obterEquipamentos(int|null $filtro): mixed
     {
         try {
             if (is_null($filtro)) {

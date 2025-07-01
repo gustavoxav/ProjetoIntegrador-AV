@@ -116,7 +116,18 @@ class CalculadoraPagamento {
     /**
      * Retornar apenas o valor total (usa em registrarDevolucao)
      * 
-     * @param array $locacao Dados da locação
+     * @param array{
+     *     dataHoraLocacao: string,
+     *     horasContratadas: int,
+     *     dataHoraEntregaPrevista: string,
+     *     codigo?: int,
+     *     itens: array<int, array{
+     *         equipamento: array{
+     *             codigo: int,
+     *             valorHora: float
+     *         }
+     *     }>
+     * } $locacao Dados da locação
      * @param string $dataHoraDevolucao Data e hora da devolução
      * @param array<int, bool>|null $taxasLimpeza Array associativo [equipamentoId => temTaxa]
      * @return float Valor total a ser pago
@@ -128,6 +139,21 @@ class CalculadoraPagamento {
 
     /**
      * Calcula as horas reais baseado na lógica existente
+     * 
+     * @param array{
+     *     dataHoraLocacao: string,
+     *     horasContratadas: int,
+     *     dataHoraEntregaPrevista: string,
+     *     codigo?: int,
+     *     itens: array<int, array{
+     *         equipamento: array{
+     *             codigo: int,
+     *             valorHora: float
+     *         }
+     *     }>
+     * } $locacao Dados da locação
+     * @param string $dataHoraDevolucao Data e hora da devolução
+     * @return int Horas reais calculadas
      */
     private function calcularHorasReais(array $locacao, string $dataHoraDevolucao): int {
         $dataHoraLocacao = new DateTime($locacao['dataHoraLocacao']);
@@ -169,7 +195,7 @@ class CalculadoraPagamento {
             if ($minutosExcedentes > 0) {
                 $horasReais += 1;
             }
-            return $horasReais;
+            return (int)$horasReais;
         }
     }
 } 

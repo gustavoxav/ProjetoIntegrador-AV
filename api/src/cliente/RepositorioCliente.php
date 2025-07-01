@@ -23,7 +23,7 @@ interface RepositorioCliente
    * Salva um novo cliente no banco de dados.
    * 
    * @param Cliente $cliente O cliente a ser salvo
-   * @return array<string, mixed> Os dados do cliente salvo (inclusive com ID)
+   * @return Cliente O cliente salvo (inclusive com ID)
    * @throws RepositorioException Em caso de erro de persistência
    */
     public function salvar(Cliente $cliente): Cliente;

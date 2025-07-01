@@ -13,6 +13,19 @@ class Equipamento implements JsonSerializable {
     private ?string $numeroSeguro = null
   ) {}
 
+  /**
+   * @return array{
+   *   codigo: int,
+   *   modelo: string,
+   *   fabricante: string,
+   *   descricao: string,
+   *   valorCompra: float,
+   *   valorHora: float,
+   *   avarias: string,
+   *   disponivel: bool,
+   *   numeroSeguro: string|null
+   * }
+   */
   public function jsonSerialize(): array {
     return [
       'codigo' => $this->codigo,
@@ -51,7 +64,7 @@ class Equipamento implements JsonSerializable {
   {
     return $this->avarias;
   }
-    public function getCodigo(): string 
+    public function getCodigo(): int 
   {
     return $this->codigo;
   }

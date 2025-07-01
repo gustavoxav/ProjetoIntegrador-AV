@@ -5,6 +5,9 @@ class RepositorioRelatorioEmBDR implements RepositorioRelatorio {
 		private PDO $pdo
 	) {}
 
+	/**
+	 * @return array<array<string, mixed>>
+	 */
 	public function buscarLocacoesDevolvidasPorPeriodo(string $dataInicial, string $dataFinal): array {
 		try {
 			$sql = "
@@ -35,6 +38,9 @@ class RepositorioRelatorioEmBDR implements RepositorioRelatorio {
 		}
 	}
 
+	/**
+	 * @return array<array<string, mixed>>
+	 */
 	public function buscarTop10ItensMaisAlugados(string $dataInicial, string $dataFinal): array {
 		try {
 			$sql = "
@@ -98,6 +104,7 @@ class RepositorioRelatorioEmBDR implements RepositorioRelatorio {
 
 	/**
 	 * Busca a soma das locações dos itens fora do TOP 10
+	 * @param array<int> $top10Ids
 	 */
 	public function buscarQuantidadeOutrosItens(string $dataInicial, string $dataFinal, array $top10Ids): int {
 		try {

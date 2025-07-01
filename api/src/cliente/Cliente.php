@@ -14,6 +14,16 @@ class Cliente implements JsonSerializable {
 
   /**
    * qnd a gnt implementa o jsonSerialize, o json_encode vai usar o retorno desse metodo para serializar o objeto
+   * @return array{
+   *   codigo: int,
+   *   nomeCompleto: string,
+   *   dataNascimento: string,
+   *   cpf: string,
+   *   telefone: string,
+   *   email: string,
+   *   endereco: string,
+   *   foto: string
+   * }
    */
   public function jsonSerialize(): array {
     return [
@@ -28,11 +38,14 @@ class Cliente implements JsonSerializable {
     ];
   }
 
+  /**
+   * @return array<string> Array de mensagens de erro
+   */
   public function validar(): array
   {
     $erros = [];
 
-    if (!is_string($this->nomeCompleto) || trim($this->nomeCompleto) === '') {
+    if (trim($this->nomeCompleto) === '') {
       $erros[] = 'O Nome completo é inválido.';
     }
     if (!ctype_digit($this->cpf) || strlen($this->cpf) !== 11) {

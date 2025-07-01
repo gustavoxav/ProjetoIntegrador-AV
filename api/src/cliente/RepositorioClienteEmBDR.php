@@ -89,7 +89,7 @@ class RepositorioClienteEmBDR implements RepositorioCliente
    * Salva um novo cliente no banco de dados.
    * 
    * @param Cliente $cliente O cliente a ser salvo
-   * @return array<string, mixed> Os dados do cliente salvo (inclusive com ID)
+   * @return Cliente O cliente salvo (inclusive com ID)
    * @throws RepositorioException Em caso de erro de persistência
    */
   public function salvar(Cliente $cliente): Cliente
@@ -103,11 +103,11 @@ class RepositorioClienteEmBDR implements RepositorioCliente
       $ps->execute([
         ':nome' => $cliente->getNomeCompleto(),
         ':cpf' => $cliente->getCpf(),
-        ':telefone' => $cliente->getTelefone() ?? '',
-        ':data_nascimento' => $cliente->getDataNascimento() ?? null,
-        ':email' => $cliente->getEmail() ?? '',
-        ':endereco' => $cliente->getEndereco() ?? '',
-        ':foto' => $cliente->getFoto() ?? '',
+        ':telefone' => $cliente->getTelefone(),
+        ':data_nascimento' => $cliente->getDataNascimento(),
+        ':email' => $cliente->getEmail(),
+        ':endereco' => $cliente->getEndereco(),
+        ':foto' => $cliente->getFoto(),
       ]);
 
       $id = (int) $this->pdo->lastInsertId();

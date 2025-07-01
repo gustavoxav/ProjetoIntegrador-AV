@@ -6,7 +6,7 @@ interface RepositorioRelatorio {
    * 
    * @param string $dataInicial Data inicial no formato Y-m-d
    * @param string $dataFinal Data final no formato Y-m-d
-   * @return array Array com dados agrupados por data
+   * @return array<array<string, mixed>> Array com dados agrupados por data
    */
   public function buscarLocacoesDevolvidasPorPeriodo(string $dataInicial, string $dataFinal): array;
 
@@ -15,7 +15,7 @@ interface RepositorioRelatorio {
    * 
    * @param string $dataInicial Data inicial no formato Y-m-d
    * @param string $dataFinal Data final no formato Y-m-d
-   * @return array Array com ranking de equipamentos mais alugados
+   * @return array<array<string, mixed>> Array com ranking de equipamentos mais alugados
    */
   public function buscarTop10ItensMaisAlugados(string $dataInicial, string $dataFinal): array;
 
@@ -33,7 +33,7 @@ interface RepositorioRelatorio {
    * 
    * @param string $dataInicial Data inicial no formato Y-m-d
    * @param string $dataFinal Data final no formato Y-m-d
-   * @param array $top10Ids Array com IDs dos equipamentos do TOP 10
+   * @param array<int> $top10Ids Array com IDs dos equipamentos do TOP 10
    * @return int Quantidade de locações dos outros itens
    */
   public function buscarQuantidadeOutrosItens(string $dataInicial, string $dataFinal, array $top10Ids): int;

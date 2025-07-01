@@ -31,6 +31,7 @@ class AuthHelper {
 
     /**
      * Inicia uma sessão para o funcionário autenticado
+     * @param array{codigo: int, nome: string, cpf: string, cargo: string} $funcionario
      */
     public static function iniciarSessao(array $funcionario): void {
         if (session_status() === PHP_SESSION_NONE) {
@@ -68,6 +69,7 @@ class AuthHelper {
 
     /**
      * Obtém os dados do funcionário logado
+     * @return array{codigo: int, nome: string, cpf: string, cargo: string}|null
      */
     public static function obterFuncionarioLogado(): array|null {
         if (!self::estaAutenticado()) {

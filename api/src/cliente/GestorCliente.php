@@ -68,7 +68,7 @@ class GestorCliente
 
         $clienteSalvo = $this->repositorioCliente->salvar($cliente);
 
-        return $clienteSalvo;
+        return $clienteSalvo->jsonSerialize();
     }
 
 

@@ -11,6 +11,14 @@ class Funcionario implements JsonSerializable {
     private string $senha_hash = '',
   ) {}
 
+  /**
+   * @return array{
+   *   codigo: int,
+   *   nome: string,
+   *   cpf: string,
+   *   cargo: string
+   * }
+   */
   public function jsonSerialize(): array {
     return [
       'codigo' => $this->codigo,

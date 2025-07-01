@@ -10,7 +10,7 @@ class GestorRelatorio {
 	 * 
 	 * @param string|null $dataInicial Data inicial (Y-m-d)
 	 * @param string|null $dataFinal Data final (Y-m-d)
-	 * @return array Dados formatados para gráfico de colunas
+	 * @return array<string, mixed> Dados formatados para gráfico de colunas
 	 */
 	public function gerarRelatorioLocacoesDevolvidasPorPeriodo(?string $dataInicial = null, ?string $dataFinal = null): array {
 		try {
@@ -62,7 +62,7 @@ class GestorRelatorio {
 	 * 
 	 * @param string|null $dataInicial Data inicial (Y-m-d)
 	 * @param string|null $dataFinal Data final (Y-m-d)
-	 * @return array Dados formatados para gráfico de pizza e tabela
+	 * @return array<string, mixed> Dados formatados para gráfico de pizza e tabela
 	 */
 	public function gerarRelatorioTop10ItensMaisAlugados(?string $dataInicial = null, ?string $dataFinal = null): array {
 		try {
