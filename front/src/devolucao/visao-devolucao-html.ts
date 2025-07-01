@@ -14,6 +14,7 @@ import type {
 import {
   formatarDataHora,
   calcularHorasUtilizadas,
+  calcularHorasCobranca,
   formatarData,
 } from "../infra/utils.js";
 import { formatarValorComSimbolo } from "../infra/calculadora-valores.js";
@@ -403,11 +404,6 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const horasTexto = document.getElementById("horas-texto");
     const horasUtilizadas = document.getElementById("horas-utilizadas");
 
-    if (dataLocacao) {
-      dataLocacao.textContent = formatarDataHora(
-        devolucao.locacao.dataHoraLocacao
-      );
-    }
     if (horasContratadas) {
       horasContratadas.textContent =
         devolucao.locacao.horasContratadas.toString();
@@ -417,12 +413,12 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
         devolucao.locacao.horasContratadas === 1 ? "hora" : "horas";
     }
 
-    if (horasUtilizadas) {
-      const horasCalculadas = calcularHorasUtilizadas(
-        devolucao.locacao.dataHoraLocacao,
-        devolucao.dataHoraDevolucao
-      );
+    const horasCalculadas = calcularHorasUtilizadas(
+      devolucao.locacao.dataHoraLocacao,
+      devolucao.dataHoraDevolucao
+    );
 
+    if (horasUtilizadas) {
       if (horasCalculadas.minutos > 0) {
         horasUtilizadas.textContent = `${horasCalculadas.horas}h ${horasCalculadas.minutos}min`;
       } else {
@@ -442,9 +438,17 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     const equipamentos = devolucao.locacao.itens.map(
       (item) => item.equipamento
     );
+    
+    const horasParaCobranca = calcularHorasCobranca(
+      devolucao.locacao.dataHoraLocacao,
+      devolucao.dataHoraDevolucao
+    );
+    
+    const horasFinal = Math.max(horasParaCobranca, devolucao.locacao.horasContratadas);
+    
     this.atualizarTabelaEquipamentos(
       equipamentos,
-      devolucao.locacao.horasContratadas
+      horasFinal
     );
 
     this.atualizarHorasNaTela(devolucao.locacao.horasContratadas);
@@ -597,7 +601,12 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       return;
     }
 
-    const horas = this.devolucaoData.locacao.horasContratadas;
+    const horasCobranca = calcularHorasCobranca(
+      this.devolucaoData.locacao.dataHoraLocacao,
+      this.devolucaoData.dataHoraDevolucao
+    );
+    
+    const horas = Math.max(horasCobranca, this.devolucaoData.locacao.horasContratadas);
     const temDesconto = horas > 2;
 
     let subtotalGeral = 0;
