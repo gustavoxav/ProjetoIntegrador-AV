@@ -33,13 +33,14 @@ class GestorFuncionario
      * @return array<string, mixed> Dados do funcionário autenticado
      * @throws \Throwable Em caso de erro ao buscar o funcionário
      */
-    public function login(string $cpf, string $senha): array {
+    public function login(string $cpf, string $senha): array
+    {
         try {
             if (empty($cpf) || empty($senha)) {
-                throw new \CredenciaisInvalidasException("CPF e senha são obrigatórios para o login.");
+                throw new CredenciaisInvalidasException("CPF e senha são obrigatórios para o login.");
             }
             if (strlen($cpf) !== 11) {
-                throw new \CredenciaisInvalidasException("CPF inválido. Deve conter 11 dígitos.");
+                throw new CredenciaisInvalidasException("CPF inválido. Deve conter 11 dígitos.");
             }
 
             $funcionario = $this->repositorioFuncionario->buscarFuncionarioFiltro($cpf);
@@ -62,6 +63,8 @@ class GestorFuncionario
             AuthHelper::iniciarSessao($dadosFuncionario);
 
             return $dadosFuncionario;
+        } catch (CredenciaisInvalidasException $e) {
+            throw $e;
         } catch (\Throwable $error) {
             throw new ErroLoginException($error->getMessage());
         }
@@ -72,7 +75,8 @@ class GestorFuncionario
      *
      * @return array<string, string> Mensagem de sucesso
      */
-    public function logout(): array {
+    public function logout(): array
+    {
         try {
             AuthHelper::destruirSessao();
             return ['mensagem' => 'Logout realizado com sucesso.'];
@@ -86,7 +90,8 @@ class GestorFuncionario
      *
      * @return array<string, mixed>|null Dados do funcionário autenticado ou null
      */
-    public function verificarAutenticacao(): array|null {
+    public function verificarAutenticacao(): array|null
+    {
         try {
             if (!AuthHelper::estaAutenticado()) {
                 return null;
@@ -104,7 +109,8 @@ class GestorFuncionario
      * @param string $cargoRequerido
      * @return bool
      */
-    public function temPermissao(string $cargoRequerido): bool {
+    public function temPermissao(string $cargoRequerido): bool
+    {
         try {
             return AuthHelper::temPermissao($cargoRequerido);
         } catch (\Throwable $error) {

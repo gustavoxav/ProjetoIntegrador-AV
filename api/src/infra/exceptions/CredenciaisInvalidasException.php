@@ -1,3 +1,3 @@
 <?php
 
-class CredenciaisInvalidasException extends ErroLoginException {}
+class CredenciaisInvalidasException extends Exception {}

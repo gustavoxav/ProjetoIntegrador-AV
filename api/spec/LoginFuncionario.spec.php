@@ -1,5 +1,7 @@
 <?php
 
+use CredenciaisInvalidasException;
+
 describe("Login de Funcionário", function () {
     beforeAll(function () {
         $this->pdo = conectarPDO();
@@ -29,21 +31,21 @@ describe("Valida retorno de erros do Login de Funcionário", function () {
 
     it("Deve lançar CredenciaisInvalidasException se o CPF não existir", function () {
         expect(fn() => $this->gestor->login("00000000000", "123456"))
-            ->toThrow(\ErroLoginException::class);
+            ->toThrow(CredenciaisInvalidasException::class);
     });
 
     it("Deve lançar CredenciaisInvalidasException se a senha estiver incorreta", function () {
         expect(fn() => $this->gestor->login("11111111111", "senhaerrada"))
-            ->toThrow(\ErroLoginException::class);
+            ->toThrow(CredenciaisInvalidasException::class);
     });
 
     it("Deve lançar CredenciaisInvalidasException se o CPF tiver menos de 11 dígitos", function () {
         expect(fn() => $this->gestor->login("123", "123456"))
-            ->toThrow(\ErroLoginException::class, "CPF inválido. Deve conter 11 dígitos.");
+            ->toThrow(CredenciaisInvalidasException::class, "CPF inválido. Deve conter 11 dígitos.");
     });
 
-    it("Deve lançar CredenciaisInvalidasException se CPF ou senha forem nulos", function () {
+    it("Deve lançar CredenciaisInvalidasException se CPF ou senha forem vazios", function () {
         expect(fn() => $this->gestor->login("", ""))
-            ->toThrow(\ErroLoginException::class);
+            ->toThrow(CredenciaisInvalidasException::class);
     });
 });
