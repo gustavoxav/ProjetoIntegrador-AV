@@ -229,12 +229,10 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
       <td>${avaria.descricao}</td>
       <td>R$ ${avaria.valorCobrar.toFixed(2).replace(".", ",")}</td>
       <td>
-        <img src="${this.construirUrlImagem(Number(avaria.id))}" 
+        <img src="${this.construirUrlImagem(avaria.id)}" 
              alt="Avaria" 
              style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;"
-             onclick="window.open('${this.construirUrlImagem(
-               Number(avaria.id)
-             )}', '_blank')">
+             onclick="window.open('${this.construirUrlImagem(avaria.id)}', '_blank')">
       </td>
     `;
     tbody.appendChild(row);
@@ -242,7 +240,7 @@ export class VisaoDevolucaoEmHTML implements VisaoDevolucao {
     this.recalcularValoresLocalmente();
   }
 
-  private construirUrlImagem(avariaId: number): string {
+  private construirUrlImagem(avariaId: string): string {
     const urlApi = import.meta.env.VITE_API_URL ?? "http://localhost:8000/api";
     return `${urlApi}/avarias/foto/${avariaId}`;
   }
