@@ -6,7 +6,7 @@ Thiago Rocha Duarte
 
 # Aplicação para aluguel de bicicletas
 
-## Objetivo
+Sistema web para gestão de locação de equipamentos desenvolvido como projeto integrador. O sistema permite controlar o processo completo de locação, devolução, gestão de avarias e relatórios.
 
 Este projeto desenvolve um sistema web para gestão de locação de equipamentos de uma loja de bicicletas. O sistema permite controlar o processo completo de locação e devolução.
 
@@ -28,16 +28,11 @@ Este projeto desenvolve um sistema web para gestão de locação de equipamentos
 - **Bootstrap 5.3.6** - Framework CSS para estilização e componentes
 - **Bootstrap Icons** - Ícones utilizados na interface
 
-### Testes
+### Testes e Qualidade
 - **Vitest** - Framework de testes unitários
 - **Playwright** - Framework de testes end-to-end (e2e)
 - **Kahlan** - Framework de testes para PHP
 - **PHPStan** - Análise estática de código PHP
-
-## Funcionalidades
-
-- **Sistema de Locação**: Criação de locações com cálculo automático de valores e descontos
-- **Sistema de Devolução**: Processamento de devoluções com cálculo de valores
 
 ## Como baixar e executar o projeto
 
@@ -111,17 +106,24 @@ pnpm e2e                # Testes end-to-end
 ```
 g9/
 ├── api/                   # Backend PHP
-│   ├── src/               # Código fonte
+│   ├── src/               # Código fonte organizado por domínio
+│   │   ├── cliente/       # Módulo de clientes
+│   │   ├── equipamento/   # Módulo de equipamentos
+│   │   ├── locacao/       # Módulo de locações
+│   │   ├── devolucao/     # Módulo de devoluções
+│   │   ├── avaria/        # Módulo de avarias
+│   │   ├── funcionario/   # Módulo de funcionários
+│   │   └── infra/         # Infraestrutura e utilitários
 │   ├── db/                # Scripts de banco de dados
-│   ├── spec/              # Testes
+│   ├── spec/              # Testes unitários
 │   └── composer.json      # Dependências PHP
 ├── front/                 # Frontend TypeScript
-│   ├── src/               # Código fonte
-│   ├── public/            # Arquivos estáticos(componentes)
+│   ├── src/               # Código fonte organizado por módulos
+│   ├── public/            # Arquivos estáticos e componentes HTML
 │   ├── e2e/               # Testes end-to-end
 │   ├── test/              # Testes unitários
 │   └── package.json       # Dependências Node.js
-└── README.md
+├── README.md              # Documentação do projeto
 └── apresentacao.pdf       # Slides de apresentação
 ```
 
@@ -133,7 +135,7 @@ g9/
 - **Page.js - Client-side routing**. Disponível em: <https://github.com/visionmedia/page.js>. Acesso em: 27 mai. 2025.
 - **Vite - Build Tool**. Disponível em: <https://vitejs.dev/guide/>. Acesso em: 27 mai. 2025.
 
-### Testes
+### Testes e Qualidade
 - **Playwright Testing Framework**. Disponível em: <https://playwright.dev/docs/writing-tests>. Acesso em: 27 mai. 2025.
 - **Vitest - Unit Testing Framework**. Disponível em: <https://vitest.dev/>. Acesso em: 27 mai. 2025.
 - **Kahlan - PHP Testing Framework**. Disponível em: <https://kahlan.github.io/docs/>. Acesso em: 27 mai. 2025.
