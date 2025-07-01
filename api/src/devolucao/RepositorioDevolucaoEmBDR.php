@@ -6,7 +6,7 @@ class RepositorioDevolucaoEmBDR implements RepositorioDevolucao {
         private PDO $pdo
     ) {}
 
-    public function salvar(Devolucao $devolucao) {
+    public function salvar(Devolucao $devolucao): array {
         try {
             $this->pdo->beginTransaction();
             
@@ -37,7 +37,11 @@ class RepositorioDevolucaoEmBDR implements RepositorioDevolucao {
             
             $this->pdo->commit();
             
-            return $this->obterPorId((int)$codigoDevolucao);
+            $resultado = $this->obterPorId((int)$codigoDevolucao);
+            if ($resultado === null) {
+                throw new PDOException("Erro ao recuperar devolução salva");
+            }
+            return $resultado;
         } catch (PDOException $e) {
             $this->pdo->rollBack();
             throw $e;
@@ -139,7 +143,10 @@ class RepositorioDevolucaoEmBDR implements RepositorioDevolucao {
         
         $devolucoes = [];
         foreach ($devolucoesData as $devolucaoData) {
-            $devolucoes[] = $this->obterPorId($devolucaoData['id']);
+            $devolucao = $this->obterPorId($devolucaoData['id']);
+            if ($devolucao !== null) {
+                $devolucoes[] = $devolucao;
+            }
         }
         
         return $devolucoes;

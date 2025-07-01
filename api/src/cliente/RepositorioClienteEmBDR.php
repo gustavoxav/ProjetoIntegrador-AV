@@ -112,7 +112,11 @@ class RepositorioClienteEmBDR implements RepositorioCliente
 
       $id = (int) $this->pdo->lastInsertId();
 
-      return $this->buscarClienteFiltro((int)$id);
+      $clienteSalvo = $this->buscarClienteFiltro((int)$id);
+      if ($clienteSalvo === null) {
+        throw new RepositorioException('Erro ao recuperar cliente salvo');
+      }
+      return $clienteSalvo;
     } catch (PDOException $ex) {
       throw new RepositorioException(
         'Erro ao salvar cliente. Verifique os dados e tente novamente.',

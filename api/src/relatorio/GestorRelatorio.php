@@ -30,7 +30,7 @@ class GestorRelatorio {
 			foreach ($dadosLocacoes as $registro) {
 				$dadosFormatados[] = [
 					'data' => $registro['data_locacao'],
-					'dataFormatada' => date('d/m/Y', strtotime($registro['data_locacao'])),
+					'dataFormatada' => date('d/m/Y', strtotime($registro['data_locacao']) ?: 0),
 					'valorTotalPago' => (float) $registro['valor_total_pago'],
 					'quantidadeLocacoes' => (int) $registro['quantidade_locacoes']
 				];
@@ -42,8 +42,8 @@ class GestorRelatorio {
 				'periodo' => [
 					'dataInicial' => $dataInicial,
 					'dataFinal' => $dataFinal,
-					'dataInicialFormatada' => date('d/m/Y', strtotime($dataInicial)),
-					'dataFinalFormatada' => date('d/m/Y', strtotime($dataFinal))
+					'dataInicialFormatada' => date('d/m/Y', strtotime($dataInicial) ?: 0),
+					'dataFinalFormatada' => date('d/m/Y', strtotime($dataFinal) ?: 0)
 				],
 				'resumo' => [
 					'valorTotalGeral' => $valorTotalGeral,
@@ -81,8 +81,8 @@ class GestorRelatorio {
 					'periodo' => [
 						'dataInicial' => $dataInicial,
 						'dataFinal' => $dataFinal,
-						'dataInicialFormatada' => date('d/m/Y', strtotime($dataInicial)),
-						'dataFinalFormatada' => date('d/m/Y', strtotime($dataFinal))
+						'dataInicialFormatada' => date('d/m/Y', strtotime($dataInicial) ?: 0),
+						'dataFinalFormatada' => date('d/m/Y', strtotime($dataFinal) ?: 0)
 					],
 					'resumo' => [
 						'totalLocacoesPeriodo' => 0,
@@ -136,8 +136,8 @@ class GestorRelatorio {
 				'periodo' => [
 					'dataInicial' => $dataInicial,
 					'dataFinal' => $dataFinal,
-					'dataInicialFormatada' => date('d/m/Y', strtotime($dataInicial)),
-					'dataFinalFormatada' => date('d/m/Y', strtotime($dataFinal))
+					'dataInicialFormatada' => date('d/m/Y', strtotime($dataInicial) ?: 0),
+					'dataFinalFormatada' => date('d/m/Y', strtotime($dataFinal) ?: 0)
 				],
 				'resumo' => [
 					'totalLocacoesPeriodo' => $totalLocacoesPeriodo,

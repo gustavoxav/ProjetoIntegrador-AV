@@ -29,7 +29,11 @@ class RepositorioAvariaEmBDR implements RepositorioAvaria {
             
             $this->pdo->commit();
             
-            return $this->obterPorId($avaria->getId());
+            $resultado = $this->obterPorId($avaria->getId());
+            if ($resultado === null) {
+                throw new AvariaException("Erro ao recuperar avaria salva");
+            }
+            return $resultado;
         } catch (PDOException $e) {
             $this->pdo->rollBack();
             throw new AvariaException("Erro ao salvar avaria: " . $e->getMessage());

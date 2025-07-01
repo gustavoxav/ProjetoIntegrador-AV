@@ -61,7 +61,13 @@ class RepositorioLocacaoEmBDR implements RepositorioLocacao
             }
 
             $this->pdo->commit();
-            return $this->obterPorId((int)$codigoLocacao);
+            
+            $locacaoSalva = $this->obterPorId((int)$codigoLocacao);
+            if ($locacaoSalva === null) {
+                throw new LocacaoException("Erro ao recuperar locação salva");
+            }
+            
+            return $locacaoSalva;
         } catch (PDOException $e) {
             $this->pdo->rollBack();
             throw $e;

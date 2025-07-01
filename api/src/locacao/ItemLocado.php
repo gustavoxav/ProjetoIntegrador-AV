@@ -19,10 +19,10 @@ class ItemLocado {
 
     public function calcularSubtotal(): float {
         if (isset($this->equipamento['calcularValorHora'])) {
-            return $this->equipamento['calcularValorHora'];
+            return (float) $this->equipamento['calcularValorHora'];
         }
         
-        $valorHora = isset($this->equipamento['valorHora']) ? $this->equipamento['valorHora'] : 0;
+        $valorHora = isset($this->equipamento['valorHora']) ? (float) $this->equipamento['valorHora'] : 0.0;
         return $valorHora * $this->tempoContratado;
     }
 

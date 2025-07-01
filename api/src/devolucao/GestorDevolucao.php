@@ -60,6 +60,7 @@ class GestorDevolucao {
         }
         
         $calculadora = new CalculadoraPagamento($this->repositorioAvaria);
+        /** @var array{dataHoraLocacao: string, horasContratadas: int, dataHoraEntregaPrevista: string, codigo?: int, itens: array<int, array{equipamento: array{codigo: int, valorHora: float}}>} $locacao */
         $resultado = $calculadora->calcularValorPagamento($locacao, $dataHoraDevolucao, $taxasLimpeza);
         
         return [
@@ -149,6 +150,7 @@ class GestorDevolucao {
             $taxasLimpeza = $this->objectToArray($taxasLimpeza);
         }
         
+        /** @var array{dataHoraLocacao: string, horasContratadas: int, dataHoraEntregaPrevista: string, codigo?: int, itens: array<int, array{equipamento: array{codigo: int, valorHora: float}}>} $locacao */
         $valorCalculado = $calculadora->calcularValorPagamentoSimples($locacao, $dataHoraDevolucao, $taxasLimpeza);
         
         $valorPago = $valorCalculado;
